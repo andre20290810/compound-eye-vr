@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v37: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v37｜左右個眼交換・運動量連動表示</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v38: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v38｜左右個眼交換・運動量連動表示</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -23,7 +23,7 @@ h1{font-size:20px;margin:0;font-weight:750;letter-spacing:.015em}header p{margin
 .sublabel{font-size:12px;color:#afc5d9;line-height:1.65;margin:10px 0}
 .slider{display:flex;align-items:center;justify-content:space-between;gap:7px;margin-bottom:9px}.slider input{width:50%;min-width:90px}
 footer{color:#90afc5;font-size:11px;margin-top:11px;line-height:1.7}
-#leaveVR{display:none;position:fixed;z-index:40;right:10px;top:10px;padding:8px 12px;background:#7b3e40;border-color:#df8f8d}
+#vrToggleStereo,#vrOpenMenu{display:none;position:fixed;z-index:43;top:10px;left:120px;padding:7px 9px;font-size:11px;opacity:.85}#vrOpenMenu{left:234px}body.vr #vrToggleStereo,body.vr #vrOpenMenu{display:block}body.vr.mono #vrHud .vrEye:nth-child(2){display:none}body.vr.mono #vrHud .vrEye:first-child{width:100%}#leaveVR{display:none;position:fixed;z-index:40;right:10px;top:10px;padding:8px 12px;background:#7b3e40;border-color:#df8f8d}
 #vrHud{position:fixed;inset:0;z-index:25;pointer-events:none;display:none}
 body.vr{overflow:hidden}body.vr header,body.vr .panel,body.vr footer{display:none}body.vr .app{padding:0;max-width:none}body.vr .main{display:block}body.vr #screen{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100svh;border:0;border-radius:0}
 body.vr #leaveVR{display:block}body.vr #vrHud{display:block}body.vr #screenBadge,body.vr #status{display:none}
@@ -120,24 +120,24 @@ body.vr #motionDebugOverlay{display:none!important}
 @media(max-width:520px){#lensEditor .editorGrid{grid-template-columns:1fr}}
 body.vr #lensEditor{display:none}
 </style></head><body>
-<div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v37｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
-<div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VR移動モード開始</button></div></header>
+<div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="vrToggleStereo" type="button" aria-label="双眼と単眼を切り替える">双眼 → 単眼</button><button id="vrOpenMenu" type="button" aria-label="VRメニューを開く">メニュー（LB）</button><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
+<header><div><h1>人工複眼 VR v38｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・個眼比較を切替。VR中はジャイロを使用せず、メニューはGameSirで操作します。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<div class="group" style="margin:0"><label id="avatarHeader" style="font-size:12px;display:flex;align-items:center;gap:5px">アバター <select id="avatarHeaderSelect" style="min-width:135px;max-width:185px;padding:8px"><option value="xbot">X Bot</option><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 3D閲覧</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
+<details id="lensEditorDisclosure" class="panel" style="margin-top:10px;padding:9px"><summary style="font-weight:650;cursor:pointer;touch-action:manipulation;padding:7px">個眼レイアウト調整を開く（誤操作防止）</summary><section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
 <div class="editorInfo">中央の3D表示を見ながら調整できます。部位の位置、楕円の幅・高さ、カメラの引き（脚全体を表示）、画角を個別に編集します。</div>
 <div class="editorRow"><label for="lensEditorEye">調整するカメラ</label><select id="lensEditorEye"></select></div>
 <div class="editorGrid" id="lensEditorFields"></div>
 <div class="editorRow"><button type="button" id="lensEditorResetOne">この部位をリセット</button><button type="button" id="lensEditorSave">このブラウザに保存</button><button type="button" id="lensEditorExport">公開初期値JSONを書き出す</button><button type="button" id="lensEditorCopy">公開初期値JSONをコピー</button><a style="color:#9ce7f2;font-size:12px" href="https://github.com/andre20290810/compound-eye-vr/edit/main/public-lens-defaults.json" target="_blank" rel="noopener noreferrer">GitHubで公開値を編集</a><button type="button" id="lensEditorImport">設定JSONを読み込む</button><input type="file" id="lensEditorFile" accept=".json,application/json" hidden></div>
-<p class="editorHint">ブラウザへの保存はこの端末のみです。公開初期値を更新するには、書き出した public-lens-defaults.json をGitHubリポジトリ直下の同名ファイルと置き換えてください。モデル・視点数ごとに設定を保持します。</p></section><footer>観察モデル：X Bot / Boxer（9動作）、AEGIS NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
+<p class="editorHint">ブラウザへの保存はこの端末のみです。公開初期値を更新するには、書き出した public-lens-defaults.json をGitHubリポジトリ直下の同名ファイルと置き換えてください。モデル・視点数ごとに設定を保持します。</p></section></details><footer>アバター：X Bot / Boxer（9動作）、AEGIS NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR閲覧はジャイロ操作を使用しません。画面スリープ防止は対応端末のWake Lock機能を使用します。</footer></div>
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
-<div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRでは首を左右に傾けても、メニューを開かず眼数変更できます。</span></div>
-<div class="group"><span class="label">観察モデル</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option><option value="aegisSoldier">AEGIS SOLDIER（黄〜赤・発光チューブ）</option></select></div>
+<div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRではGameSirのLBでメニューを開き、十字キー・スティックで選択、Aで決定、BでVRゲームに戻れます。</span></div>
+<div class="group"><span class="label">アバター</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option><option value="aegisSoldier">AEGIS SOLDIER（黄〜赤・発光チューブ）</option></select></div>
 <div class="group"><span class="label">動作</span><select id="motion"><option value="xbot_punch">元FBX・パンチ</option></select></div>
 <div class="group"><label class="label"><input type="checkbox" id="poseAligned" checked> 個眼の見え方を中央の人体と同じ方向にそろえる（推奨）</label></div>
 <p class="sublabel">オン：腕・脚の角度を中央の姿勢と一致させます。オフ：独立した斜めカメラ視点（従来方式）で観察できます。</p>
-<div class="group"><span class="label">可視化方式</span><select id="vizMode"><option value="lenses" selected>楕円融合（枠なし・大型）</option><option value="inspect">個眼比較（独立カメラ）</option></select></div>
+<div class="group"><label class="label">視点 <select id="viewModePicker"><option value="front">正面</option><option value="back">背面</option><option value="pov">主観（アバター視点）</option></select></label></div><div class="group"><span class="label">可視化方式</span><select id="vizMode"><option value="lenses" selected>楕円融合（枠なし・大型）</option><option value="inspect">個眼比較（独立カメラ）</option></select></div>
 <div class="slider"><span class="label">中央全身の不透明度</span><input id="anchorAlpha" type="range" min="0" max="1" step=".02" value=".20"><span id="anchorAlphaLabel">20%</span></div>
 <div class="slider"><span class="label">手足のカメラ映像倍率（個眼の枠とは別）</span><input id="limbImageZoom" type="range" min="0.75" max="1.80" step=".05" value="1.00"><span id="limbImageZoomLabel">1.00×</span></div>
 <div class="slider"><span class="label">個眼の大きさ</span><input id="lensScale" type="range" min=".75" max="2.20" step=".05" value="1.10"><span id="lensScaleLabel">1.10×</span></div>
@@ -225,7 +225,7 @@ function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(
 const state={model:'xbot',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.20,lensScale:1.10,lensPull:1.10,showLabels:true,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
 const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）',armor_walk:'自然歩行（X Bot動作ベース）',armor_run:'自然走行（X Bot動作ベース）'};
-state.lensOverrides={};state.lensEditorIndex=0;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
+state.lensOverrides={};state.lensEditorIndex=0;state.viewMode='front';state.stereoMode=true;state.vrGameMode=false;state.menuIndex=0;state.punchPlayback=1.7;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
 state.focusAreas=Array(6).fill(1);state.focusFrom=Array(6).fill(1);
@@ -452,17 +452,17 @@ function aegisFullBodyPunch(nodes,T,R,t){
    R[i]=qmul(R[i],q);
  };
  // Drive starts from the rear leg, continues through pelvis and trunk, then arm.
- rotate('Pelvis',[0,1,0],-18*drive+7*preload);
- rotate('Chest',[0,1,0],-13*drive+6*preload);
+ rotate('Pelvis',[0,1,0],-26*drive+10*preload);
+ rotate('Chest',[0,1,0],-19*drive+9*preload);
  rotate('Chest',[0,0,1],-3.5*drive);
- rotate('L_UpperLeg',[1,0,0],-16*step+5*preload);
- rotate('L_LowerLeg',[1,0,0],14*step);
- rotate('R_UpperLeg',[1,0,0],11*drive-8*preload);
- rotate('R_LowerLeg',[1,0,0],-12*drive+5*preload);
+ rotate('L_UpperLeg',[1,0,0],-23*step+7*preload);
+ rotate('L_LowerLeg',[1,0,0],19*step);
+ rotate('R_UpperLeg',[1,0,0],18*drive-9*preload);
+ rotate('R_LowerLeg',[1,0,0],-17*drive+5*preload);
  const pelvis=ids.Pelvis;
  if(pelvis!==undefined){
    T[pelvis]=T[pelvis].slice();
-   T[pelvis][2]+=0.055*step;
+   T[pelvis][2]+=0.085*step;
    T[pelvis][1]-=0.014*drive;
  }
  // Targets in each shoulder's local coordinates; extension follows hip drive.
@@ -475,47 +475,39 @@ function aegisFullBodyPunch(nodes,T,R,t){
  aegisSolveArm(nodes,R,'L',[.020,-.14,.17]);
 }
 // The gait is retargeted from the actual Boxer_Walk / Boxer_Run animation tracks.
+// X Bot sets the motion-cycle durations. AEGIS uses its own local axes,
+// avoiding the incompatible X Bot bind-pose quaternions that bent the limbs.
 function aegisRetargetGait(nodes,T,R,motion,t){
- const src=getModel('xbot');
- const clip=src.animations.find(a=>a.name===(motion==='armor_run'?'Boxer_Run':'Boxer_Walk'));
- if(!clip)return;
- const at=((t%clip.duration)+clip.duration)%clip.duration;
- const srcIndex=new Map(src.nodes.map((n,i)=>[n.name,i]));
- const tracks=new Map(clip.channels.map(ch=>[ch.node+':'+ch.path,ch]));
- const sample=(name,path)=>{
-  const idx=srcIndex.get(name);if(idx===undefined)return null;
-  const ch=tracks.get(idx+':'+path);if(!ch)return null;
-  let i=0;while(i<ch.input.length-2&&ch.input[i+1]<at)i++;
-  const j=Math.min(i+1,ch.input.length-1);
-  const f=clamp01((at-ch.input[i])/Math.max(ch.input[j]-ch.input[i],1e-6));
-  const a=Array.from(ch.output.slice(i*ch.size,(i+1)*ch.size));
-  const b=Array.from(ch.output.slice(j*ch.size,(j+1)*ch.size));
-  return path==='rotation'?qSlerp(a,b,f):a.map((v,k)=>lerp(v,b[k],f));
+ const source=getModel('xbot');
+ const duration=source.animations.find(a=>a.name===(motion==='armor_run'?'Boxer_Run':'Boxer_Walk'))?.duration||(motion==='armor_run'?.633:1.033);
+ const phase=t*2*Math.PI/duration;
+ const running=motion==='armor_run';
+ const swing=running?29:18,kneeMax=running?40:23,armSwing=running?21:13;
+ const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
+ const rotate=(name,axis,deg)=>{
+  const i=ids[name];if(i===undefined)return;
+  const h=rad(deg)*.5,sa=Math.sin(h);
+  R[i]=qmul(R[i],[axis[0]*sa,axis[1]*sa,axis[2]*sa,Math.cos(h)]);
  };
- const to=new Map(nodes.map((n,i)=>[n.name,i]));
- const pairs=[
-  ['Hips','Pelvis',.70],['Spine2','Chest',.76],
-  ['LeftArm','L_UpperArm',.76],['LeftForeArm','L_Forearm',.82],
-  ['RightArm','R_UpperArm',.76],['RightForeArm','R_Forearm',.82],
-  ['LeftUpLeg','L_UpperLeg',.82],['LeftLeg','L_LowerLeg',.80],
-  ['RightUpLeg','R_UpperLeg',.82],['RightLeg','R_LowerLeg',.80]
- ];
- for(const [fromName,toName,weight] of pairs){
-  const j=srcIndex.get(fromName),i=to.get(toName);
-  if(i===undefined||j===undefined)continue;
-  const animated=sample(fromName,'rotation');
-  if(!animated)continue;
-  const delta=qmul(qInv(src.nodes[j].rotation),animated);
-  R[i]=qmul(R[i],qSlerp([0,0,0,1],delta,weight));
- }
- const pelvis=to.get('Pelvis');
- const translation=sample('Hips','translation');
- if(pelvis!==undefined){
-  const phase=at/clip.duration*2*Math.PI;
-  const sourceY=src.nodes[srcIndex.get('Hips')].translation[1];
-  const bob=translation?clamp((translation[1]-sourceY)*.38,-.018,.027):0;
-  T[pelvis]=T[pelvis].slice();
-  T[pelvis][1]+=bob+.006*(motion==='armor_run'?1.45:1)*Math.abs(Math.sin(phase));
+ // Symmetric anti-phase foot cycles in the avatar's anatomical coordinate frame.
+ const l=Math.sin(phase),r=-l;
+ rotate('L_UpperLeg',[1,0,0],-swing*l);
+ rotate('R_UpperLeg',[1,0,0],-swing*r);
+ rotate('L_LowerLeg',[1,0,0],kneeMax*Math.max(0,l));
+ rotate('R_LowerLeg',[1,0,0],kneeMax*Math.max(0,r));
+ // Counter-swing the arms, with the elbows slightly flexed.
+ rotate('L_UpperArm',[1,0,0],armSwing*l);
+ rotate('R_UpperArm',[1,0,0],armSwing*r);
+ rotate('L_Forearm',[1,0,0],running?12:8);
+ rotate('R_Forearm',[1,0,0],running?12:8);
+ rotate('Chest',[1,0,0],running?4.0:1.7);
+ rotate('Chest',[0,1,0],(running?4:2.5)*l);
+ rotate('Pelvis',[0,1,0],(running?3:2)*r);
+ rotate('Pelvis',[0,0,1],(running?2.2:1.5)*l);
+ if(ids.Pelvis!==undefined){
+   T[ids.Pelvis]=T[ids.Pelvis].slice();
+   T[ids.Pelvis][1]+=(running?.017:.007)*Math.abs(Math.sin(phase));
+   T[ids.Pelvis][2]+=(running?.008:.003)*Math.sin(phase);
  }
 }
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
@@ -686,7 +678,7 @@ const lensDiagnostics={perEye:[],worldJoints:[]};
 function anchoredLenses(eye,globalPV,modelFit){
  const defs=JOINT_LENS_LAYOUT[state.eyeCount]||[];
  const rects=new Float32Array(24),sampling=new Float32Array(12),offsets=new Float32Array(12),report=[];
- const viewAspect=(state.vr?canvas.width*.5:canvas.width)/Math.max(canvas.height,1);
+ const viewAspect=(isStereoVR()?canvas.width*.5:canvas.width)/Math.max(canvas.height,1);
  for(let i=0;i<defs.length;i++){
   const [layoutTrack,laneX,laneY,rx,ry]=defs[i],k=lensKind(i),spec=activeCameras()[i];
   const track=state.model==='xbot'?swapAnatomicalTrack(layoutTrack):layoutTrack;
@@ -738,6 +730,22 @@ function anchoredLenses(eye,globalPV,modelFit){
  return {rects,sampling,offsets};
 }
 function camera(spec,aspect,eye){
+ if(state.viewMode==='pov'&&modelData?.world&&state._modelFit){
+  const h=nodeJointWorld('Head|Neck',state._modelFit);
+  if(h){
+   const m=state._modelFit;
+   let forward=norm([m[8],m[9],m[10]]);
+   // Keep forward aligned with the avatar's chest; avoid rotating the camera with each punch.
+   const point=[h[0]+forward[0]*.095,h[1]+.06,h[2]+forward[2]*.095];
+   const look=[point[0]+forward[0]*3,point[1]+forward[1]*3-.35,point[2]+forward[2]*3];
+   if(isStereoVR()){
+    const right=norm(cross(forward,[0,1,0])),shift=(eye===0?-1:1)*.032;
+    for(let k=0;k<3;k++)point[k]+=right[k]*shift;
+   }
+   return mul(perspective(rad(state.vr?70:65),aspect,.018,40),lookAt(point,look,[0,1,0]));
+  }
+ }
+
  const yaw=state.viewYaw+(state.gameMode?state.gameLookYaw:0)+rad((spec.yaw||0)*(state.angle/70));
  const pitch=clamp(state.viewPitch+(state.gameMode?state.gameLookPitch:0)+rad(spec.pitch||0),-1.50,1.50);
  const distance=state.zoom*spec.distance/(spec.track?Math.max(.75,state.limbImageZoom):1);
@@ -753,7 +761,7 @@ function camera(spec,aspect,eye){
  // making the body vanish behind the old ground plane. Keep the viewer above ground.
  if(state.gameMode){pt[1]=Math.max(pt[1],.38);}
 
- if(state.vr){const dir=norm(sub(center,pt)),right=norm(cross(dir,[0,1,0]));const offset=(eye===0?-1:1)*.032;
+ if(isStereoVR()){const dir=norm(sub(center,pt)),right=norm(cross(dir,[0,1,0]));const offset=(eye===0?-1:1)*.032;
   for(let k=0;k<3;k++)pt[k]+=right[k]*offset;
  }
  const up=Math.abs(pitch)>1.47?[0,0,-1]:[0,1,0];
@@ -827,17 +835,26 @@ function renderArena(pv){
  gl.drawArrays(gl.LINES,0,m.vertexCount);
  gl.depthMask(true);gl.enable(gl.DEPTH_TEST);
 }
+function firstPersonBodyMask(){
+ const mask=new Float32Array(48).fill(1);
+ const joints=modelData?.skin?.joints||[];
+ for(let i=0;i<joints.length&&i<48;i++){
+  const name=modelData.nodes[joints[i]]?.name||'';
+  if(/^(Head|Neck)$/.test(name))mask[i]=0;
+ }
+ return mask;
+}
 function renderFacet(idx,eye,pv,world){
  const t=offscreen[eye*(activeCameras().length+1)+idx];
  gl.bindFramebuffer(gl.FRAMEBUFFER,t.fbo);gl.viewport(0,0,fboWidth,fboHeight);
  gl.clearColor(0,0,0,0);gl.disable(gl.BLEND);gl.enable(gl.DEPTH_TEST);
  gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
  if(idx===0)renderArena(pv);
- renderMesh(pv,world,partMask(idx));
+ renderMesh(pv,world,(idx===0&&state.viewMode==='pov')?firstPersonBodyMask():partMask(idx));
 }
-function compose(eye,w,h,globalPV,modelFit){let half=state.vr?Math.floor(w/2):w, x=eye*half,tw=state.vr?(eye===1?w-half:half):w;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(x,0,tw,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(x,0,tw,h);gl.disable(gl.DEPTH_TEST);gl.useProgram(compProg);gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(compProg.aP);gl.vertexAttribPointer(compProg.aP,2,gl.FLOAT,false,0,0);
+function compose(eye,w,h,globalPV,modelFit){let half=isStereoVR()?Math.floor(w/2):w, x=eye*half,tw=isStereoVR()?(eye===1?w-half:half):w;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(x,0,tw,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(x,0,tw,h);gl.disable(gl.DEPTH_TEST);gl.useProgram(compProg);gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(compProg.aP);gl.vertexAttribPointer(compProg.aP,2,gl.FLOAT,false,0,0);
 for(let i=0;i<7;i++){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,offscreen[eye*(activeCameras().length+1)+Math.min(i,activeCameras().length)].tex);gl.uniform1i(compProg.tex[i],i);}
-const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:0);gl.uniform1f(compProg.uAnchorAlpha,state.gameMode?Math.max(state.anchorAlpha,.80):state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
+const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.viewMode==='pov'?2:state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:0);gl.uniform1f(compProg.uAnchorAlpha,state.gameMode?Math.max(state.anchorAlpha,.80):state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
 
 // The motion detector reads model-local bone position AND bone rotation.
 // Neither camera motion nor scene navigation can increase these scores.
@@ -974,7 +991,7 @@ function renderMotionDebug(){
  el.replaceChildren(title,summary,table);
  lastMotionDebugAt=performance.now();
 }
-function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1);}let {w,h}=resize(),eyeW=state.vr?w/2:w;const cap=state.vr?540:700;const rw=Math.max(120,Math.min(cap,Math.floor(eyeW*.82))),rh=Math.max(120,Math.min(cap,Math.floor(h*.82)));const nTargets=(activeCameras().length+1)*(state.vr?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
+function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1);}let {w,h}=resize(),eyeW=isStereoVR()?w/2:w;const cap=state.vr?540:700;const rw=Math.max(120,Math.min(cap,Math.floor(eyeW*.82))),rh=Math.max(120,Math.min(cap,Math.floor(h*.82)));const nTargets=(activeCameras().length+1)*(isStereoVR()?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
 // Yaw is tracked relative to user-selected calibration, while eye-specific camera angles stay independent.
 const smoothing=state.vr?.38:.28;const sensed=sensorLive();
  const yTarget=state.vr&&state.menuOpen?state.viewYaw:(sensed?(state.gyroInvert?-state.yaw:state.yaw):state.dragYaw);
@@ -982,7 +999,7 @@ const smoothing=state.vr?.38:.28;const sensed=sensorLive();
  state.viewYaw=lerp(state.viewYaw,yTarget,smoothing);
  state.viewPitch=lerp(state.viewPitch,pTarget,smoothing);
 const t=state.paused?state.pauseTime:(now*.001-state.timeStart)*state.motionSpeed;state.renderTime=t;
-if(modelData.skin||modelData.animations.length)animateModel(modelData,state.motion,t);else animateModel(modelData,'idle',t);
+if(modelData.skin||modelData.animations.length)animateModel(modelData,state.motion,t*(/punch/i.test(state.motion)?state.punchPlayback:state.gameMode&&/(walk|run)/i.test(state.motion)?(state.gameAction==='run'?1.55:1.35):1));else animateModel(modelData,'idle',t);
 let pulse=state.model==='heart'&&state.motion==='spin'?1+.045*Math.sin(t*2*Math.PI*1.12):1;
 let local=mul(scale(state.fitScale*pulse,state.fitScale*pulse,state.fitScale*pulse),trans(-state.modelCenter[0],-state.modelCenter[1],-state.modelCenter[2]));
 let spin=state.motion==='spin'&&state.model!=='heart'?rotY(.36*t):ID();
@@ -992,9 +1009,9 @@ updateSkeletonMotion(t,now);
 updateAttention(now);
 const f=specList();const markerBase=state.vr?{yaw:0,pitch:2,roll:0,distance:3.25*state.vrFraming,fov:50,tx:0,ty:-.07,tz:0}:
  {yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0};
-const markerPVs=state.vr?[camera(markerBase,eyeW/h,0),camera(markerBase,eyeW/h,1)]:[camera(markerBase,eyeW/h,0)];
-drawMotionMarkerOverlay(markerPVs);for(let eye=0;eye<(state.vr?2:1);eye++){let aspect=eyeW/h;const globalPV=camera(state.vr?{yaw:0,pitch:2,roll:0,distance:3.25*state.vrFraming,fov:50,tx:0,ty:-.07,tz:0}:{yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0},aspect,eye);renderFacet(0,eye,globalPV,world);
- for(let i=0;i<f.length;i++){
+const markerPVs=isStereoVR()?[camera(markerBase,eyeW/h,0),camera(markerBase,eyeW/h,1)]:[camera(markerBase,eyeW/h,0)];
+drawMotionMarkerOverlay(markerPVs);for(let eye=0;eye<(isStereoVR()?2:1);eye++){let aspect=eyeW/h;const globalPV=camera(state.vr?{yaw:0,pitch:2,roll:0,distance:3.25*state.vrFraming,fov:50,tx:0,ty:-.07,tz:0}:{yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0},aspect,eye);renderFacet(0,eye,globalPV,world);
+ for(let i=0;i<(state.viewMode==='pov'?0:f.length);i++){
   let spec=f[i];
   if(state.vr&&/(下半身|腰〜|足先|下半身)/.test(spec.name))spec={...spec,distance:spec.distance*1.18,fov:Math.max(spec.fov,46)};
   renderFacet(i+1,eye,camera(spec,aspect,eye),world);
@@ -1004,7 +1021,7 @@ frameCount++;if(frameCount%10===0)updateCameraBadgePositions();if(frameCount%20=
  if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot')?(state.motion==='xbot_punch'?1.10:motionDuration()):1.64;$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
  const g=$('gyroReadout');const live=sensorLive();const text=live?'受信中（'+state.sensorPackets+'回）':state.gyro?'許可済み・未受信':'許可なし';
  if(g)g.textContent='ジャイロ: '+text+' ｜ Yaw: '+(state.yaw*180/Math.PI).toFixed(1)+'° ｜ Pitch: '+(state.pitch*180/Math.PI).toFixed(1)+'°'+(state.baseline?' ｜ 基準設定済み':' ｜ 基準未設定');
- if($('vrSensorText'))$('vrSensorText').textContent=live?'回転ジャイロ追従中  '+(state.viewYaw*180/Math.PI).toFixed(0)+'° / '+(state.viewPitch*180/Math.PI).toFixed(0)+'°':'ジャイロ未受信：タッチ操作可';if($('gyroRaw')){$('gyroRaw').textContent='α '+((state.rawEuler?.[0]??0).toFixed(1))+'° / β '+((state.rawEuler?.[1]??0).toFixed(1))+'° / γ '+((state.rawEuler?.[2]??0).toFixed(1))+'° / 画面 '+currentScreenAngle()+'° / '+(window.isSecureContext?'HTTPS利用可':'HTTPS必須')+' / '+(window.innerWidth>window.innerHeight?'横向き':'縦向き')+' / 基準α '+((state.baseGyro?.a??0).toFixed(1))+'°';}updateVRNotice(live);
+ if($('vrSensorText'))$('vrSensorText').textContent=state.vr?'ジャイロOFF｜LB メニュー・A 決定・B 戻る・RB 単眼切替':live?'回転ジャイロ追従中  '+(state.viewYaw*180/Math.PI).toFixed(0)+'° / '+(state.viewPitch*180/Math.PI).toFixed(0)+'°':'ジャイロ未受信：タッチ操作可';if($('gyroRaw')){$('gyroRaw').textContent='α '+((state.rawEuler?.[0]??0).toFixed(1))+'° / β '+((state.rawEuler?.[1]??0).toFixed(1))+'° / γ '+((state.rawEuler?.[2]??0).toFixed(1))+'° / 画面 '+currentScreenAngle()+'° / '+(window.isSecureContext?'HTTPS利用可':'HTTPS必須')+' / '+(window.innerWidth>window.innerHeight?'横向き':'縦向き')+' / 基準α '+((state.baseGyro?.a??0).toFixed(1))+'°';}updateVRNotice(live);
  if($('vrSensorText2'))$('vrSensorText2').textContent=$('vrSensorText').textContent;
  numericMovementMetrics();renderMotionDebug();$('fpsLabel').textContent=Math.round(20000/Math.max(now-fpsAt,1))+' fps';fpsAt=now;
  }
@@ -1099,11 +1116,11 @@ function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punc
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
 function renderUI(){document.querySelectorAll('[data-count]').forEach(b=>b.classList.toggle('active',Number(b.dataset.count)===state.eyeCount));
- $('model').value=state.model;$('vizMode').value=state.vizMode;$('poseAligned').checked=state.poseAligned;fillMotionOptions();$('motion').value=state.motion;
+ $('model').value=state.model;if($('avatarHeaderSelect'))$('avatarHeaderSelect').value=state.model;if($('viewModePicker'))$('viewModePicker').value=state.viewMode;$('vizMode').value=state.vizMode;$('poseAligned').checked=state.poseAligned;fillMotionOptions();$('motion').value=state.motion;
  $('blend').value=state.blend;$('blendText').textContent=Math.round(100*state.blend)+'%';$('feather').value=state.feather;$('featherText').textContent=Math.round(100*state.feather)+'%';$('zoom').value=state.zoom;$('zoomText').textContent=state.zoom.toFixed(2)+'×';
  $('angle').value=state.angle;$('angleText').textContent=state.angle+'°';$('vertical').value=state.vertical;$('verticalText').textContent=state.vertical+'°';$('fish').checked=state.fish;
  const name=state.eyeCount===2?'通常立体視':state.eyeCount===3?'△：胸正面＋左右腕脚':state.eyeCount===4?'左右頭部＋腕脚':state.eyeCount===5?'頭胸＋左右腕脚':state.eyeCount===6?'頭胸＋左右腕脚＋骨盤':'複眼';
- $('screenBadge').textContent=state.eyeCount+'個眼 · '+name; if(state.eyeCount===4)$('screenBadge').textContent='4個眼 · 頭＋左腕 / 左脚 / 頭＋右腕 / 右脚'; if(state.eyeCount===5)$('screenBadge').textContent='5個眼 · 首〜肩 / 左上 / 左下 / 右上 / 右下'; if(state.eyeCount===6)$('screenBadge').textContent='6個眼 · 頭胸 / 左腕 / 左脚 / 右腕 / 右脚 / 骨盤';$('screenBadge').textContent+=state.poseAligned?' · 角度一致':' · 斜め独立視点';
+ $('screenBadge').textContent=state.eyeCount+'個眼 · '+name; if(state.eyeCount===4)$('screenBadge').textContent='4個眼 · 頭＋左腕 / 左脚 / 頭＋右腕 / 右脚'; if(state.eyeCount===5)$('screenBadge').textContent='5個眼 · 首〜肩 / 左上 / 左下 / 右上 / 右下'; if(state.eyeCount===6)$('screenBadge').textContent='6個眼 · 頭胸 / 左腕 / 左脚 / 右腕 / 右脚 / 骨盤';$('screenBadge').textContent+=(state.viewMode==='pov'?' · アバター主観':state.viewMode==='back'?' · 背面観察':'') ;$('screenBadge').textContent+=state.poseAligned?' · 角度一致':' · 斜め独立視点';
  if($('vrEyesLabel'))$('vrEyesLabel').textContent=state.eyeCount+'視点';
  for(const [id,key] of [['lensScale','lensScale'],['lensPull','lensPull'],['armImageZoom','armImageZoom'],['legImageZoom','legImageZoom'],['coreImageZoom','coreImageZoom']]){const el=$(id);if(el){el.value=state[key];$(id+'Label').textContent=state[key].toFixed(2)+'×';}}
  $('showMotionMarkers').checked=state.showMotionMarkers;
@@ -1168,6 +1185,7 @@ function recenter(){
  toast('センサーデータ未受信：タッチ視点を正面に戻しました');return false;
 }
 function onOrientation(e){
+ if(state.vr)return; // Gyro and orientation-driven actions are disabled inside VR.
  if(!Number.isFinite(e.alpha)&&!Number.isFinite(e.beta)&&!Number.isFinite(e.gamma))return;
  const newScreenAngle=currentScreenAngle();
  state.rawScreenAngle=newScreenAngle;
@@ -1277,7 +1295,10 @@ async function requestGyro(){
   toast('ジャイロが利用できません：'+e.message);return false;}
 }
 function updateVRNotice(live){
- const el=$('vrNotice');if(!el||!state.vr)return;
+ const el=$('vrNotice');if(!el)return;
+ // Gyro-free VR viewing intentionally has no pose-sensor warnings/overlays.
+ el.classList.remove('show');return;
+ if(!state.vr)return;
  if(live){el.classList.remove('show');return;}
  const reason=!window.isSecureContext?'HTTPSでないため姿勢センサーを使用できません':state.sensorPermission==='denied'?'ジャイロの許可が拒否されました':!state.gyro?'ジャイロ許可が未取得です':'姿勢データを受信できていません（v2/v3回転方式で再試行してください）';
  el.textContent=reason+'。VR映像自体は表示されます。Safariでジャイロ許可後、端末を横向きにして正面合わせしてください。';
@@ -1290,43 +1311,140 @@ function showRenderFailure(e){
 }
 function rollGesture(){if(state.calibration||Math.abs(state.pitch)>rad(48)){state.rollStart=0;return;}let v=Math.abs(state.roll),now=performance.now();if(v<rad(18)){state.rollReady=true;state.rollStart=0;return;}if(!state.rollReady||v<rad(37))return;if(!state.rollStart)state.rollStart=now;if(now-state.rollStart>850){state.rollReady=false;state.rollStart=0;toggleMenu();}}
 const ACTIONS=[
-{id:'eye2',label:'2眼',x:.18,y:.26,w:.29,h:.20},{id:'eye3',label:'3眼',x:.50,y:.26,w:.29,h:.20},{id:'eye4',label:'4眼',x:.82,y:.26,w:.29,h:.20},
-{id:'eye5',label:'5眼',x:.32,y:.52,w:.36,h:.20},{id:'eye6',label:'6眼',x:.68,y:.52,w:.36,h:.20},
-{id:'center',label:'正面合わせ',x:.20,y:.79,w:.34,h:.20},{id:'motion',label:'動作',x:.50,y:.79,w:.26,h:.20},{id:'close',label:'閉じる',x:.80,y:.79,w:.30,h:.20}];
-function makeVrMenu(){let root=$('vrHud');root.innerHTML='';hud=[];for(let i=0;i<2;i++){let eye=document.createElement('div');eye.className='vrEye';let panel=document.createElement('div');panel.className='vrPanel';let top=document.createElement('div');top.className='vrHeading';top.textContent='設定中はタップのみで選択（ジャイロ一時停止）';panel.append(top);for(let a of ACTIONS){let b=document.createElement('button');b.className='vrAction';b.dataset.action=a.id;b.textContent=a.label;b.style.left=(a.x*100)+'%';b.style.top=(a.y*100)+'%';b.style.width=(a.w*100)+'%';b.style.height=(a.h*100)+'%';b.addEventListener('click',e=>{e.stopPropagation();doAction(a.id)});panel.append(b);}let foot=document.createElement('div');foot.className='vrHelp';foot.textContent='誤操作を防ぐためタップで決定・閉じるまで姿勢操作は停止';panel.append(foot);let cursor=document.createElement('div');cursor.className='crosshair';panel.append(cursor);eye.append(panel);root.append(eye);hud.push({panel,cursor});}renderVrMenu();}
-function renderVrMenu(){hud.forEach(x=>x.panel.classList.toggle('open',state.menuOpen));document.querySelectorAll('.vrAction').forEach(b=>b.classList.toggle('active',b.dataset.action==='eye'+state.eyeCount));}
-function toggleMenu(force){if(!state.vr||state.calibration)return;state.menuOpen=force===undefined?!state.menuOpen:!!force;$('vrTapHint').classList.toggle('on',state.menuOpen);state.menuBase={yaw:state.yaw,pitch:state.pitch};state.gazeX=.5;state.gazeY=.5;state.dwellKey=null;state.dwellAt=0;renderVrMenu();}
-function doAction(id){if(id.startsWith('eye'))setEyeCount(Number(id[3]));else if(id==='model')nextModel();else if(id==='motion')nextMotion();else if(id==='center'){recenter();toggleMenu(false);}else if(id==='close')toggleMenu(false);state.dwellKey='cooldown';state.dwellAt=performance.now()+700;renderVrMenu();}
-function updateGaze(now){
- // VR settings are touch-only to prevent accidental gaze or gyro selections.
- return;
- if(!state.menuOpen||!state.vr||!sensorLive()||state.pauseGyroUI)return;
- const sens=state.gestureSensitivity;
- const x=clamp(.5+(state.yaw-state.menuBase.yaw)*1.75*sens,.06,.94);
- const y=clamp(.5-(state.pitch-state.menuBase.pitch)*1.55*sens,.07,.93);
- state.gazeX=lerp(state.gazeX,x,.42);state.gazeY=lerp(state.gazeY,y,.42);
- hud.forEach(m=>{m.cursor.style.left=(state.gazeX*100)+'%';m.cursor.style.top=(state.gazeY*100)+'%';});
- if(state.dwellKey==='cooldown'&&now<state.dwellAt)return;
- const hit=ACTIONS.find(a=>Math.abs(state.gazeX-a.x)<a.w*.55&&Math.abs(state.gazeY-a.y)<a.h*.58);
- const key=hit?.id||null;
- if(key!==state.dwellKey){state.dwellKey=key;state.dwellAt=now;}
- const progress=key?clamp01((now-state.dwellAt)/560):0;
- document.querySelectorAll('.vrAction').forEach(b=>{b.classList.toggle('focus',b.dataset.action===key);b.style.background=key===b.dataset.action?`linear-gradient(90deg,#208393 ${Math.round(progress*100)}%,#183b56 0%)`:'';});
- if(key&&progress>=1)doAction(key);
+ {id:'eye2',label:'個眼2'}, {id:'eye3',label:'個眼3'},
+ {id:'eye4',label:'個眼4'}, {id:'eye5',label:'個眼5'},
+ {id:'eye6',label:'個眼6'}, {id:'stereo',label:'双眼 / 単眼'},
+ {id:'model',label:'アバター切替'}, {id:'motion',label:'動作切替'},
+ {id:'view',label:'正面 / 背面 / 主観'}, {id:'center',label:'視点リセット'},
+ {id:'close',label:'VRゲームに戻る'}, {id:'exit',label:'VR終了'}
+];
+function isStereoVR(){return state.vr&&state.stereoMode!==false;}
+function toggleStereoMode(){
+ state.stereoMode=!state.stereoMode;
+ document.body.classList.toggle('mono',state.vr&&!state.stereoMode);
+ $('vrToggleStereo').textContent=state.stereoMode?'双眼 → 単眼':'単眼 → 双眼';
+ renderVrMenu();
+}
+function makeVrMenu(){
+ const root=$('vrHud');root.replaceChildren();hud=[];
+ for(let eyeIndex=0;eyeIndex<2;eyeIndex++){
+  const eye=document.createElement('div');eye.className='vrEye';
+  const panel=document.createElement('div');panel.className='vrPanel';
+  panel.style.padding='8px 8px 5px';panel.style.overflow='auto';
+  const title=document.createElement('div');title.style.cssText='text-align:center;font-weight:700;color:#dffcff;font-size:clamp(9px,1.7vw,14px);margin-bottom:6px';
+  title.textContent='GameSir メニュー：十字キー / スティック選択 · A決定 · B戻る';
+  panel.append(title);
+  const grid=document.createElement('div');
+  grid.style.cssText='display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px';
+  ACTIONS.forEach((a,i)=>{
+   const b=document.createElement('button');b.className='vrAction';b.dataset.action=a.id;b.dataset.menuIndex=String(i);
+   b.textContent=a.label;
+   b.style.cssText='position:relative;left:auto;top:auto;transform:none;width:100%;height:auto;min-height:clamp(24px,7dvh,58px);padding:4px 2px;font-size:clamp(9px,1.8vw,14px);pointer-events:auto;white-space:normal';
+   b.onclick=e=>{e.stopPropagation();state.menuIndex=i;doAction(a.id);};
+   grid.append(b);
+  });
+  panel.append(grid);
+  const help=document.createElement('div');
+  help.style.cssText='text-align:center;font-size:10px;color:#afcad8;margin-top:5px';
+  help.textContent='LBでメニュー · RBで単眼/双眼';
+  panel.append(help);
+  eye.append(panel);root.append(eye);hud.push({panel});
+ }
+ renderVrMenu();
+}
+function renderVrMenu(){
+ hud.forEach(x=>x.panel.classList.toggle('open',state.menuOpen));
+ document.querySelectorAll('.vrAction').forEach(b=>{
+  const i=Number(b.dataset.menuIndex);
+  b.classList.toggle('focus',state.menuOpen&&i===state.menuIndex);
+  b.classList.toggle('active',(b.dataset.action==='eye'+state.eyeCount)||(b.dataset.action==='stereo'&&!state.stereoMode));
+ });
+}
+function toggleMenu(force){
+ if(!state.vr)return;
+ state.menuOpen=force===undefined?!state.menuOpen:!!force;
+ $('vrTapHint').classList.remove('on');
+ if(state.menuOpen)state.menuIndex=0;
+ renderVrMenu();
+}
+function closeMenuToGame(){
+ toggleMenu(false);
+ if(!state.gameMode)toggle3DSpace(true);
+}
+function doAction(id){
+ if(id.startsWith('eye'))setEyeCount(Number(id.substring(3)));
+ else if(id==='stereo')toggleStereoMode();
+ else if(id==='model')nextModel();
+ else if(id==='motion')nextMotion();
+ else if(id==='view')cycleViewMode();
+ else if(id==='center')recenter();
+ else if(id==='close')closeMenuToGame();
+ else if(id==='exit'){endVR();return;}
+ renderVrMenu();
+}
+function navigateVrMenu(dx,dy){
+ const columns=2;
+ let row=Math.floor(state.menuIndex/columns),col=state.menuIndex%columns;
+ row=clamp(row+dy,0,Math.ceil(ACTIONS.length/columns)-1);
+ col=clamp(col+dx,0,columns-1);
+ state.menuIndex=Math.min(row*columns+col,ACTIONS.length-1);
+ renderVrMenu();
+}
+// Menu selection is exclusively GameSir or touchscreen: no head tilts or gaze dwell.
+function updateGaze(now){return;}
+let wakeLockHandle=null;
+async function ensureVrWakeLock(){
+ if(!state.vr||document.hidden||!navigator.wakeLock?.request||wakeLockHandle)return;
+ try{
+   const lock=await navigator.wakeLock.request('screen');
+   wakeLockHandle=lock;
+   lock.addEventListener?.('release',()=>{if(wakeLockHandle===lock)wakeLockHandle=null;});
+ }
+ catch(err){console.warn('Wake Lock not available on this browser',err);}
+}
+function releaseVrWakeLock(){
+ if(wakeLockHandle){try{wakeLockHandle.release();}catch(e){}wakeLockHandle=null;}
+}
+document.addEventListener('visibilitychange',()=>{if(state.vr&&!document.hidden)ensureVrWakeLock();});
+function handleVrController(pad,now){
+ if(!state.vr)return false;if(!pad)return !!state.menuOpen;
+ const lb=isPressed(pad,4),rb=isPressed(pad,5);
+ if(lb&&!state.vrLBPrev&&!state.menuOpen)toggleMenu(true);
+ if(rb&&!state.vrRBPrev)toggleStereoMode();
+ state.vrLBPrev=lb;state.vrRBPrev=rb;
+ const A=isPressed(pad,0),B=isPressed(pad,1);
+ if(state.menuOpen){
+  const axes=pad.axes||[];
+  const ax=Number(axes[0]||0),ay=Number(axes[1]||0);
+  const dx=(isPressed(pad,15)||ax>.65?1:0)-(isPressed(pad,14)||ax<-.65?1:0);
+  const dy=(isPressed(pad,13)||ay>.65?1:0)-(isPressed(pad,12)||ay<-.65?1:0);
+  const dir=dx+2*dy;
+  if(dir!==0&&(dir!==state.lastVrDir||now-state.lastVrMove>235)){
+    navigateVrMenu(dx,dy);
+    state.lastVrMove=now;
+  }
+  state.lastVrDir=dir;
+  if(A&&!state.vrAPrev)doAction(ACTIONS[state.menuIndex].id);
+  if(B&&!state.vrBPrev)closeMenuToGame();
+  state.vrAPrev=A;state.vrBPrev=B;
+  return true;
+ }
+ state.vrAPrev=A;state.vrBPrev=B;state.lastVrDir=0;
+ return false;
 }
 async function beginVR(){
  // Sensor permission is optional for VISUAL rendering, but requested from the click gesture.
- if(!state.gyro)await requestGyro();
- state.vr=true;document.body.classList.add('vr');state.menuOpen=false;state.gestureState={lastHeadSign:0,headTurns:[],lastNodSign:0,nods:[],rollArmed:true,rollDirection:0,rollAt:0,rollCooldown:0,lookUpAt:0,lastShake:0,shakeCount:0,centerCooldown:0,headCooldown:0};renderVrMenu();
+ // VR uses fixed cameras; never request or read gyro during headset evaluation.
+ state.gyroBeforeVR=state.gyro;state.gestureBeforeVR=state.gestureEnabled;state.gyro=false;state.gestureEnabled=false;state.vrLBPrev=false;state.vrRBPrev=false;state.vrAPrev=false;state.vrBPrev=false;state.vr=true;state.stereoMode=true;document.body.classList.add('vr');document.body.classList.remove('mono');state.menuOpen=false;state.gestureState={lastHeadSign:0,headTurns:[],lastNodSign:0,nods:[],rollArmed:true,rollDirection:0,rollAt:0,rollCooldown:0,lookUpAt:0,lastShake:0,shakeCount:0,centerCooldown:0,headCooldown:0};renderVrMenu();
  $('renderFailure').classList.remove('show');
  state.baseline=null;state.baseGyro=null;state.lastScreenAngle=undefined;
  state.viewYaw=0;state.viewPitch=0;state.dragYaw=0;state.dragPitch=0;state.gyroStartAngle=0;state.gyroStartPitch=0;
  // Standard element fullscreen and orientation-lock are not supported by iPhone Safari.
  // The CSS VR stage is the primary mechanism: never block or wait for these APIs.
  try{if(document.fullscreenEnabled&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}
- updateVRNotice(false);requestAnimationFrame(()=>{try{resize();}catch(e){showRenderFailure(e)}});
+ ensureVrWakeLock();updateVRNotice(false);requestAnimationFrame(()=>{try{resize();}catch(e){showRenderFailure(e)}});
 }
-function endVR(){state.vr=false;state.calibration=false;state.calibId++;document.body.classList.remove('vr');$('calibration').classList.remove('show');$('vrNotice').classList.remove('show');$('renderFailure').classList.remove('show');state.menuOpen=false;$('vrTapHint').classList.remove('on');renderVrMenu();try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}}
+function endVR(){releaseVrWakeLock();state.vr=false;state.gyro=!!state.gyroBeforeVR;state.gestureEnabled=!!state.gestureBeforeVR;document.body.classList.remove('mono');state.calibration=false;state.calibId++;document.body.classList.remove('vr');$('calibration').classList.remove('show');$('vrNotice').classList.remove('show');$('renderFailure').classList.remove('show');state.menuOpen=false;$('vrTapHint').classList.remove('on');renderVrMenu();try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}}
 function calibrate(){
  let id=++state.calibId;state.calibration=true;state.menuOpen=false;$('calibration').classList.add('show');
  let n=3;
@@ -1415,7 +1533,15 @@ function toggle3DSpace(force){const active=typeof force==='boolean'?force:!state
  else{state.actorPos=[0,0];state.center=[0,.88,0];}
  renderUI();toast(active?'3D空間操作：GameSir・WASDで操作（画面ボタンなし）':'3D空間操作を終了');
 }
-function flipFacing(){state.facingBack=!state.facingBack;renderUI();toast(state.facingBack?'背面向き':'正面向き');}
+function setViewMode(mode){
+ if(!['front','back','pov'].includes(mode))return;
+ state.viewMode=mode;state.facingBack=mode==='back';
+ renderUI();
+}
+function cycleViewMode(){
+ const items=['front','back','pov'];setViewMode(items[(items.indexOf(state.viewMode)+1)%items.length]);
+}
+function flipFacing(){state.facingBack=!state.facingBack;state.viewMode=state.facingBack?'back':'front';renderUI();toast(state.facingBack?'背面向き':'正面向き');}
 let gpPrev={},keyState={},lastPadStatusAt=0,lastPadConnected=false;
 function isPressed(p,n){return !!p?.buttons?.[n]?.pressed || (p?.buttons?.[n]?.value||0)>.65;}
 function deadAxis(v,dead=.18){const a=Math.abs(Number(v)||0);return a<=dead?0:Math.sign(v)*(a-dead)/(1-dead);}
@@ -1442,6 +1568,7 @@ function updateGameControl(now){
   }
  }
  if(!!pad!==lastPadConnected){lastPadConnected=!!pad;gpPrev={};if(pad)toast('ゲームパッド検出: '+pad.id.slice(0,36));}
+ if(handleVrController(pad,now))return;
  if(!state.gameMode)return;
  const keyDown=k=>!!keyState[k];
  const kbX=(keyDown('d')||keyDown('ArrowRight')?1:0)-(keyDown('a')||keyDown('ArrowLeft')?1:0);
@@ -1460,7 +1587,7 @@ function updateGameControl(now){
   if(punch&&!gpPrev[3])setGameAction('punch');
   gpPrev[3]=punch;
   const flip=isPressed(pad,5);
-  if(flip&&!gpPrev[5])flipFacing();
+  if(!state.vr&&flip&&!gpPrev[5])flipFacing();
   gpPrev[5]=flip;
   const reset=isPressed(pad,9);
   if(reset&&!gpPrev[9]){state.actorPos=[0,0];state.gameLookYaw=0;state.gameLookPitch=0;recenter();}
@@ -1520,7 +1647,11 @@ window.addEventListener('keydown',e=>{keyState[e.key.toLowerCase()]=true;keyStat
  if(state.gameMode&&e.key==='4')setGameAction('punch');
 });
 window.addEventListener('keyup',e=>{keyState[e.key.toLowerCase()]=false;keyState[e.key]=false;});
-$('allowGyro').onclick=requestGyro;$('centerNow').onclick=recenter;$('startVR').onclick=beginVR;$('leaveVR').onclick=endVR;$('recenterVR').onclick=recenter;$('reloadOnError').onclick=()=>location.reload();$('exitOnError').onclick=endVR;
+$('allowGyro').onclick=requestGyro;$('centerNow').onclick=recenter;$('startVR').onclick=async()=>{if(state.gameMode)toggle3DSpace(false);await beginVR();};$('leaveVR').onclick=endVR;$('recenterVR').onclick=recenter;$('reloadOnError').onclick=()=>location.reload();$('exitOnError').onclick=endVR;
+$('avatarHeaderSelect').onchange=e=>changeModel(e.target.value);
+$('viewModePicker').onchange=e=>setViewMode(e.target.value);
+$('vrToggleStereo').onclick=toggleStereoMode;
+$('vrOpenMenu').onclick=()=>toggleMenu(true);
 $('autoEye10').onchange=e=>{state.autoEye10=e.target.checked;state.nextEyeAt=performance.now()+10000;toast(state.autoEye10?'10秒ごとに眼数切替':'手動切替');};$('model').onchange=e=>changeModel(e.target.value);$('motion').onchange=e=>setMotion(e.target.value);
 $('zoom').oninput=e=>{state.zoom=Number(e.target.value);renderUI();};$('angle').oninput=e=>{state.angle=Number(e.target.value);$('angleText').textContent=state.angle+'°';renderCameraBadges();};$('vertical').oninput=e=>{state.vertical=Number(e.target.value);$('verticalText').textContent=state.vertical+'°';};$('fish').onchange=e=>{state.fish=e.target.checked;};$('blend').oninput=e=>{state.blend=Number(e.target.value);$('blendText').textContent=Math.round(100*state.blend)+'%';};$('feather').oninput=e=>{state.feather=Number(e.target.value);$('featherText').textContent=Math.round(100*state.feather)+'%';};$('invertGyro').onchange=e=>{state.gyroInvert=e.target.checked;};document.querySelectorAll('[data-count]').forEach(b=>b.onclick=()=>setEyeCount(b.dataset.count));
 $('togglePause').onclick=()=>{state.paused=!state.paused;if(state.paused)state.pauseTime=(performance.now()*.001-state.timeStart)*state.motionSpeed;else state.timeStart=performance.now()*.001-state.pauseTime/state.motionSpeed;$('togglePause').textContent=state.paused?'動作再開':'動作停止';};
@@ -1545,7 +1676,7 @@ $('gestureEnabled').onchange=e=>{state.gestureEnabled=e.target.checked;};
 $('motionSpeed').oninput=e=>{let time=state.paused?state.pauseTime:(performance.now()*.001-state.timeStart)*state.motionSpeed;state.motionSpeed=Number(e.target.value);if(!state.paused)state.timeStart=performance.now()*.001-time/state.motionSpeed;$('speedLabel').textContent=state.motionSpeed.toFixed(2)+'×';};
 $('motionScrub').oninput=e=>{state.paused=true;state.pauseTime=Number(e.target.value);$('motionTime').textContent=state.pauseTime.toFixed(2)+'s';$('togglePause').textContent='動作再開';};
 let pointer=null,dragSuppressUntil=0;canvas.addEventListener('pointerdown',e=>{pointer={x:e.clientX,y:e.clientY,yaw:state.dragYaw,pitch:state.dragPitch};try{canvas.setPointerCapture(e.pointerId);}catch(_){} });canvas.addEventListener('pointermove',e=>{if(!pointer)return;state.dragYaw=pointer.yaw+(e.clientX-pointer.x)*.008;state.dragPitch=clamp(pointer.pitch+(e.clientY-pointer.y)*.008,-1.35,1.35);});canvas.addEventListener('pointerup',()=>pointer=null);canvas.addEventListener('pointercancel',()=>pointer=null);
-$('screen').addEventListener('click',()=>{if(state.vr&&!state.calibration&&performance.now()>dragSuppressUntil)toggleMenu();});
+$('screen').addEventListener('click',()=>{if(state.vr&&!state.calibration){/* VR menu is opened exclusively by LB or the explicit menu button. */}});
 window.addEventListener('keydown',e=>{if(!state.gameMode&&['2','3','4','5'].includes(e.key))setEyeCount(e.key);if(e.key==='Escape'&&state.vr)endVR();if(e.key==='m'&&state.vr)toggleMenu();});
 let frameCount=0;
 function loop(now){requestAnimationFrame(loop);try{updateGameControl(now);draw(now);updateGaze(now);drawErrorCount=0;}catch(e){console.error(e);drawErrorCount++;showStatus('描画エラー: '+e.message);if(drawErrorCount===1)showRenderFailure(e);ready=false;}}
@@ -1713,8 +1844,8 @@ async function startApplication(){
   showStatus('3Dモデルを読み込み中…');
   await loadPublishedLensDefaults();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();applyDefaultSettings();
-  renderUI();showStatus('v37：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
-  window.__compoundTest={version:"37",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  renderUI();showStatus('v38：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
+  window.__compoundTest={version:"38",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
