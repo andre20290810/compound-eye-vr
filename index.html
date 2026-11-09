@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v30: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v30｜左右個眼交換・運動量連動表示</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v30: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v31｜左右個眼交換・運動量連動表示</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -106,7 +106,7 @@ body.vr #motionDebugOverlay{display:none!important}
 @media(max-width:650px){#motionDebugOverlay{width:58%;font-size:10px}}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v30｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<header><div><h1>人工複眼 VR v31｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
 <div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
 <footer>観察モデル：X Bot / Boxer（9動作）、AEGIS SILVER / NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
@@ -204,7 +204,7 @@ function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
 const state={model:'aegisCeramic',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.60,lensScale:1.10,lensPull:1.10,showLabels:false,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺'};
-const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）'};
+const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）'};
 state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
@@ -385,9 +385,45 @@ function aegisProceduralPunch(nodes,R,t){
  aegisSolveArm(nodes,R,'R',rightTarget);
  aegisSolveArm(nodes,R,'L',[.020,-.14,.17]);
 }
+// Separate procedural animation. Original arm-only punch is left unchanged.
+function aegisFullBodyPunch(nodes,T,R,t){
+ const cycle=((t%1.65)+1.65)%1.65;
+ const sm=(a,b,x)=>{const v=clamp01((x-a)/(b-a));return v*v*(3-2*v);};
+ const preload=sm(.06,.22,cycle)*(1-sm(.40,.53,cycle));
+ const drive=sm(.25,.58,cycle)*(1-sm(.78,1.27,cycle));
+ const step=sm(.12,.43,cycle)*(1-sm(.95,1.43,cycle));
+ const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
+ const rotate=(name,axis,degrees)=>{
+   const i=ids[name];if(i===undefined)return;
+   const h=rad(degrees)*.5,q=[axis[0]*Math.sin(h),axis[1]*Math.sin(h),axis[2]*Math.sin(h),Math.cos(h)];
+   R[i]=qmul(R[i],q);
+ };
+ // Drive starts from the rear leg, continues through pelvis and trunk, then arm.
+ rotate('Pelvis',[0,1,0],-18*drive+7*preload);
+ rotate('Chest',[0,1,0],-13*drive+6*preload);
+ rotate('Chest',[0,0,1],-3.5*drive);
+ rotate('L_UpperLeg',[1,0,0],-16*step+5*preload);
+ rotate('L_LowerLeg',[1,0,0],14*step);
+ rotate('R_UpperLeg',[1,0,0],11*drive-8*preload);
+ rotate('R_LowerLeg',[1,0,0],-12*drive+5*preload);
+ const pelvis=ids.Pelvis;
+ if(pelvis!==undefined){
+   T[pelvis]=T[pelvis].slice();
+   T[pelvis][2]+=0.055*step;
+   T[pelvis][1]-=0.014*drive;
+ }
+ // Targets in each shoulder's local coordinates; extension follows hip drive.
+ const ext=sm(.28,.61,cycle)*(1-sm(.79,1.22,cycle));
+ aegisSolveArm(nodes,R,'R',[
+   lerp(-.025,-.012,ext),
+   lerp(-.155,-.029,ext),
+   lerp(.165,.33,ext)
+ ]);
+ aegisSolveArm(nodes,R,'L',[.020,-.14,.17]);
+}
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
-if(md.animations.length && motion!=='armor_punch'){
+if(md.animations.length && !['armor_punch','armor_power_punch'].includes(motion)){
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
@@ -418,7 +454,10 @@ if(!clip&&(motion==='walk'||motion==='micro')&&nodes.some(n=>n.name==='LeftUpper
      set('LeftShoulder',[0,0,1],.35*b);set('RightShoulder',[0,0,1],-.35*b);
    }
  }
-if(motion==='armor_punch'&&['aegisCeramic','aegisEmber'].includes(state.model))aegisProceduralPunch(nodes,R,t);
+if(['aegisCeramic','aegisEmber'].includes(state.model)){
+ if(motion==='armor_punch')aegisProceduralPunch(nodes,R,t);
+ if(motion==='armor_power_punch')aegisFullBodyPunch(nodes,T,R,t);
+}
 md.poseRot=R;
 const local=nodes.map((n,i)=>n.matrix?new Float32Array(n.matrix):matTRS(T[i],R[i],S[i]));const world=md.world;
 function calc(i){if(world[i])return world[i];world[i]=nodes[i].parent>=0?mul(calc(nodes[i].parent),local[i]):local[i];return world[i];}
@@ -544,12 +583,12 @@ function anchoredLenses(eye,globalPV,modelFit){
   const [track,laneX,laneY,rx,ry]=defs[i],k=lensKind(i),spec=activeCameras()[i];
   const jointName=lensAnchorNames(i,track),joint=nodeJointWorld(jointName,modelFit);
   const ref=joint?projectionUV(globalPV,joint):null;
-  const side=laneX<.47?1:laneX>.53?-1:0;
+  const side=laneX<.47?-1:laneX>.53?1:0;
   const anchor=ref||[.5,laneY];
   // Shoulder / pelvis in local texture is registered to exactly the SAME height
   // in the reference projection; a deliberate small sideways offset preserves separation.
   // Camera placement uses fixed left/right display lanes; rendering cameras remain untouched.
-  // Left source cameras occupy the right display lane and vice versa.
+  // Keep left and right anatomical parts on their corresponding screen sides.
   // Stable horizontal lanes avoid leg cutouts crossing the center body's legs.
   const laneDistance=k==='full'?.24:k==='upperHead'?.28:k==='arm'?.26:k==='leg'?.27:0;
   const laneCenter=clamp(.5+side*laneDistance*clamp(state.lensPull,.6,1.25)+clamp((anchor[0]-.5)*.06,-.025,.025),.15,.85);
@@ -930,7 +969,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber'].includes(state.model))return ['armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber'].includes(state.model))return ['armor_guard','armor_punch','armor_power_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
