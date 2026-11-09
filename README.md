@@ -1,19 +1,42 @@
-# Artificial Compound Eye VR
+# 人工複眼VR｜研究用プロトタイプ
 
-GitHub Pagesで公開する人工複眼VR試作アプリです。
+公開サイト：<https://andre20290810.github.io/compound-eye-vr/>
 
-- 公開URL: https://andre20290810.github.io/compound-eye-vr/
-- 現在の内容: v25試作（War Botのアニメーション品質とiPhone/GameSirの実機動作は未検証）
-- 起動ファイル: `index.html`
+本リポジトリはWebGL2で3Dアバターの複数部位を観察するための試作アプリです。X Bot・AEGIS NAVY・AEGIS SOLDIERのモデルを表示し、人工複眼の2〜6眼構成、局所カメラ、VR双眼／単眼、GameSir操作、運動スコアに連動した表示倍率の調整を行えます。
 
-## 更新方法
+## v41の追加機能
 
-同じURLを維持して更新できます。`main`ブランチの`index.html`を新しいHTMLに置き換え、コミットしてプッシュしてください。
+- **VR位置調整：** LTで左右を対称的に中央へ、RTで対称的に外側へ。左右交差防止、倍率・画角は不変
+- **設定保存：** X Bot／AEGIS NAVY／AEGIS SOLDIER × 2〜6眼の15組を別管理。Y長押し900msで現在の組のみ保存。旧v39設定を退避・平均値で対称設定に移行
+- **眼数切替：** X長押し900msで10秒ごとに2→3→4→5→6→2を切替
+- **実験計測：** 折りたたみ式「実験計測」から開始・停止・消去、骨格CSV・個眼CSV・表示／イベントCSV・実験条件JSONをダウンロード。約30Hzを目標に記録
+- **比較条件：** A＝固定5眼・関節マーカー、B＝運動スコア連動の個眼選択・面積拡大・関節マーカー。アバター・モーション・再生速度・眼位置を揃え、0秒から繰り返し再生
 
-```powershell
-git add index.html
-git commit -m "Update compound eye VR"
-git push origin main
-```
+**重要：** 本データは3Dアニメーション由来の計算値であり、人体の実測値、実測精度、技能の正誤判定ではありません。取得できる運動スコアは表示制御用で、認知機構や身体技能の因果推定には使用できません。
 
-GitHub Pagesは`main`ブランチのルートから公開しています。`.nojekyll`によりHTMLをそのまま配信します。
+出力CSVの列・単位、匿名試行ID、素材メタデータと制限については [実験データ仕様 v1](docs/experiment-data-schema-v1.md) を参照してください。
+
+## 使い方
+
+1. `index.html` を開く（推奨：公開サイトのHTTPS経由）。
+2. 観察するアバター・動作・個眼数を選択。
+3. 必要に応じて「🥽 3D閲覧」「🎮 VRゲーム」を開始。VR時はジャイロOFF、GameSirのLBでメニュー、Aで決定、Bで戻る、RBで双眼／単眼を切替。
+4. VRの左右位置はLT／RTで調整し、Y長押しで保存。保存値はブラウザのローカル領域に残り、アバター・個眼数ごとに復元される。
+5. 通常画面の「実験計測」を展開。条件選択・再生・計測開始・停止・CSV／JSON出力を行う。
+
+個眼レイアウト調整は初期状態で折りたたまれています。研究用ログの詳細グラフも通常画面には常時表示しません。
+
+## フォルダ
+
+- `index.html`: 3Dモデル、描画、入力、実験計測パネル
+- `public-lens-defaults.json`: 公開用の個眼配置初期値
+- `build-manifest.json`: ソース実装GitコミットID（実験環境JSONに反映）
+- `docs/experiment-data-schema-v1.md`: データ仕様・単位・制約
+
+## ソース・ライセンスに関する注意
+
+X Bot・AEGISの3D素材はこのHTMLに同梱されていますが、素材の元の著作者・配布元・個別ライセンスの証明はこのリポジトリだけでは確認できません。ライセンスに関する推定は避け、実験JSONには `not specified / verify before redistribution` と記録します。公開・再配布・論文図版掲載前に素材の権利を個別確認してください。
+
+## 開発・公開
+
+GitHub Pages は `main` ブランチのルートを配信します。HTML／JSONを編集・コミットして公開できます。ブラウザ環境によってはGamepad API、Wake Lock、VR画面向きなどの対応状況が異なります。GameSir実機およびスマートフォン上のすべての組合せでの動作は保証していません。
