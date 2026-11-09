@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v36: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v36｜左右個眼交換・運動量連動表示</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v37: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v37｜左右個眼交換・運動量連動表示</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -121,8 +121,8 @@ body.vr #motionDebugOverlay{display:none!important}
 body.vr #lensEditor{display:none}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v36｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
-<div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
+<header><div><h1>人工複眼 VR v37｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VR移動モード開始</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
 <section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
 <div class="editorInfo">中央の3D表示を見ながら調整できます。部位の位置、楕円の幅・高さ、カメラの引き（脚全体を表示）、画角を個別に編集します。</div>
@@ -133,7 +133,7 @@ body.vr #lensEditor{display:none}
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
 <div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRでは首を左右に傾けても、メニューを開かず眼数変更できます。</span></div>
-<div class="group"><span class="label">観察モデル</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option></select></div>
+<div class="group"><span class="label">観察モデル</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option><option value="aegisSoldier">AEGIS SOLDIER（黄〜赤・発光チューブ）</option></select></div>
 <div class="group"><span class="label">動作</span><select id="motion"><option value="xbot_punch">元FBX・パンチ</option></select></div>
 <div class="group"><label class="label"><input type="checkbox" id="poseAligned" checked> 個眼の見え方を中央の人体と同じ方向にそろえる（推奨）</label></div>
 <p class="sublabel">オン：腕・脚の角度を中央の姿勢と一致させます。オフ：独立した斜めカメラ視点（従来方式）で観察できます。</p>
@@ -223,8 +223,8 @@ function currentScreenAngle(){
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
 const state={model:'xbot',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.20,lensScale:1.10,lensPull:1.10,showLabels:true,showMotionMarkers:true};
-const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺'};
-const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）'};
+const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
+const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）',armor_walk:'自然歩行（X Bot動作ベース）',armor_run:'自然走行（X Bot動作ベース）'};
 state.lensOverrides={};state.lensEditorIndex=0;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
@@ -239,7 +239,7 @@ const VS=`#version 300 es
 precision highp float;
 in vec3 aP;in vec3 aN;in vec4 aColor;in vec4 aJoints;in vec4 aWeights;
 uniform mat4 uPV;uniform mat4 uWorld;uniform mat4 uBones[48];uniform int uSkin;
-out vec3 vColor;out vec3 vNormal;out float vPart;
+out vec3 vColor;out vec3 vNormal;out vec3 vSourcePos;out float vPart;
 uniform float uPartMask[48];uniform int uPartActive;
 void main(){
  vec4 p=vec4(aP,1.);vec3 n=aN;
@@ -248,11 +248,11 @@ void main(){
  mat4 bone=aWeights.x*uBones[ji.x]+aWeights.y*uBones[ji.y]+aWeights.z*uBones[ji.z]+aWeights.w*uBones[ji.w];p=bone*p;n=mat3(bone)*n;}else{vPart=1.0;}
  gl_Position=uPV*uWorld*p;
  vNormal=normalize(mat3(uWorld)*n);
- vColor=aColor.rgb;
+ vColor=aColor.rgb;vSourcePos=aP;
 }`;
 const FS=`#version 300 es
 precision highp float;
-in vec3 vColor;in vec3 vNormal;in float vPart;out vec4 frag;uniform int uPartActive;uniform float uOutsideAlpha;uniform float uNavy;uniform float uExclusive;
+in vec3 vColor;in vec3 vNormal;in vec3 vSourcePos;in float vPart;out vec4 frag;uniform int uPartActive;uniform float uOutsideAlpha;uniform float uNavy;uniform float uExclusive;uniform float uSoldierTube;uniform float uTime;
 void main(){
  // The unselected geometry stays faint, selected bone surfaces stay prominent.
  vec3 n=normalize(vNormal);vec3 key=normalize(vec3(.55,.90,1.1));vec3 fill=normalize(vec3(-.9,.5,.35));
@@ -261,9 +261,17 @@ void main(){
  float rim=pow(1.-abs(n.z),3.)*.12;
  vec3 metal=pow(max(vColor,vec3(.015)),vec3(.87))*lit+vec3(.27,.35,.46)*gleam+vec3(.08,.13,.21)*rim;
  float part=uExclusive>.5?smoothstep(.49,.57,vPart):clamp(smoothstep(.04,.70,vPart),0.,1.);
- float a=uPartActive==1?mix(uOutsideAlpha,1.,part):1.;
+ float a=uExclusive<-.5?.52:(uPartActive==1?mix(uOutsideAlpha,1.,part):1.);
  if(uPartActive==1&&a<.005)discard;
- metal=mix(metal,vec3(metal.r*.16,metal.g*.27,metal.b*.48),uNavy);frag=vec4(min(metal,vec3(1.)),a);
+ metal=mix(metal,vec3(metal.r*.16,metal.g*.27,metal.b*.48),uNavy);
+ if(uSoldierTube>.5){
+   float v=clamp((vSourcePos.y-.17)/1.02,0.,1.);
+   v=clamp(v+.085*sin(uTime*2.2+vSourcePos.y*14.+vSourcePos.x*9.),0.,1.);
+   vec3 heat=mix(vec3(1.,.87,.06),vec3(1.,.42,.025),smoothstep(.12,.58,v));
+   heat=mix(heat,vec3(1.,.055,.025),smoothstep(.52,.96,v));
+   metal=mix(metal,heat,.91)+heat*.08;
+ }
+ frag=vec4(min(metal,vec3(1.)),a);
 }`;
 const CS=`#version 300 es
 precision highp float;
@@ -309,7 +317,7 @@ void main(){
  vec2 p=vec2(.5)+(vUV-vec2(.5))*uVRFit;
  vec4 base=cam(0,p);
  if(uN<=2){frag=vec4(mix(BG,base.rgb,base.a),1.);return;}
- vec3 color=mix(BG,base.rgb,base.a*(uMode==1?uAnchorAlpha*.25:uAnchorAlpha));
+ vec3 color=mix(BG,base.rgb,base.a<.75?base.a:base.a*(uMode==1?uAnchorAlpha*.25:uAnchorAlpha));
  for(int i=0;i<6;i++){
    if(i>=uN)break;
    vec4 rect=uLensRect[i];vec2 center=rect.xy;vec2 radii=rect.zw*uLensScale;
@@ -334,7 +342,7 @@ function initGL(){gl=canvas.getContext('webgl2',{alpha:false,antialias:true,dept
 for(const key of ['aP','aN','aColor','aJoints','aWeights'])shaderProg[key]=gl.getAttribLocation(shaderProg,key);
 for(const key of ['uPV','uWorld','uBones','uSkin','uPartMask','uPartActive','uOutsideAlpha','uNavy','uExclusive'])shaderProg[key]=gl.getUniformLocation(shaderProg,key==='uBones'?'uBones[0]':key==='uPartMask'?'uPartMask[0]':key);
 const CVS=`#version 300 es\nprecision highp float;in vec2 aP;out vec2 vUV;void main(){vUV=(aP+1.)*.5;gl_Position=vec4(aP,0.,1.);}`.replace('\\n','\n');
-compProg=program(CVS,CS);compProg.aP=gl.getAttribLocation(compProg,'aP');compProg.uN=gl.getUniformLocation(compProg,'uN');compProg.uMode=gl.getUniformLocation(compProg,'uMode');compProg.uAnchorAlpha=gl.getUniformLocation(compProg,'uAnchorAlpha');compProg.uLensScale=gl.getUniformLocation(compProg,'uLensScale');compProg.uLensPull=gl.getUniformLocation(compProg,'uLensPull');compProg.uVRFit=gl.getUniformLocation(compProg,'uVRFit');compProg.uLensRect=gl.getUniformLocation(compProg,'uLensRect[0]');compProg.uLensUV=gl.getUniformLocation(compProg,'uLensUV[0]');compProg.uLensOffset=gl.getUniformLocation(compProg,'uLensOffset[0]');compProg.uFish=gl.getUniformLocation(compProg,'uFish');compProg.uFeather=gl.getUniformLocation(compProg,'uFeather');compProg.uBlend=gl.getUniformLocation(compProg,'uBlend');compProg.tex=[0,1,2,3,4,5,6].map(i=>gl.getUniformLocation(compProg,'uTex'+i));quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);}
+compProg=program(CVS,CS);compProg.aP=gl.getAttribLocation(compProg,'aP');compProg.uN=gl.getUniformLocation(compProg,'uN');compProg.uMode=gl.getUniformLocation(compProg,'uMode');compProg.uAnchorAlpha=gl.getUniformLocation(compProg,'uAnchorAlpha');compProg.uLensScale=gl.getUniformLocation(compProg,'uLensScale');compProg.uLensPull=gl.getUniformLocation(compProg,'uLensPull');compProg.uVRFit=gl.getUniformLocation(compProg,'uVRFit');compProg.uLensRect=gl.getUniformLocation(compProg,'uLensRect[0]');compProg.uLensUV=gl.getUniformLocation(compProg,'uLensUV[0]');compProg.uLensOffset=gl.getUniformLocation(compProg,'uLensOffset[0]');shaderProg.uSoldierTube=gl.getUniformLocation(shaderProg,'uSoldierTube');shaderProg.uTime=gl.getUniformLocation(shaderProg,'uTime');compProg.uFish=gl.getUniformLocation(compProg,'uFish');compProg.uFeather=gl.getUniformLocation(compProg,'uFeather');compProg.uBlend=gl.getUniformLocation(compProg,'uBlend');compProg.tex=[0,1,2,3,4,5,6].map(i=>gl.getUniformLocation(compProg,'uTex'+i));quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);}
 function decode64(b64){let raw=atob(b64),a=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i);return a.buffer;}
 function accessor(j,bin,id){let a=j.accessors[id],v=j.bufferViews[a.bufferView],offset=(v.byteOffset||0)+(a.byteOffset||0),n=a.count*({SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT4:16}[a.type]||1);let stride=v.byteStride||0;if(stride)throw Error('interleaved accessors not supported');let type=a.componentType;
 let A=type===5126?Float32Array:type===5125?Uint32Array:type===5123?Uint16Array:type===5121?Uint8Array:type===5122?Int16Array:null;if(!A)throw Error('unsupported accessor '+type);let arr=new A(bin,offset,n).slice();if(a.normalized){let max=type===5121?255:type===5123?65535:type===5122?32767:1;return Float32Array.from(arr,x=>x/max);}return arr;}
@@ -345,7 +353,30 @@ if(!n)n=normals(p,tri);if(!color){color=new Float32Array(count*4);for(let i=0;i<
 if(!joints)joints=new Float32Array(count*4);if(!weights)weights=new Float32Array(count*4);
 let ib=gl.createBuffer();gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,ib);gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,new Uint32Array(tri),gl.STATIC_DRAW);
 return{p:buf(new Float32Array(p)),n:buf(new Float32Array(n)),col:buf(new Float32Array(color)),joint:buf(new Float32Array(joints)),weight:buf(new Float32Array(weights)),ib,count:tri.length,modelNode,skinned};}
-function parseGLB(b64){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
+// Remove one disconnected right-shoulder blade extension, not the full cable layer.
+function removeRightShoulderKnife(pos,indices){
+ const count=pos.length/3,parents=new Int32Array(count);
+ for(let i=0;i<count;i++)parents[i]=i;
+ const root=i=>{while(parents[i]!==i){parents[i]=parents[parents[i]];i=parents[i];}return i;};
+ for(let i=0;i<indices.length;i+=3){
+  const a=root(indices[i]),b=root(indices[i+1]),c=root(indices[i+2]);
+  parents[b]=a;parents[c]=a;
+ }
+ const groups=new Map();
+ for(let i=0;i<indices.length;i++){
+  const vi=indices[i],r=root(vi);
+  if(!groups.has(r))groups.set(r,{xmin:Infinity,xmax:-Infinity,ymin:Infinity,ymax:-Infinity,count:0});
+  const g=groups.get(r),x=pos[vi*3],y=pos[vi*3+1];
+  g.xmin=Math.min(g.xmin,x);g.xmax=Math.max(g.xmax,x);
+  g.ymin=Math.min(g.ymin,y);g.ymax=Math.max(g.ymax,y);g.count++;
+ }
+ const blade=[...groups].find(([r,g])=>g.xmin>.015&&g.xmax<.09&&g.ymin>.89&&g.ymax>1.12&&g.ymax<1.20);
+ if(!blade)return indices;
+ const chosen=blade[0],output=[];
+ for(let i=0;i<indices.length;i+=3)if(root(indices[i])!==chosen)output.push(indices[i],indices[i+1],indices[i+2]);
+ return new Uint32Array(output);
+}
+function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
 let geo=[],min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
@@ -357,7 +388,9 @@ let mat=j.materials?.[pr.material];let mcol=mat?.pbrMetallicRoughness?.baseColor
 if(!col){col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set(mcol,i*4);}else if(mcol){for(let i=0;i<col.length;i+=4){for(let k=0;k<3;k++)col[i+k]*=mcol[k];}}
 let joints=pr.attributes.JOINTS_0!==undefined?accessor(j,bin,pr.attributes.JOINTS_0):null,weights=pr.attributes.WEIGHTS_0!==undefined?accessor(j,bin,pr.attributes.WEIGHTS_0):null;
 let skinned=nd.skin!==undefined;
-geo.push(makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned));
+if(modelId==='aegisEmber'&&mat?.name==='cables')tri=removeRightShoulderKnife(p,tri);
+let gpu=makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned);
+gpu.materialName=mat?.name||'';geo.push(gpu);
 for(let i=0;i<p.length;i+=3){for(let k=0;k<3;k++){min[k]=Math.min(min[k],p[i+k]);max[k]=Math.max(max[k],p[i+k]);}}}}
 if(!geo.length)throw Error('no mesh primitives');
 let skin=j.skins?.[0],invBind=skin?accessor(j,bin,skin.inverseBindMatrices):null;
@@ -441,9 +474,53 @@ function aegisFullBodyPunch(nodes,T,R,t){
  ]);
  aegisSolveArm(nodes,R,'L',[.020,-.14,.17]);
 }
+// The gait is retargeted from the actual Boxer_Walk / Boxer_Run animation tracks.
+function aegisRetargetGait(nodes,T,R,motion,t){
+ const src=getModel('xbot');
+ const clip=src.animations.find(a=>a.name===(motion==='armor_run'?'Boxer_Run':'Boxer_Walk'));
+ if(!clip)return;
+ const at=((t%clip.duration)+clip.duration)%clip.duration;
+ const srcIndex=new Map(src.nodes.map((n,i)=>[n.name,i]));
+ const tracks=new Map(clip.channels.map(ch=>[ch.node+':'+ch.path,ch]));
+ const sample=(name,path)=>{
+  const idx=srcIndex.get(name);if(idx===undefined)return null;
+  const ch=tracks.get(idx+':'+path);if(!ch)return null;
+  let i=0;while(i<ch.input.length-2&&ch.input[i+1]<at)i++;
+  const j=Math.min(i+1,ch.input.length-1);
+  const f=clamp01((at-ch.input[i])/Math.max(ch.input[j]-ch.input[i],1e-6));
+  const a=Array.from(ch.output.slice(i*ch.size,(i+1)*ch.size));
+  const b=Array.from(ch.output.slice(j*ch.size,(j+1)*ch.size));
+  return path==='rotation'?qSlerp(a,b,f):a.map((v,k)=>lerp(v,b[k],f));
+ };
+ const to=new Map(nodes.map((n,i)=>[n.name,i]));
+ const pairs=[
+  ['Hips','Pelvis',.70],['Spine2','Chest',.76],
+  ['LeftArm','L_UpperArm',.76],['LeftForeArm','L_Forearm',.82],
+  ['RightArm','R_UpperArm',.76],['RightForeArm','R_Forearm',.82],
+  ['LeftUpLeg','L_UpperLeg',.82],['LeftLeg','L_LowerLeg',.80],
+  ['RightUpLeg','R_UpperLeg',.82],['RightLeg','R_LowerLeg',.80]
+ ];
+ for(const [fromName,toName,weight] of pairs){
+  const j=srcIndex.get(fromName),i=to.get(toName);
+  if(i===undefined||j===undefined)continue;
+  const animated=sample(fromName,'rotation');
+  if(!animated)continue;
+  const delta=qmul(qInv(src.nodes[j].rotation),animated);
+  R[i]=qmul(R[i],qSlerp([0,0,0,1],delta,weight));
+ }
+ const pelvis=to.get('Pelvis');
+ const translation=sample('Hips','translation');
+ if(pelvis!==undefined){
+  const phase=at/clip.duration*2*Math.PI;
+  const sourceY=src.nodes[srcIndex.get('Hips')].translation[1];
+  const bob=translation?clamp((translation[1]-sourceY)*.38,-.018,.027):0;
+  T[pelvis]=T[pelvis].slice();
+  T[pelvis][1]+=bob+.006*(motion==='armor_run'?1.45:1)*Math.abs(Math.sin(phase));
+ }
+}
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
-if(md.animations.length && !['armor_punch','armor_power_punch'].includes(motion)){
+if(md.animations.length && !['armor_punch','armor_power_punch','armor_walk','armor_run'].includes(motion)){
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
@@ -474,9 +551,10 @@ if(!clip&&(motion==='walk'||motion==='micro')&&nodes.some(n=>n.name==='LeftUpper
      set('LeftShoulder',[0,0,1],.35*b);set('RightShoulder',[0,0,1],-.35*b);
    }
  }
-if(['aegisCeramic','aegisEmber'].includes(state.model)){
+if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model)){
  if(motion==='armor_punch')aegisProceduralPunch(nodes,R,t);
  if(motion==='armor_power_punch')aegisFullBodyPunch(nodes,T,R,t);
+ if(motion==='armor_walk'||motion==='armor_run')aegisRetargetGait(nodes,T,R,motion,t);
 }
 md.poseRot=R;
 const local=nodes.map((n,i)=>n.matrix?new Float32Array(n.matrix):matTRS(T[i],R[i],S[i]));const world=md.world;
@@ -531,19 +609,19 @@ function partMask(idx){
  return mask;
 }
 function renderMesh(pv,fit,region){gl.useProgram(shaderProg);gl.uniformMatrix4fv(shaderProg.uPV,false,pv);
- gl.uniform1f(shaderProg.uNavy,state.model==='aegisEmber'?1.0:0.0);gl.uniform1i(shaderProg.uPartActive,region?1:0);gl.uniform1f(shaderProg.uOutsideAlpha,state.outsideAlpha);gl.uniform1f(shaderProg.uExclusive,state.eyeCount===6?1:0);
+ gl.uniform1f(shaderProg.uNavy,['aegisEmber','aegisSoldier'].includes(state.model)?1.0:0.0);gl.uniform1i(shaderProg.uPartActive,region?1:0);gl.uniform1f(shaderProg.uOutsideAlpha,state.outsideAlpha);gl.uniform1f(shaderProg.uExclusive,state.eyeCount===6?1:0);
  gl.uniform1fv(shaderProg.uPartMask,region||new Float32Array(48).fill(1));
  let md=modelData;
-for(const mesh of md.geo){if(md.nodes[mesh.modelNode]?.name?.startsWith('SwordProp_')&&state.model!=='sword')continue;gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,md.bones);
+for(const mesh of md.geo){if(md.nodes[mesh.modelNode]?.name?.startsWith('SwordProp_')&&state.model!=='sword')continue;gl.uniform1f(shaderProg.uSoldierTube,state.model==='aegisSoldier'&&mesh.materialName==='cables'?1:0);gl.uniform1f(shaderProg.uTime,state.renderTime||0);gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,md.bones);
 let nodeWorld=md.world[mesh.modelNode]||ID();gl.uniformMatrix4fv(shaderProg.uWorld,false,mesh.skinned?fit:mul(fit,nodeWorld));
 for(const [attr,buffer,components] of [['aP',mesh.p,3],['aN',mesh.n,3],['aColor',mesh.col,4],['aJoints',mesh.joint,4],['aWeights',mesh.weight,4]]){let loc=shaderProg[attr];if(loc<0)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,components,gl.FLOAT,false,0,0);}
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_INT,0);}}
-function getModel(id){if(id==='crystal')return modelCache.crystal||(modelCache.crystal=makeCrystal());if(!modelCache[id])modelCache[id]=parseGLB(window.ASSETS[id]);return modelCache[id];}
+function getModel(id){if(id==='aegisSoldier')return getModel('aegisEmber');if(id==='crystal')return modelCache.crystal||(modelCache.crystal=makeCrystal());if(!modelCache[id])modelCache[id]=parseGLB(window.ASSETS[id],id);return modelCache[id];}
 function makeCrystal(){// A simple faceted volume for viewing-angle comparison
 const p=[0,1.6,0,0,.0,0],tri=[],N=9,rings=[[],[],[]];for(let layer=0;layer<3;layer++){const radx=[.38,.62,.30][layer],yy=[1.22,.75,.24][layer];for(let j=0;j<N;j++){let a=j*2*Math.PI/N;rings[layer].push(p.length/3);p.push(Math.cos(a)*radx,yy,Math.sin(a)*radx);}}
 for(let j=0;j<N;j++){let n=(j+1)%N;tri.push(0,rings[0][j],rings[0][n]);for(let layer=0;layer<2;layer++){let a=rings[layer][j],b=rings[layer][n],c=rings[layer+1][j],d=rings[layer+1][n];tri.push(a,c,b,b,c,d);}tri.push(rings[2][n],rings[2][j],1);}
 let pos=Float32Array.from(p),ind=Uint32Array.from(tri),col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set([.47,.82,.99,1],i*4);return{geo:[makeGpuMesh(pos,normals(pos,ind),col,ind,null,null,0,false)],nodes:[{translation:[0,0,0],rotation:[0,0,0,1],scale:[1,1,1],children:[],parent:-1}],skin:null,animations:[],min:[-.62,0,-.62],max:[.62,1.6,.62],bones:new Float32Array(512),world:[ID()]};}
-function changeModel(id){try{if(id==='aegisCeramic')id='aegisEmber';if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);state.model=id;partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=id==='xbot'?'xbot_punch':id==='aegisEmber'?'armor_power_punch':id==='man'?'walk':(['armor','aegisCeramic'].includes(id)?'armor_breathe':'idle');if(id==='heart')state.zoom=.83;else state.zoom=1;renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
+function changeModel(id){try{if(id==='aegisCeramic')id='aegisEmber';if(id==='aegisSoldier'&&typeof window.ASSETS.aegisEmber==='string'){toast('AEGIS SOLDIER 準備中');return;}if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);state.model=id;partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=id==='xbot'?'xbot_punch':(['aegisEmber','aegisSoldier'].includes(id))?'armor_power_punch':id==='man'?'walk':(['armor','aegisCeramic'].includes(id)?'armor_breathe':'idle');if(id==='heart')state.zoom=.83;else state.zoom=1;renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
 function createTargets(w,h,count){offscreen.forEach(t=>{gl.deleteFramebuffer(t.fbo);gl.deleteTexture(t.tex);gl.deleteRenderbuffer(t.depth)});offscreen=[];fboWidth=w;fboHeight=h;for(let i=0;i<count;i++){let tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);let depth=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,depth);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,w,h);let fbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('個眼用映像の生成に失敗しました');offscreen.push({fbo,tex,depth});}gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
 function resize(){let box=scope.getBoundingClientRect(),ratio=Math.min(devicePixelRatio||1,state.vr?1.1:1.4);let w=Math.max(2,Math.floor(box.width*ratio)),h=Math.max(2,Math.floor(box.height*ratio));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}return{w,h};}
 
@@ -702,8 +780,8 @@ function numericMovementMetrics(){
  const box=$('movementMetrics');if(!box||!modelData||!modelData.world)return;
  const names=modelData.nodes.map(x=>x.name),W=modelData.world;
  const node=name=>{const i=names.indexOf(name);return i>=0&&W[i]?W[i]:null;};
- const hand=node((['armor','aegisCeramic','aegisEmber'].includes(state.model))?'R_Hand':'RightHand');
- const shoulder=node((['armor','aegisCeramic','aegisEmber'].includes(state.model))?'R_UpperArm':'RightShoulder');
+ const hand=node((['armor','aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))?'R_Hand':'RightHand');
+ const shoulder=node((['armor','aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))?'R_UpperArm':'RightShoulder');
  if(!hand||!shoulder){box.textContent='動作基準の計測対象外（静止モデル）';return;}
  const lateral=(hand[12]-shoulder[12])*state.fitScale*100;
  const foot=node('RightFoot'),hip=node('Hips');
@@ -725,7 +803,7 @@ function initArena(){
  }
  for(let n=-extent/step;n<=extent/step;n++){
   const v=n*step,major=n%4===0;
-  const c=n===0?[.12,.59,.68]:major?[.095,.32,.40]:[.055,.19,.26];
+  const c=n===0?[.31,.94,.98]:major?[.22,.70,.83]:[.13,.40,.55];
   line(v,-extent,v,extent,c);line(-extent,v,extent,v,c);
  }
  // Two low-intensity directional guides.
@@ -735,12 +813,12 @@ function initArena(){
   weight:buf(new Float32Array(verts.length/3*4)),vertexCount:verts.length/3};
 }
 function renderArena(pv){
- if(!state.gameMode||!arenaGpu)return;
+ if(!arenaGpu)return;
  gl.depthMask(false);gl.disable(gl.DEPTH_TEST);
  gl.useProgram(shaderProg);gl.uniformMatrix4fv(shaderProg.uPV,false,pv);
  gl.uniformMatrix4fv(shaderProg.uWorld,false,ID());
  gl.uniform1i(shaderProg.uSkin,0);gl.uniform1i(shaderProg.uPartActive,0);
- gl.uniform1f(shaderProg.uOutsideAlpha,1);gl.uniform1f(shaderProg.uNavy,0);
+ gl.uniform1f(shaderProg.uOutsideAlpha,1);gl.uniform1f(shaderProg.uNavy,0);gl.uniform1f(shaderProg.uExclusive,-1);gl.uniform1f(shaderProg.uSoldierTube,0);
  const m=arenaGpu;
  for(const [attr,buff,n] of [['aP',m.p,3],['aN',m.n,3],['aColor',m.col,4],['aJoints',m.joint,4],['aWeights',m.weight,4]]){
   const loc=shaderProg[attr];if(loc<0)continue;
@@ -903,7 +981,7 @@ const smoothing=state.vr?.38:.28;const sensed=sensorLive();
  const pTarget=state.vr&&state.menuOpen?state.viewPitch:(sensed?(state.gyroInvert?-state.pitch:state.pitch):state.dragPitch);
  state.viewYaw=lerp(state.viewYaw,yTarget,smoothing);
  state.viewPitch=lerp(state.viewPitch,pTarget,smoothing);
-const t=state.paused?state.pauseTime:(now*.001-state.timeStart)*state.motionSpeed;
+const t=state.paused?state.pauseTime:(now*.001-state.timeStart)*state.motionSpeed;state.renderTime=t;
 if(modelData.skin||modelData.animations.length)animateModel(modelData,state.motion,t);else animateModel(modelData,'idle',t);
 let pulse=state.model==='heart'&&state.motion==='spin'?1+.045*Math.sin(t*2*Math.PI*1.12):1;
 let local=mul(scale(state.fitScale*pulse,state.fitScale*pulse,state.fitScale*pulse),trans(-state.modelCenter[0],-state.modelCenter[1],-state.modelCenter[2]));
@@ -1016,7 +1094,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber'].includes(state.model))return ['armor_power_punch','armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_power_punch','armor_walk','armor_run','armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -1052,7 +1130,7 @@ function renderUI(){document.querySelectorAll('[data-count]').forEach(b=>b.class
 }
 function setEyeCount(n){state.eyeCount=clamp(Number(n),2,6);state.selectedCamera=0;state.focusLens=-1;renderUI();toast(state.eyeCount+'視点へ切替');}
 function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];state.motion=m;resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
-function nextModel(){const items=['xbot','aegisEmber'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
+function nextModel(){const items=['xbot','aegisEmber','aegisSoldier'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
 function nextMotion(){const items=motionOptions();setMotion(items[(items.indexOf(state.motion)+1)%items.length]);}
 function renderCameraBadges(){const pane=$('cameraBadges');if(!pane)return;pane.innerHTML='';if(!state.showLabels)return;
  const pos={3:[[.50,.78],[.22,.51],[.78,.51]],4:[[.23,.67],[.23,.30],[.77,.67],[.77,.30]],5:[[.50,.87],[.22,.64],[.22,.28],[.78,.64],[.78,.28]],6:[[.50,.86],[.215,.64],[.215,.29],[.785,.64],[.785,.29],[.50,.22]]};
@@ -1322,16 +1400,16 @@ function resetDefaultSettings(){try{localStorage.removeItem(CONFIG_KEY);}catch(e
 function setGameAction(a){
  if(!state.gameMode)state.gameMode=true;
  if(!['idle','walk','run','punch'].includes(a))return;
- if(!['xbot','aegisCeramic','aegisEmber'].includes(state.model))changeModel('xbot');
+ if(!['xbot','aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))changeModel('xbot');
  state.gameAction=a;
  const motion=state.model==='xbot'?(a==='idle'?'xbot_idle':a==='walk'?'xbot_walk':a==='run'?'xbot_run':'xbot_punch'):
- (a==='punch'?'armor_power_punch':a==='idle'?'armor_breathe':a==='walk'?'armor_step':'armor_step');
+ (a==='punch'?'armor_power_punch':a==='idle'?'armor_breathe':a==='walk'?'armor_walk':'armor_run');
  if(state.motion!==motion)setMotion(motion);
  if(a==='punch')state.gamePunchUntil=performance.now()+1100;
  renderUI();
 }
 function toggle3DSpace(force){const active=typeof force==='boolean'?force:!state.gameMode;
- if(active&&!['xbot','aegisCeramic','aegisEmber'].includes(state.model))changeModel('xbot');
+ if(active&&!['xbot','aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))changeModel('xbot');
  state.gameMode=active;
  if(active){state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.dragYaw=0;state.dragPitch=0;state.viewYaw=0;state.viewPitch=0;state.lastGameUpdate=performance.now();state.gameAction='idle';setGameAction('idle');}
  else{state.actorPos=[0,0];state.center=[0,.88,0];}
@@ -1366,43 +1444,54 @@ function updateGameControl(now){
  if(!!pad!==lastPadConnected){lastPadConnected=!!pad;gpPrev={};if(pad)toast('ゲームパッド検出: '+pad.id.slice(0,36));}
  if(!state.gameMode)return;
  const keyDown=k=>!!keyState[k];
- let ax=(keyDown('d')||keyDown('ArrowRight')?1:0)-(keyDown('a')||keyDown('ArrowLeft')?1:0);
- let az=(keyDown('s')||keyDown('ArrowDown')?1:0)-(keyDown('w')||keyDown('ArrowUp')?1:0);
+ const kbX=(keyDown('d')||keyDown('ArrowRight')?1:0)-(keyDown('a')||keyDown('ArrowLeft')?1:0);
+ const kbZ=(keyDown('s')||keyDown('ArrowDown')?1:0)-(keyDown('w')||keyDown('ArrowUp')?1:0);
+ let sx=0,sz=0,dx=0,dz=0;
  if(pad){
-  const analog=pad.axes||[];
-  ax+=deadAxis(analog[0]);az+=deadAxis(analog[1]);
-  // D-pad supported if this GameSir exposes digital rather than analog direction.
-  ax+=(isPressed(pad,15)?1:0)-(isPressed(pad,14)?1:0);
-  az+=(isPressed(pad,13)?1:0)-(isPressed(pad,12)?1:0);
-  // Only interpret 2/3 as the right stick for the standard mapping.
-  // Nonstandard GameSir modes can expose the LT/RT trigger (resting at -1)
-  // in these axes, which previously caused continuous uncontrolled camera spin.
-  if(pad.mapping==='standard' && analog.length>=4){
-    state.gameLookYaw+=deadAxis(analog[2],.24)*dt*1.20;
-    state.gameLookPitch=clamp(state.gameLookPitch+deadAxis(analog[3],.24)*dt*.80,-.30,.66);
+  const axes=pad.axes||[];
+  sx=deadAxis(axes[0]);sz=deadAxis(axes[1]);
+  dx=(isPressed(pad,15)?1:0)-(isPressed(pad,14)?1:0);
+  dz=(isPressed(pad,13)?1:0)-(isPressed(pad,12)?1:0);
+  if(pad.mapping==='standard'&&axes.length>=4){
+   state.gameLookYaw+=deadAxis(axes[2],.24)*dt*1.20;
+   state.gameLookPitch=clamp(state.gameLookPitch+deadAxis(axes[3],.24)*dt*.80,-.30,.66);
   }
-  for(const [b,a] of [[0,'idle'],[1,'walk'],[2,'run'],[3,'punch']]){
-    const down=isPressed(pad,b);if(down&&!gpPrev[b])setGameAction(a);gpPrev[b]=down;
-  }
-  const flip=isPressed(pad,5);if(flip&&!gpPrev[5])flipFacing();gpPrev[5]=flip;
-  const reset=isPressed(pad,9);if(reset&&!gpPrev[9]){state.actorPos=[0,0];state.gameLookYaw=0;state.gameLookPitch=0;recenter();}gpPrev[9]=reset;
-  state.gameSprint=isPressed(pad,7);
+  const punch=isPressed(pad,3);
+  if(punch&&!gpPrev[3])setGameAction('punch');
+  gpPrev[3]=punch;
+  const flip=isPressed(pad,5);
+  if(flip&&!gpPrev[5])flipFacing();
+  gpPrev[5]=flip;
+  const reset=isPressed(pad,9);
+  if(reset&&!gpPrev[9]){state.actorPos=[0,0];state.gameLookYaw=0;state.gameLookPitch=0;recenter();}
+  gpPrev[9]=reset;
  }
- for(const [k,d] of Object.entries(state.gameInput)){if(!d)continue;
-   if(k==='forward')az-=1;if(k==='back')az+=1;if(k==='left')ax-=1;if(k==='right')ax+=1;}
+ let tx=0,tz=0;
+ for(const [k,v] of Object.entries(state.gameInput)){
+  if(!v)continue;
+  if(k==='forward')tz-=1;if(k==='back')tz+=1;
+  if(k==='left')tx-=1;if(k==='right')tx+=1;
+ }
+ const stickMoving=Math.hypot(sx,sz)>.08;
+ const dpadMoving=Math.hypot(dx,dz)>.01;
+ const keyboardMoving=Math.hypot(kbX+tx,kbZ+tz)>.01;
+ // Stick always runs, D-pad walks; idle immediately when both are released.
+ const desired=stickMoving?'run':(dpadMoving||keyboardMoving)?'walk':'idle';
+ const ax=stickMoving?sx:dpadMoving?dx:kbX+tx;
+ const az=stickMoving?sz:dpadMoving?dz:kbZ+tz;
  const magnitude=Math.hypot(ax,az);
+ if(state.gameAction!=='punch'||now>state.gamePunchUntil){
+  if(state.gameAction!==desired)setGameAction(desired);
+ }
  if(magnitude>.06){
   const scale=1/Math.max(magnitude,1),angle=state.viewYaw+state.gameLookYaw;
-  // Camera sits toward +Z and looks toward -Z: up on stick must move AWAY from viewer.
   const forward=[-Math.sin(angle),-Math.cos(angle)],right=[Math.cos(angle),-Math.sin(angle)];
-  const running=state.gameSprint||state.gameAction==='run'||magnitude>.82;
-  const speed=(running?2.5:1.25)*state.gameMoveSpeed;
+  const speed=(stickMoving?2.5:1.25)*state.gameMoveSpeed;
   state.actorPos[0]+=(forward[0]*(-az)+right[0]*ax)*scale*speed*dt;
   state.actorPos[1]+=(forward[1]*(-az)+right[1]*ax)*scale*speed*dt;
-  state.actorPos[0]=clamp(state.actorPos[0],-8,8);state.actorPos[1]=clamp(state.actorPos[1],-8,8);
-  if(state.gameAction==='idle')setGameAction(running?'run':'walk');
+  state.actorPos[0]=clamp(state.actorPos[0],-8,8);
+  state.actorPos[1]=clamp(state.actorPos[1],-8,8);
  }
- if(state.gameAction==='punch'&&now>state.gamePunchUntil)setGameAction('idle');
 }
 function bindTouchDirection(btn,k){btn.addEventListener('pointerdown',e=>{state.gameInput[k]=true;btn.classList.add('pressed');e.preventDefault();btn.setPointerCapture?.(e.pointerId);});
  for(const event of ['pointerup','pointercancel','lostpointercapture'])btn.addEventListener(event,()=>{state.gameInput[k]=false;btn.classList.remove('pressed');});}
@@ -1486,7 +1575,7 @@ async function loadPublishedLensDefaults(){
  }catch(err){console.warn('Published layout fallback in use',err);}
 }
 function getLensTune(model,n,i){
- const built=DEFAULT_LENS_TUNES[model]?.[n]?.[i]||{};
+ const built=DEFAULT_LENS_TUNES[model==='aegisSoldier'?'aegisEmber':model]?.[n]?.[i]||{};
  const custom=state.lensOverrides?.[model]?.[n]?.[i]||{};
  return {x:0,y:0,imageY:0,w:1,h:1,distance:1,fov:1,...built,...custom};
 }
@@ -1624,8 +1713,8 @@ async function startApplication(){
   showStatus('3Dモデルを読み込み中…');
   await loadPublishedLensDefaults();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();applyDefaultSettings();
-  renderUI();showStatus('v36：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
-  window.__compoundTest={version:"36",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  renderUI();showStatus('v37：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
+  window.__compoundTest={version:"37",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
