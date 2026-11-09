@@ -1,6 +1,6 @@
 {
   "format": "compound-eye-lens-layout",
-  "version": 35,
+  "version": 36,
   "defaults": {
     "aegisCeramic": {
       "4": {
@@ -176,7 +176,7 @@
       },
       "5": {
         "0": {
-          "y": 0.07,
+          "y": 0,
           "h": 2,
           "distance": 1.27,
           "imageY": -0.005,
@@ -204,7 +204,7 @@
       "6": {
         "0": {
           "h": 1.67,
-          "y": 0.1,
+          "y": 0.055,
           "distance": 1.22,
           "w": 2,
           "imageY": -0.03,
@@ -235,15 +235,19 @@
           "x": 0
         },
         "5": {
-          "y": -0.1,
+          "y": -0.125,
           "h": 1.26,
           "distance": 0.6,
           "x": 0,
-          "fov": 1.34,
+          "fov": 1.47,
           "imageY": 0.08
         }
       }
     }
   },
-  "overrides": {}
+  "overrides": {},
+  "uiDefaults": {
+    "anchorAlpha": 0.2,
+    "showLensLabels": true
+  }
 }
