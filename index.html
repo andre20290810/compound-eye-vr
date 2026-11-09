@@ -712,7 +712,7 @@ function updateSkeletonMotion(animationTime,now){
  const next=new Map(),stats=[],active=state.motion!=='idle'&&!state.motion.endsWith('_idle');
  for(let i=0;i<md.nodes.length;i++){
   const bone=md.nodes[i],world=md.world[i];
-  if(!world||!jointNamePattern.test(bone.name)||md.skin&&!md.skin.joints.includes(i))continue;
+  if(!world||(md.skin&&!md.skin.joints.includes(i)))continue;
   const position=[world[12]-rootPos[0],world[13]-rootPos[1],world[14]-rootPos[2]];
   const orientation=md.poseRot?.[i]||bone.rotation;
   const prev=motionHistory.get(i);
@@ -722,7 +722,8 @@ function updateSkeletonMotion(animationTime,now){
    const dot=Math.abs(orientation.reduce((v,x,k)=>v+x*prev.orientation[k],0));
    angular=2*Math.acos(clamp(dot,-1,1))/dt;
    // Normed joint score: linear m/s plus active local joint degrees/s.
-   const rawScore=100*clamp01(.68*linear/.85+.32*angular/5.0);
+   const isFinger=/Hand(?:Thumb|Index|Middle|Ring|Pinky)/i.test(bone.name);
+   const rawScore=100*clamp01(.68*linear/.85+.32*angular/5.0)*(isFinger?.20:1);
    score=lerp(prev.score,rawScore,.58);
   }
   next.set(i,{position,orientation:orientation.slice(),score});
