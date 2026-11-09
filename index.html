@@ -610,7 +610,7 @@ motionMarkerLayer.style.cssText='position:absolute;inset:0;pointer-events:none;o
 scope.appendChild(motionMarkerLayer);
 let previousJointPositions=new Map(),previousJointModel=null,previousJointTime=0;
 function renderMotionMarkers(pv){
- if(!state.showMotionMarkers||state.vr||!pv||!modelData?.world){motionMarkerLayer.replaceChildren();return;}
+ if(!state.showMotionMarkers||!pv||!modelData?.world){motionMarkerLayer.replaceChildren();return;}
  const now=performance.now(),dt=Math.max(.008,Math.min(.1,(now-previousJointTime)/1000||.016));
  if(previousJointModel!==modelData){previousJointPositions.clear();previousJointModel=modelData;}
  previousJointTime=now;
@@ -624,19 +624,23 @@ function renderMotionMarkers(pv){
   const displacement=Math.hypot(...point.map((v,k)=>v-prev[k]));
   // A small velocity threshold prevents static noise from covering the body.
   if(displacement/dt<.045)continue;
-  const worldPoint=mulPoint(state._modelFit,point),uv=projectionUV(pv,worldPoint);
-  if(uv&&uv[0]>.02&&uv[0]<.98&&uv[1]>.02&&uv[1]<.98)
-   moving.push({uv,speed:displacement/dt});
+  const worldPoint=mulPoint(state._modelFit,point);
+  moving.push({worldPoint,speed:displacement/dt});
  }
  previousJointPositions=current;
  moving.sort((a,b)=>b.speed-a.speed);
  motionMarkerLayer.replaceChildren();
- for(const item of moving.slice(0,16)){
-  const mark=document.createElement('span');
-  mark.style.cssText='position:absolute;width:6px;height:6px;background:#ff3030;border:1px solid #fff4;box-shadow:0 0 2px #650000;transform:translate(-50%,-50%)';
-  mark.style.left=(item.uv[0]*100)+'%';
-  mark.style.top=((1-item.uv[1])*100)+'%';
-  motionMarkerLayer.appendChild(mark);
+ const projections=Array.isArray(pv)?pv:[pv];
+ for(let eye=0;eye<projections.length;eye++){
+  for(const item of moving.slice(0,16)){
+   const uv=projectionUV(projections[eye],item.worldPoint);
+   if(!uv||uv[0]<.02||uv[0]>.98||uv[1]<.02||uv[1]>.98)continue;
+   const mark=document.createElement('span');
+   mark.style.cssText='position:absolute;width:6px;height:6px;background:#ff3030;border:1px solid #fff4;box-shadow:0 0 2px #650000;transform:translate(-50%,-50%)';
+   mark.style.left=((eye+uv[0])*100/projections.length)+'%';
+   mark.style.top=((1-uv[1])*100)+'%';
+   motionMarkerLayer.appendChild(mark);
+  }
  }
 }
 function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1);}let {w,h}=resize(),eyeW=state.vr?w/2:w;const cap=state.vr?540:700;const rw=Math.max(120,Math.min(cap,Math.floor(eyeW*.82))),rh=Math.max(120,Math.min(cap,Math.floor(h*.82)));const nTargets=(activeCameras().length+1)*(state.vr?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
@@ -653,7 +657,9 @@ let local=mul(scale(state.fitScale*pulse,state.fitScale*pulse,state.fitScale*pul
 let spin=state.motion==='spin'&&state.model!=='heart'?rotY(.36*t):ID();
 let world=mul(trans(state.actorPos[0],.86,state.actorPos[1]),mul(rotY(state.actorYaw+(state.facingBack?Math.PI:0)),mul(spin,local)));state._modelFit=world;
 if(state.gameMode)state.center=[state.actorPos[0],.88,state.actorPos[1]];
-const f=specList();const markerPV=camera({yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0},eyeW/h,0);renderMotionMarkers(markerPV);for(let eye=0;eye<(state.vr?2:1);eye++){let aspect=eyeW/h;const globalPV=camera(state.vr?{yaw:0,pitch:2,roll:0,distance:3.25*state.vrFraming,fov:50,tx:0,ty:-.07,tz:0}:{yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0},aspect,eye);renderFacet(0,eye,globalPV,world);
+const f=specList();const markerBase={yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0};
+const markerPVs=state.vr?[camera(markerBase,eyeW/h,0),camera(markerBase,eyeW/h,1)]:[camera(markerBase,eyeW/h,0)];
+renderMotionMarkers(markerPVs);for(let eye=0;eye<(state.vr?2:1);eye++){let aspect=eyeW/h;const globalPV=camera(state.vr?{yaw:0,pitch:2,roll:0,distance:3.25*state.vrFraming,fov:50,tx:0,ty:-.07,tz:0}:{yaw:0,pitch:3,roll:0,distance:2.98,fov:43,tx:0,ty:0,tz:0},aspect,eye);renderFacet(0,eye,globalPV,world);
  for(let i=0;i<f.length;i++){
   let spec=f[i];
   if(state.vr&&/(下半身|腰〜|足先|下半身)/.test(spec.name))spec={...spec,distance:spec.distance*1.18,fov:Math.max(spec.fov,46)};
