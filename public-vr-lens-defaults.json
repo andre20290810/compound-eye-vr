@@ -1,0 +1,16 @@
+{
+  "format": "compound-eye-vr-lens-layout",
+  "version": 42,
+  "coordinate_system": {
+    "x": "normalized horizontal offset per logical camera",
+    "y": "normalized vertical offset per logical camera",
+    "w": "elliptical window width multiplier",
+    "h": "elliptical window height multiplier",
+    "imageY": "vertical offset within camera texture",
+    "distance": "camera distance multiplier",
+    "fov": "camera field-of-view multiplier"
+  },
+  "note": "VR-only reference defaults. Normal viewer configurations remain in public-lens-defaults.json. Empty defaults mean neutral VR lenses, independent of the normal viewer.",
+  "defaults": {},
+  "symmetric_inward_defaults": {}
+}
