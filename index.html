@@ -474,7 +474,11 @@ function partMask(idx){
   5:['core','leftUpper','leftLower','rightUpper','rightLower'],
   6:['core','leftUpper','leftLower','rightUpper','rightLower','pelvis']
  };
- const name=(mapping[state.eyeCount]||[])[idx-1];
+ let name=(mapping[state.eyeCount]||[])[idx-1];
+ if(state.model==='xbot'&&name){
+   name=name.startsWith('left')?'right'+name.slice(4):
+        name.startsWith('right')?'left'+name.slice(5):name;
+ }
  if(!name)return null;
  const key=state.model+':'+state.eyeCount+':'+idx;
  if(partMaskCache[key])return partMaskCache[key];
@@ -554,6 +558,11 @@ function swapSideDefs(defs){
  // Previous layout-only swapping moved arm anchors onto the opposite side.
  return defs;
 }
+// Swap bone references only for X Bot. Keep AEGIS joint mapping untouched.
+function swapAnatomicalTrack(track){
+ return String(track||'').replace(/Left|Right|L_|R_/g,m=>
+   m==='Left'?'Right':m==='Right'?'Left':m==='L_'?'R_':'L_');
+}
 function lensKind(i){
  if(state.eyeCount===3) return i===0?'core':'full';
  if(state.eyeCount===4) return (i===0||i===2)?'upperHead':'leg';
@@ -567,7 +576,8 @@ function lensAnchorNames(i,defaultNames){
  // Use the upper shoulder and hip junction as layout anchors, not the forearm/shin tip.
  const left=/左|left/i.test(spec?.name||'');
  const right=/右|right/i.test(spec?.name||'');
- const side=left?'Left':right?'Right':'';
+ const side=left?(state.model==='xbot'?'Right':'Left'):
+                  right?(state.model==='xbot'?'Left':'Right'):'';
  if(kind==='upperHead')return side+'Shoulder|'+(side==='Left'?'L_UpperArm':'R_UpperArm');
  if(side&&kind==='arm')return side+'Shoulder|'+(side==='Left'?'L_UpperArm':'R_UpperArm');
  if(side&&kind==='leg')return side+'UpLeg|'+(side==='Left'?'L_UpperLeg':'R_UpperLeg');
@@ -580,7 +590,8 @@ function anchoredLenses(eye,globalPV,modelFit){
  const rects=new Float32Array(24),sampling=new Float32Array(12),offsets=new Float32Array(12),report=[];
  const viewAspect=(state.vr?canvas.width*.5:canvas.width)/Math.max(canvas.height,1);
  for(let i=0;i<defs.length;i++){
-  const [track,laneX,laneY,rx,ry]=defs[i],k=lensKind(i),spec=activeCameras()[i];
+  const [layoutTrack,laneX,laneY,rx,ry]=defs[i],k=lensKind(i),spec=activeCameras()[i];
+  const track=state.model==='xbot'?swapAnatomicalTrack(layoutTrack):layoutTrack;
   const jointName=lensAnchorNames(i,track),joint=nodeJointWorld(jointName,modelFit);
   const ref=joint?projectionUV(globalPV,joint):null;
   const side=laneX<.47?-1:laneX>.53?1:0;
@@ -643,6 +654,7 @@ function camera(spec,aspect,eye){
 }
 function effectiveSpec(spec){
  let s={...spec};
+ if(state.model==='xbot'&&s.track)s.track=swapAnatomicalTrack(s.track);
  // Match the direction of the reference body camera. This keeps projected
  // elbow/knee motion angles consistent instead of rotating limbs by 30 degrees.
  // The original oblique multi-camera view is still available as an option.
