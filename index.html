@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v33: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v33｜左右個眼交換・運動量連動表示</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v34: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v34｜左右個眼交換・運動量連動表示</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -104,12 +104,32 @@ body.vr #vrTapHint.on{display:block}
 #motionDebugOverlay .top3{color:#ffd698;font-weight:700}
 body.vr #motionDebugOverlay{display:none!important}
 @media(max-width:650px){#motionDebugOverlay{width:58%;font-size:10px}}
+</style><style>
+#lensEditor{margin:12px 0 0;padding:12px;border:1px solid #4d7891;border-radius:14px;background:#102b40;color:#e5f5fa}
+#lensEditor h2{margin:0 0 9px;font-size:15px}
+#lensEditor .editorInfo{font-size:12px;color:#a8c9db;line-height:1.6;margin-bottom:10px}
+#lensEditor .editorRow{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:8px 0}
+#lensEditor label{font-size:12px;color:#d0e4ef}
+#lensEditor select{flex:1;min-width:180px;padding:8px}
+#lensEditor .editorGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+#lensEditor .editorField{display:flex;flex-direction:column;gap:4px;background:#17384f;padding:8px;border-radius:9px;font-size:12px}
+#lensEditor .editorField span{display:flex;justify-content:space-between;gap:8px}
+#lensEditor input[type=range]{width:100%}
+#lensEditor button{padding:8px 10px;font-size:12px}
+#lensEditor .editorHint{color:#b1d0dc;font-size:11px;line-height:1.6;margin:8px 0 0}
+@media(max-width:520px){#lensEditor .editorGrid{grid-template-columns:1fr}}
+body.vr #lensEditor{display:none}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v33｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<header><div><h1>人工複眼 VR v34｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
 <div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<footer>観察モデル：X Bot / Boxer（9動作）、AEGIS SILVER / NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
+<section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
+<div class="editorInfo">中央の3D表示を見ながら調整できます。部位の位置、楕円の幅・高さ、カメラの引き（脚全体を表示）、画角を個別に編集します。</div>
+<div class="editorRow"><label for="lensEditorEye">調整するカメラ</label><select id="lensEditorEye"></select></div>
+<div class="editorGrid" id="lensEditorFields"></div>
+<div class="editorRow"><button type="button" id="lensEditorResetOne">この部位をリセット</button><button type="button" id="lensEditorSave">このブラウザに保存</button><button type="button" id="lensEditorExport">公開用設定JSONを書き出す</button><button type="button" id="lensEditorImport">設定JSONを読み込む</button><input type="file" id="lensEditorFile" accept=".json,application/json" hidden></div>
+<p class="editorHint">保存はこのブラウザ内のみ。公開サイト全体の初期値を更新するには、書き出したJSONをGitHubの公開版へ反映する必要があります。表示数の異なるレイアウトも別々に保存されます。</p></section><footer>観察モデル：X Bot / Boxer（9動作）、AEGIS SILVER / NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
 <div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRでは首を左右に傾けても、メニューを開かず眼数変更できます。</span></div>
@@ -205,7 +225,7 @@ function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(
 const state={model:'aegisCeramic',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.60,lensScale:1.10,lensPull:1.10,showLabels:false,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺'};
 const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）'};
-state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
+state.lensOverrides={};state.lensEditorIndex=0;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
 state.focusAreas=Array(6).fill(1);state.focusFrom=Array(6).fill(1);
@@ -606,7 +626,7 @@ function anchoredLenses(eye,globalPV,modelFit){
   const desired=k==='pelvis'&&state.eyeCount===6?[.50,.55]:
     [side===0?clamp(anchor[0],.12,.88):laneCenter,clamp(anchor[1],.12,.88)];
   const below=k==='full'?.20:k==='upperHead'?.090:k==='arm'?.115:k==='leg'?.135:k==='pelvis'?.03:k==='core'?.06:0;
-  const center=[clamp(desired[0],.16,.84),clamp(desired[1]-(k==='pelvis'&&state.eyeCount===6?0:below),.16,.83)];
+  let center=[clamp(desired[0],.16,.84),clamp(desired[1]-(k==='pelvis'&&state.eyeCount===6?0:below),.16,.83)];
   let radiusX=rx*(k==='core'?.90:k==='leg'?.83:k==='upperHead'?.85:.96),radiusY=ry*(k==='core'?.92:k==='upperHead'?.94:1.10);
   if(state.eyeCount===3&&k==='full'){radiusX=Math.max(radiusX,.23);radiusY=Math.max(radiusY,.34);}
   if(state.eyeCount===6&&k==='core'){radiusX*=1.05;radiusY*=1.08;}
@@ -615,6 +635,9 @@ function anchoredLenses(eye,globalPV,modelFit){
   if(state.eyeCount>=4&&k==='leg'){radiusX*=.76;radiusY*=.76;}
   if(state.eyeCount>=4&&(k==='arm'||k==='upperHead')){radiusX*=1.15;radiusY*=1.13;}
   if(state.eyeCount===6&&k==='pelvis'){radiusX*=.91;radiusY*=.91;}
+  const tune=getLensTune(state.model,state.eyeCount,i);
+  center=[clamp(center[0]+tune.x,-.05,1.05),clamp(center[1]+tune.y,-.05,1.05)];
+  radiusX=clamp(radiusX*tune.w,.025,.48);radiusY=clamp(radiusY*tune.h,.025,.48);
   const areaRatio=state.focusAreas?.[i]||1;
   rects.set([center[0],center[1],radiusX*Math.sqrt(areaRatio),radiusY*Math.sqrt(areaRatio)],i*4);
   const sample=1.0;
@@ -658,6 +681,12 @@ function camera(spec,aspect,eye){
 }
 function effectiveSpec(spec){
  let s={...spec};
+ const cameraIndex=activeCameras().indexOf(spec);
+ if(cameraIndex>=0){
+   const tune=getLensTune(state.model,state.eyeCount,cameraIndex);
+   s.distance=(s.distance||2.4)*tune.distance;
+   s.fov=clamp((s.fov||48)*tune.fov,25,95);
+ }
  if(state.model==='xbot'&&s.track)s.track=swapAnatomicalTrack(s.track);
  // Match the direction of the reference body camera. This keeps projected
  // elbow/knee motion angles consistent instead of rotating limbs by 30 degrees.
@@ -1015,7 +1044,7 @@ function renderUI(){document.querySelectorAll('[data-count]').forEach(b=>b.class
  $('outsideTransparency').value=Math.round((1-state.outsideAlpha)*100);$('outsideTransparencyLabel').textContent=Math.round((1-state.outsideAlpha)*100)+'%';
  $('gyroSensitivity').value=state.gyroSensitivity;$('gestureSensitivity').value=state.gestureSensitivity;
  $('vrFraming').value=state.vrFraming;
- renderVrMenu();refreshCameraFields();renderCameraBadges();
+ renderVrMenu();refreshCameraFields();renderCameraBadges();renderLensEditor();
 }
 function setEyeCount(n){state.eyeCount=clamp(Number(n),2,6);state.selectedCamera=0;state.focusLens=-1;renderUI();toast(state.eyeCount+'視点へ切替');}
 function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];state.motion=m;resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
@@ -1411,7 +1440,86 @@ window.addEventListener('keydown',e=>{if(!state.gameMode&&['2','3','4','5'].incl
 let frameCount=0;
 function loop(now){requestAnimationFrame(loop);try{updateGameControl(now);draw(now);updateGaze(now);drawErrorCount=0;}catch(e){console.error(e);drawErrorCount++;showStatus('描画エラー: '+e.message);if(drawErrorCount===1)showRenderFailure(e);ready=false;}}
 
-// Removed bulky numeric camera editor. Keep per-eye zoom instead.
+
+const LENS_TUNE_KEY='compoundeye.v34.lensOverrides';
+const DEFAULT_LENS_TUNES={
+  aegisCeramic:{4:{1:{distance:1.30,fov:1.18,h:.82,w:.80},3:{distance:1.30,fov:1.18,h:.82,w:.80}},5:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}},6:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}}},
+  aegisEmber:{4:{1:{distance:1.30,fov:1.18,h:.82,w:.80},3:{distance:1.30,fov:1.18,h:.82,w:.80}},5:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}},6:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}}}
+};
+function getLensTune(model,n,i){
+ const built=DEFAULT_LENS_TUNES[model]?.[n]?.[i]||{};
+ const custom=state.lensOverrides?.[model]?.[n]?.[i]||{};
+ return {x:0,y:0,w:1,h:1,distance:1,fov:1,...built,...custom};
+}
+function setLensTune(i,key,value){
+ const m=state.model,n=state.eyeCount;
+ if(!state.lensOverrides[m])state.lensOverrides[m]={};
+ if(!state.lensOverrides[m][n])state.lensOverrides[m][n]={};
+ if(!state.lensOverrides[m][n][i])state.lensOverrides[m][n][i]={};
+ state.lensOverrides[m][n][i][key]=value;
+}
+function renderLensEditor(){
+ const select=$('lensEditorEye'),fields=$('lensEditorFields');
+ if(!select||!fields)return;
+ const n=state.eyeCount;
+ const selected=clamp(state.lensEditorIndex,0,Math.max(0,activeCameras().length-1));
+ state.lensEditorIndex=selected;
+ const old=select.value;
+ select.replaceChildren();
+ activeCameras().forEach((c,i)=>{const op=document.createElement('option');op.value=i;op.textContent=(i+1)+' · '+c.name;select.append(op);});
+ select.value=String(selected);
+ const t=getLensTune(state.model,n,selected);
+ fields.replaceChildren();
+ const configs=[
+  ['x','左右位置',-.40,.40,.005],['y','上下位置',-.35,.35,.005],
+  ['w','楕円の横幅',.35,2,.01],['h','楕円の高さ',.35,2,.01],
+  ['distance','カメラ距離（大きいほど引く）',.60,2.5,.01],
+  ['fov','カメラ画角（大きいほど広域）',.65,1.85,.01]
+ ];
+ configs.forEach(([key,label,min,max,step])=>{
+ const wrap=document.createElement('label');wrap.className='editorField';
+ const span=document.createElement('span'),name=document.createElement('span'),value=document.createElement('output');
+ name.textContent=label;value.textContent=t[key].toFixed(2);span.append(name,value);
+ const control=document.createElement('input');control.type='range';control.min=min;control.max=max;control.step=step;control.value=t[key];
+ control.oninput=()=>{const v=Number(control.value);value.textContent=v.toFixed(2);setLensTune(selected,key,v);};
+ wrap.append(span,control);fields.append(wrap);
+ });
+}
+function saveLensEditor(){
+ try{localStorage.setItem(LENS_TUNE_KEY,JSON.stringify(state.lensOverrides));toast('この端末に個眼調整値を保存しました');}
+ catch(e){toast('ブラウザに保存できませんでした');}
+}
+function loadLensEditor(){
+ try{const v=JSON.parse(localStorage.getItem(LENS_TUNE_KEY)||'{}');if(v&&typeof v==='object'&&!Array.isArray(v))state.lensOverrides=v;}
+ catch(e){console.warn('Lens settings could not be loaded',e);}
+}
+function downloadLensEditor(){
+ const data={format:'compound-eye-lens-layout',version:34,defaults:DEFAULT_LENS_TUNES,overrides:state.lensOverrides};
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+ const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='compound-eye-public-lens-layout-v34.json';a.click();
+ setTimeout(()=>URL.revokeObjectURL(u),1200);
+ toast('GitHub登録用の設定JSONを出力しました');
+}
+$('lensEditorEye').onchange=e=>{state.lensEditorIndex=Number(e.target.value);renderLensEditor();};
+$('lensEditorResetOne').onclick=()=>{
+ const m=state.model,n=state.eyeCount,i=state.lensEditorIndex;
+ if(state.lensOverrides[m]?.[n])delete state.lensOverrides[m][n][i];
+ renderLensEditor();toast('部位の調整値を初期化しました');
+};
+$('lensEditorSave').onclick=saveLensEditor;
+$('lensEditorExport').onclick=downloadLensEditor;
+$('lensEditorImport').onclick=()=>$('lensEditorFile').click();
+$('lensEditorFile').onchange=async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{
+  const parsed=JSON.parse(await file.text());
+  if(parsed.format!=='compound-eye-lens-layout'||typeof parsed.overrides!=='object')throw Error('format');
+  state.lensOverrides=parsed.overrides;renderLensEditor();saveLensEditor();toast('個眼レイアウト設定を読み込みました');
+ }catch(err){toast('レイアウトJSONが読み込めません');}
+ e.target.value='';
+};
+
+// Per-eye calibration controls are below the 3D viewer.
 
 async function unpackAsset(key){
  if(window.ASSETS[key] instanceof ArrayBuffer)return;
@@ -1451,9 +1559,9 @@ async function startApplication(){
  try{
   showStatus('3Dモデルを読み込み中…');
   await unpackAssets();
-  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;applyDefaultSettings();
-  renderUI();showStatus('v30：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
-  window.__compoundTest={version:"30",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();applyDefaultSettings();
+  renderUI();showStatus('v34：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
+  window.__compoundTest={version:"34",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
