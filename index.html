@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v34: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v34｜左右個眼交換・運動量連動表示</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v35: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼 VR v35｜左右個眼交換・運動量連動表示</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -121,23 +121,23 @@ body.vr #motionDebugOverlay{display:none!important}
 body.vr #lensEditor{display:none}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v34｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<header><div><h1>人工複眼 VR v35｜左右個眼交換・骨格運動量で面積制御</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
 <div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
 <section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
 <div class="editorInfo">中央の3D表示を見ながら調整できます。部位の位置、楕円の幅・高さ、カメラの引き（脚全体を表示）、画角を個別に編集します。</div>
 <div class="editorRow"><label for="lensEditorEye">調整するカメラ</label><select id="lensEditorEye"></select></div>
 <div class="editorGrid" id="lensEditorFields"></div>
-<div class="editorRow"><button type="button" id="lensEditorResetOne">この部位をリセット</button><button type="button" id="lensEditorSave">このブラウザに保存</button><button type="button" id="lensEditorExport">公開用設定JSONを書き出す</button><button type="button" id="lensEditorImport">設定JSONを読み込む</button><input type="file" id="lensEditorFile" accept=".json,application/json" hidden></div>
-<p class="editorHint">保存はこのブラウザ内のみ。公開サイト全体の初期値を更新するには、書き出したJSONをGitHubの公開版へ反映する必要があります。表示数の異なるレイアウトも別々に保存されます。</p></section><footer>観察モデル：X Bot / Boxer（9動作）、AEGIS SILVER / NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
+<div class="editorRow"><button type="button" id="lensEditorResetOne">この部位をリセット</button><button type="button" id="lensEditorSave">このブラウザに保存</button><button type="button" id="lensEditorExport">公開初期値JSONを書き出す</button><button type="button" id="lensEditorCopy">公開初期値JSONをコピー</button><a style="color:#9ce7f2;font-size:12px" href="https://github.com/andre20290810/compound-eye-vr/edit/main/public-lens-defaults.json" target="_blank" rel="noopener noreferrer">GitHubで公開値を編集</a><button type="button" id="lensEditorImport">設定JSONを読み込む</button><input type="file" id="lensEditorFile" accept=".json,application/json" hidden></div>
+<p class="editorHint">ブラウザへの保存はこの端末のみです。公開初期値を更新するには、書き出した public-lens-defaults.json をGitHubリポジトリ直下の同名ファイルと置き換えてください。モデル・視点数ごとに設定を保持します。</p></section><footer>観察モデル：X Bot / Boxer（9動作）、AEGIS NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR操作にはHTTPSと対応ブラウザ・センサー許可が必要です。</footer></div>
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
 <div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRでは首を左右に傾けても、メニューを開かず眼数変更できます。</span></div>
-<div class="group"><span class="label">観察モデル</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisCeramic">AEGIS SILVER（銀・鋭角バイザー）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option></select></div>
+<div class="group"><span class="label">観察モデル</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option></select></div>
 <div class="group"><span class="label">動作</span><select id="motion"><option value="xbot_punch">元FBX・パンチ</option></select></div>
 <div class="group"><label class="label"><input type="checkbox" id="poseAligned" checked> 個眼の見え方を中央の人体と同じ方向にそろえる（推奨）</label></div>
 <p class="sublabel">オン：腕・脚の角度を中央の姿勢と一致させます。オフ：独立した斜めカメラ視点（従来方式）で観察できます。</p>
-<div class="group"><span class="label">可視化方式</span><select id="vizMode"><option value="lenses" selected>楕円融合（枠なし・大型）</option><option value="sector">扇形融合（中央周囲）</option><option value="inspect">個眼比較（独立カメラ）</option></select></div>
+<div class="group"><span class="label">可視化方式</span><select id="vizMode"><option value="lenses" selected>楕円融合（枠なし・大型）</option><option value="inspect">個眼比較（独立カメラ）</option></select></div>
 <div class="slider"><span class="label">中央全身の不透明度</span><input id="anchorAlpha" type="range" min="0" max="1" step=".02" value=".52"><span id="anchorAlphaLabel">52%</span></div>
 <div class="slider"><span class="label">手足のカメラ映像倍率（個眼の枠とは別）</span><input id="limbImageZoom" type="range" min="0.75" max="1.80" step=".05" value="1.00"><span id="limbImageZoomLabel">1.00×</span></div>
 <div class="slider"><span class="label">個眼の大きさ</span><input id="lensScale" type="range" min=".75" max="2.20" step=".05" value="1.10"><span id="lensScaleLabel">1.10×</span></div>
@@ -222,7 +222,7 @@ function currentScreenAngle(){
 }
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
-const state={model:'aegisCeramic',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.60,lensScale:1.10,lensPull:1.10,showLabels:false,showMotionMarkers:true};
+const state={model:'xbot',eyeCount:3,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.60,lensScale:1.10,lensPull:1.10,showLabels:false,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺'};
 const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）'};
 state.lensOverrides={};state.lensEditorIndex=0;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
@@ -543,7 +543,7 @@ function makeCrystal(){// A simple faceted volume for viewing-angle comparison
 const p=[0,1.6,0,0,.0,0],tri=[],N=9,rings=[[],[],[]];for(let layer=0;layer<3;layer++){const radx=[.38,.62,.30][layer],yy=[1.22,.75,.24][layer];for(let j=0;j<N;j++){let a=j*2*Math.PI/N;rings[layer].push(p.length/3);p.push(Math.cos(a)*radx,yy,Math.sin(a)*radx);}}
 for(let j=0;j<N;j++){let n=(j+1)%N;tri.push(0,rings[0][j],rings[0][n]);for(let layer=0;layer<2;layer++){let a=rings[layer][j],b=rings[layer][n],c=rings[layer+1][j],d=rings[layer+1][n];tri.push(a,c,b,b,c,d);}tri.push(rings[2][n],rings[2][j],1);}
 let pos=Float32Array.from(p),ind=Uint32Array.from(tri),col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set([.47,.82,.99,1],i*4);return{geo:[makeGpuMesh(pos,normals(pos,ind),col,ind,null,null,0,false)],nodes:[{translation:[0,0,0],rotation:[0,0,0,1],scale:[1,1,1],children:[],parent:-1}],skin:null,animations:[],min:[-.62,0,-.62],max:[.62,1.6,.62],bones:new Float32Array(512),world:[ID()]};}
-function changeModel(id){try{if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);state.model=id;partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=id==='xbot'?'xbot_punch':id==='man'?'walk':(['armor','aegisCeramic','aegisEmber'].includes(id)?'armor_breathe':'idle');if(id==='heart')state.zoom=.83;else state.zoom=1;renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
+function changeModel(id){try{if(id==='aegisCeramic')id='aegisEmber';if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);state.model=id;partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=id==='xbot'?'xbot_punch':id==='aegisEmber'?'armor_power_punch':id==='man'?'walk':(['armor','aegisCeramic'].includes(id)?'armor_breathe':'idle');if(id==='heart')state.zoom=.83;else state.zoom=1;renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
 function createTargets(w,h,count){offscreen.forEach(t=>{gl.deleteFramebuffer(t.fbo);gl.deleteTexture(t.tex);gl.deleteRenderbuffer(t.depth)});offscreen=[];fboWidth=w;fboHeight=h;for(let i=0;i<count;i++){let tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);let depth=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,depth);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,w,h);let fbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('個眼用映像の生成に失敗しました');offscreen.push({fbo,tex,depth});}gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
 function resize(){let box=scope.getBoundingClientRect(),ratio=Math.min(devicePixelRatio||1,state.vr?1.1:1.4);let w=Math.max(2,Math.floor(box.width*ratio)),h=Math.max(2,Math.floor(box.height*ratio));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}return{w,h};}
 
@@ -623,8 +623,11 @@ function anchoredLenses(eye,globalPV,modelFit){
   // Stable horizontal lanes avoid leg cutouts crossing the center body's legs.
   const laneDistance=k==='full'?.24:k==='upperHead'?.28:k==='arm'?.26:k==='leg'?.27:0;
   const laneCenter=clamp(.5+side*laneDistance*clamp(state.lensPull,.6,1.25)+clamp((anchor[0]-.5)*.06,-.025,.025),.15,.85);
-  const desired=k==='pelvis'&&state.eyeCount===6?[.50,.55]:
+  const desiredBase=k==='pelvis'&&state.eyeCount===6?[.50,.55]:
     [side===0?clamp(anchor[0],.12,.88):laneCenter,clamp(anchor[1],.12,.88)];
+  const tune=getLensTune(state.model,state.eyeCount,i);
+  // Shift the window AND its registered source image. v34 moved only the mask.
+  const desired=[clamp(desiredBase[0]+tune.x,-.05,1.05),clamp(desiredBase[1]+tune.y,-.05,1.05)];
   const below=k==='full'?.20:k==='upperHead'?.090:k==='arm'?.115:k==='leg'?.135:k==='pelvis'?.03:k==='core'?.06:0;
   let center=[clamp(desired[0],.16,.84),clamp(desired[1]-(k==='pelvis'&&state.eyeCount===6?0:below),.16,.83)];
   let radiusX=rx*(k==='core'?.90:k==='leg'?.83:k==='upperHead'?.85:.96),radiusY=ry*(k==='core'?.92:k==='upperHead'?.94:1.10);
@@ -635,8 +638,7 @@ function anchoredLenses(eye,globalPV,modelFit){
   if(state.eyeCount>=4&&k==='leg'){radiusX*=.76;radiusY*=.76;}
   if(state.eyeCount>=4&&(k==='arm'||k==='upperHead')){radiusX*=1.15;radiusY*=1.13;}
   if(state.eyeCount===6&&k==='pelvis'){radiusX*=.91;radiusY*=.91;}
-  const tune=getLensTune(state.model,state.eyeCount,i);
-  center=[clamp(center[0]+tune.x,-.05,1.05),clamp(center[1]+tune.y,-.05,1.05)];
+  // Position already follows the desired point, including its user adjustment.
   radiusX=clamp(radiusX*tune.w,.025,.48);radiusY=clamp(radiusY*tune.h,.025,.48);
   const areaRatio=state.focusAreas?.[i]||1;
   rects.set([center[0],center[1],radiusX*Math.sqrt(areaRatio),radiusY*Math.sqrt(areaRatio)],i*4);
@@ -648,7 +650,7 @@ function anchoredLenses(eye,globalPV,modelFit){
   const local=joint?projectionUV(localPV,joint):null;
   if(local){
     offsets.set([local[0]-.5-(desired[0]-center[0])*sample,
-                 local[1]-.5-(desired[1]-center[1])*sample],i*2);
+                 local[1]-.5-(desired[1]-center[1])*sample-(tune.imageY||0)],i*2);
   }
   report.push({name:jointName,region:k,joint3D:joint,anchorUV:ref,
    destUV:desired,centerUV:center,sourceUV:local,offsetUV:Array.from(offsets.slice(i*2,i*2+2)),
@@ -757,7 +759,7 @@ function renderFacet(idx,eye,pv,world){
 }
 function compose(eye,w,h,globalPV,modelFit){let half=state.vr?Math.floor(w/2):w, x=eye*half,tw=state.vr?(eye===1?w-half:half):w;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(x,0,tw,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(x,0,tw,h);gl.disable(gl.DEPTH_TEST);gl.useProgram(compProg);gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(compProg.aP);gl.vertexAttribPointer(compProg.aP,2,gl.FLOAT,false,0,0);
 for(let i=0;i<7;i++){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,offscreen[eye*(activeCameras().length+1)+Math.min(i,activeCameras().length)].tex);gl.uniform1i(compProg.tex[i],i);}
-const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:state.vizMode==='sector'?2:0);gl.uniform1f(compProg.uAnchorAlpha,state.gameMode?Math.max(state.anchorAlpha,.80):state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
+const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:0);gl.uniform1f(compProg.uAnchorAlpha,state.gameMode?Math.max(state.anchorAlpha,.80):state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
 
 // The motion detector reads model-local bone position AND bone rotation.
 // Neither camera motion nor scene navigation can increase these scores.
@@ -1014,7 +1016,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber'].includes(state.model))return ['armor_guard','armor_punch','armor_power_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber'].includes(state.model))return ['armor_power_punch','armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -1048,7 +1050,7 @@ function renderUI(){document.querySelectorAll('[data-count]').forEach(b=>b.class
 }
 function setEyeCount(n){state.eyeCount=clamp(Number(n),2,6);state.selectedCamera=0;state.focusLens=-1;renderUI();toast(state.eyeCount+'視点へ切替');}
 function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];state.motion=m;resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
-function nextModel(){const items=['xbot','aegisCeramic','aegisEmber'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
+function nextModel(){const items=['xbot','aegisEmber'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
 function nextMotion(){const items=motionOptions();setMotion(items[(items.indexOf(state.motion)+1)%items.length]);}
 function renderCameraBadges(){const pane=$('cameraBadges');if(!pane)return;pane.innerHTML='';if(!state.showLabels)return;
  const pos={3:[[.50,.78],[.22,.51],[.78,.51]],4:[[.23,.67],[.23,.30],[.77,.67],[.77,.30]],5:[[.50,.87],[.22,.64],[.22,.28],[.78,.64],[.78,.28]],6:[[.50,.86],[.215,.64],[.215,.29],[.785,.64],[.785,.29],[.50,.22]]};
@@ -1278,7 +1280,7 @@ function applyDefaultSettings(){
  try{const saved=JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');if(!saved)return false;
   for(const k of ['lensScale','lensPull','anchorAlpha','armImageZoom','legImageZoom','coreImageZoom','limbImageZoom','gyroSensitivity','outsideAlpha','vrFraming','zoom'])
    if(Number.isFinite(saved[k]))state[k]=saved[k];
-  if(saved.vizMode&&['lenses','sector','inspect'].includes(saved.vizMode))state.vizMode=saved.vizMode;
+  if(saved.vizMode&&['lenses','inspect'].includes(saved.vizMode))state.vizMode=saved.vizMode;
   if(Number.isFinite(saved.eyeCount))state.eyeCount=clamp(saved.eyeCount,2,6);
   if(typeof saved.facingBack==='boolean')state.facingBack=saved.facingBack;
   if(typeof saved.showMotionMarkers==='boolean')state.showMotionMarkers=saved.showMotionMarkers;
@@ -1304,7 +1306,7 @@ function setGameAction(a){
  if(!['xbot','aegisCeramic','aegisEmber'].includes(state.model))changeModel('xbot');
  state.gameAction=a;
  const motion=state.model==='xbot'?(a==='idle'?'xbot_idle':a==='walk'?'xbot_walk':a==='run'?'xbot_run':'xbot_punch'):
- (a==='punch'?'armor_punch':a==='idle'?'armor_breathe':a==='walk'?'armor_step':'armor_step');
+ (a==='punch'?'armor_power_punch':a==='idle'?'armor_breathe':a==='walk'?'armor_step':'armor_step');
  if(state.motion!==motion)setMotion(motion);
  if(a==='punch')state.gamePunchUntil=performance.now()+1100;
  renderUI();
@@ -1441,15 +1443,27 @@ let frameCount=0;
 function loop(now){requestAnimationFrame(loop);try{updateGameControl(now);draw(now);updateGaze(now);drawErrorCount=0;}catch(e){console.error(e);drawErrorCount++;showStatus('描画エラー: '+e.message);if(drawErrorCount===1)showRenderFailure(e);ready=false;}}
 
 
-const LENS_TUNE_KEY='compoundeye.v34.lensOverrides';
-const DEFAULT_LENS_TUNES={
-  aegisCeramic:{4:{1:{distance:1.30,fov:1.18,h:.82,w:.80},3:{distance:1.30,fov:1.18,h:.82,w:.80}},5:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}},6:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}}},
-  aegisEmber:{4:{1:{distance:1.30,fov:1.18,h:.82,w:.80},3:{distance:1.30,fov:1.18,h:.82,w:.80}},5:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}},6:{2:{distance:1.32,fov:1.22,h:.82,w:.80},4:{distance:1.32,fov:1.22,h:.82,w:.80}}}
-};
+const LENS_TUNE_KEY='compoundeye.v35.lensOverrides';
+let DEFAULT_LENS_TUNES={"aegisCeramic":{"4":{"1":{"distance":1.3,"fov":1.18,"h":0.82,"w":0.8},"3":{"distance":1.3,"fov":1.18,"h":0.82,"w":0.8}},"5":{"2":{"distance":1.32,"fov":1.22,"h":0.82,"w":0.8},"4":{"distance":1.32,"fov":1.22,"h":0.82,"w":0.8}},"6":{"2":{"distance":1.32,"fov":1.22,"h":0.82,"w":0.8},"4":{"distance":1.32,"fov":1.22,"h":0.82,"w":0.8}}},"aegisEmber":{"4":{"1":{"distance":1.34,"fov":1.18,"h":1.18,"w":1.18},"3":{"distance":1.34,"fov":1.18,"h":1.17,"w":0.8},"0":{"distance":1.16},"2":{"distance":1.16}},"5":{"2":{"distance":1.26,"fov":1.22,"h":1.77,"w":0.8},"4":{"distance":1.26,"fov":1.22,"h":1.38,"w":0.8},"0":{"y":0.06,"x":-0.015,"distance":1.35},"1":{"distance":1.31},"3":{"distance":1.31}},"6":{"2":{"distance":1.32,"fov":1.22,"h":1.37,"w":0.8},"4":{"distance":1.32,"fov":1.22,"h":1.4,"w":0.8},"0":{"distance":1.22,"y":0.045,"w":1.13},"1":{"distance":1.43},"3":{"distance":1.43},"5":{"distance":1.09,"y":-0.09}},"3":{"0":{"distance":1.34},"1":{"distance":1.03},"2":{"distance":1.03}}},"xbot":{"3":{"0":{"y":0.05,"x":-0.105,"distance":1.25,"h":1.29},"1":{"x":0.14,"distance":0.69,"fov":1.29,"w":1.18,"h":1.11,"y":-0.03},"2":{"x":0,"y":-0.015,"fov":0.88,"distance":1.13}},"4":{"0":{"distance":1.15},"1":{"distance":1.52},"2":{"distance":1.15},"3":{"distance":1.43}},"5":{"0":{"y":0.01,"h":2,"distance":1.27},"1":{"distance":1.27},"2":{"distance":1.56},"3":{"distance":1.27},"4":{"distance":1.56}},"6":{"0":{"h":1.67,"y":0.1,"distance":1.22,"w":2},"1":{"distance":1.3},"2":{"distance":1.44},"3":{"distance":1.3},"4":{"distance":1.44},"5":{"y":-0.1,"h":1.26,"distance":0.6,"x":0.075,"fov":1.46}}}};
+
+async function loadPublishedLensDefaults(){
+ try{
+  const response=await fetch('public-lens-defaults.json',{cache:'no-store'});
+  if(!response.ok)return;
+  const config=await response.json();
+  if(config.format!=='compound-eye-lens-layout'||!config.defaults||typeof config.defaults!=='object')return;
+  const next=JSON.parse(JSON.stringify(config.defaults));
+  for(const [model,counts] of Object.entries(config.overrides||{}))
+   for(const [n,cameras] of Object.entries(counts||{}))
+    for(const [i,params] of Object.entries(cameras||{}))
+     Object.assign(((next[model]??={})[n]??={})[i]??={},params);
+  DEFAULT_LENS_TUNES=next;
+ }catch(err){console.warn('Published layout fallback in use',err);}
+}
 function getLensTune(model,n,i){
  const built=DEFAULT_LENS_TUNES[model]?.[n]?.[i]||{};
  const custom=state.lensOverrides?.[model]?.[n]?.[i]||{};
- return {x:0,y:0,w:1,h:1,distance:1,fov:1,...built,...custom};
+ return {x:0,y:0,imageY:0,w:1,h:1,distance:1,fov:1,...built,...custom};
 }
 function setLensTune(i,key,value){
  const m=state.model,n=state.eyeCount;
@@ -1464,18 +1478,20 @@ function renderLensEditor(){
  const n=state.eyeCount;
  const selected=clamp(state.lensEditorIndex,0,Math.max(0,activeCameras().length-1));
  state.lensEditorIndex=selected;
- const old=select.value;
  select.replaceChildren();
  activeCameras().forEach((c,i)=>{const op=document.createElement('option');op.value=i;op.textContent=(i+1)+' · '+c.name;select.append(op);});
  select.value=String(selected);
  const t=getLensTune(state.model,n,selected);
  fields.replaceChildren();
  const configs=[
-  ['x','左右位置',-.40,.40,.005],['y','上下位置',-.35,.35,.005],
+  ['x','左右位置',-.40,.40,.005],['y',lensKind(selected)==='pelvis'?'腰～股関節の高さ':lensKind(selected)==='core'?'首～胸の高さ':'上下位置',-.45,.45,.005],
   ['w','楕円の横幅',.35,2,.01],['h','楕円の高さ',.35,2,.01],
   ['distance','カメラ距離（大きいほど引く）',.60,2.5,.01],
   ['fov','カメラ画角（大きいほど広域）',.65,1.85,.01]
  ];
+ if(['pelvis','core'].includes(lensKind(selected))){
+   configs.splice(2,0,['imageY','部位映像の上下位置（＋で上）',-.30,.30,.005]);
+ }
  configs.forEach(([key,label,min,max,step])=>{
  const wrap=document.createElement('label');wrap.className='editorField';
  const span=document.createElement('span'),name=document.createElement('span'),value=document.createElement('output');
@@ -1493,10 +1509,21 @@ function loadLensEditor(){
  try{const v=JSON.parse(localStorage.getItem(LENS_TUNE_KEY)||'{}');if(v&&typeof v==='object'&&!Array.isArray(v))state.lensOverrides=v;}
  catch(e){console.warn('Lens settings could not be loaded',e);}
 }
+function publicLayoutExportData(){
+ const merged=JSON.parse(JSON.stringify(DEFAULT_LENS_TUNES));
+ for(const [model,counts] of Object.entries(state.lensOverrides||{})){
+  for(const [n,cameras] of Object.entries(counts||{})){
+   for(const [i,params] of Object.entries(cameras||{})){
+    Object.assign(((merged[model]??={})[n]??={})[i]??={},params);
+   }
+  }
+ }
+ return {format:'compound-eye-lens-layout',version:35,defaults:merged,overrides:{}};
+}
 function downloadLensEditor(){
- const data={format:'compound-eye-lens-layout',version:34,defaults:DEFAULT_LENS_TUNES,overrides:state.lensOverrides};
+ const data=publicLayoutExportData();
  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
- const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='compound-eye-public-lens-layout-v34.json';a.click();
+ const u=URL.createObjectURL(blob),a=document.createElement('a');a.href=u;a.download='public-lens-defaults.json';a.click();
  setTimeout(()=>URL.revokeObjectURL(u),1200);
  toast('GitHub登録用の設定JSONを出力しました');
 }
@@ -1508,13 +1535,22 @@ $('lensEditorResetOne').onclick=()=>{
 };
 $('lensEditorSave').onclick=saveLensEditor;
 $('lensEditorExport').onclick=downloadLensEditor;
+$('lensEditorCopy').onclick=async()=>{
+ try{await navigator.clipboard.writeText(JSON.stringify(publicLayoutExportData(),null,2));toast('公開初期値JSONをコピーしました。GitHubの公開ファイルに貼り付けて保存してください');}
+ catch(e){toast('コピーできません。JSONの書き出しをご利用ください');}
+};
 $('lensEditorImport').onclick=()=>$('lensEditorFile').click();
 $('lensEditorFile').onchange=async e=>{
  const file=e.target.files?.[0];if(!file)return;
  try{
   const parsed=JSON.parse(await file.text());
   if(parsed.format!=='compound-eye-lens-layout'||typeof parsed.overrides!=='object')throw Error('format');
-  state.lensOverrides=parsed.overrides;renderLensEditor();saveLensEditor();toast('個眼レイアウト設定を読み込みました');
+  const merged=JSON.parse(JSON.stringify(parsed.defaults||{}));
+  for(const [model,counts] of Object.entries(parsed.overrides||{}))
+   for(const [n,cameras] of Object.entries(counts||{}))
+    for(const [i,params] of Object.entries(cameras||{}))
+     Object.assign(((merged[model]??={})[n]??={})[i]??={},params);
+  state.lensOverrides=merged;renderLensEditor();saveLensEditor();toast('個眼レイアウト設定を読み込みました');
  }catch(err){toast('レイアウトJSONが読み込めません');}
  e.target.value='';
 };
@@ -1558,10 +1594,10 @@ async function warmOtherAssets(){
 async function startApplication(){
  try{
   showStatus('3Dモデルを読み込み中…');
-  await unpackAssets();
+  await loadPublishedLensDefaults();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();applyDefaultSettings();
-  renderUI();showStatus('v34：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
-  window.__compoundTest={version:"34",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  renderUI();showStatus('v35：左右個眼表示配置修正・AEGISパンチIK・運動量／面積制御');
+  window.__compoundTest={version:"35",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
