@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v22: 3D関節座標を基準に局所カメラと個眼位置を追従、半透明の全身基準像と関節観察映像を分離。3〜6個眼・扇形・個眼比較。"><title>人工複眼 VR v26.2｜透明グリッド・左右カメラ整合</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v22: 3D関節座標を基準に局所カメラと個眼位置を追従、半透明の全身基準像と関節観察映像を分離。3〜6個眼・扇形・個眼比較。"><title>人工複眼 VR v27.0｜視点保護＋透明グリッド</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -99,7 +99,7 @@ body.vr #vrTapHint.on{display:block}
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
 <header><div><h1>人工複眼 VR v26.2｜透明グリッド・左右カメラ整合</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
 <div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
-<div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
+<div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="視点のリセット" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
 <footer>X BotにBoxer 9動作、Swordの6動作を共通骨格で収録。AEGIS SILVER、AEGIS METALLIC BLUEも保持。対象外は初期状態で完全透過。VRの位置追跡・ゴーグル固有のレンズ歪み補正は未実装です。姿勢操作にはHTTPSのSafariとセンサー許可が必要です。</footer></div>
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
@@ -126,8 +126,8 @@ body.vr #vrTapHint.on{display:block}
 <div class="group"><span class="label">左右腕の付け根を肩位置、脚の付け根を股関節位置にそろえます。倍率と距離は次回用に保存できます。</span></div>
 <div class="group"><button id="gameIdle">静止</button><button id="gameWalk">歩く</button><button id="gameRun">走る</button><button id="gamePunch">パンチ</button><button id="gameReset">位置リセット</button></div>
 <div id="gamepadStatus" class="sublabel" role="status" style="word-break:break-word;font-variant-numeric:tabular-nums">ゲームパッド未接続：GameSirのBluetooth接続後、ボタンを押して認識を確認してください。</div>
-<div class="sublabel">🎮 GameSir（標準Gamepad API）：左スティック移動／右スティック視点、A=静止・B=歩く・X=走る・Y=パンチ、RB=前後切替、START=正面合わせ。WASD・矢印キーにも対応します。3D操作モードで有効です。</div>
-<div class="sublabel" style="color:#ffd3a0">iPhoneではアプリ内の埋め込みブラウザでGameSirが検出されないことがあります。GameSir操作はSafariアプリで直接このGitHub PagesのURLを開いて確認してください。</div>
+<div class="sublabel">🎮 GameSir（標準Gamepad API）：左スティック移動／右スティック視点（非標準モードは安全のため視点操作を無効化）、A=静止・B=歩く・X=走る・Y=パンチ、RB=前後切替、START=正面合わせ。WASD・矢印キーにも対応します。3D操作モードで有効です。</div>
+<div class="sublabel" style="color:#ffd3a0">表示がv25のままなら古いページです。最新版はv27.0。iPhoneではアプリ内の埋め込みブラウザでGameSirが検出されないことがあります。GameSir操作はSafariアプリで直接このGitHub PagesのURLを開いて確認してください。</div>
 <div class="group"><label class="label"><input type="file" id="localGlb" accept=".glb,model/gltf-binary" style="max-width:190px"> 追加モデルGLBの読み込み</label></div>
 <div class="slider"><span class="label">動作再生速度</span><input id="motionSpeed" type="range" min=".25" max="1.5" step=".05" value=".65"><span id="speedLabel">0.65×</span></div>
 <div class="slider"><span class="label">動作フレーム</span><input id="motionScrub" type="range" min="0" max="1.64" step=".01" value="0"><span id="motionTime">0.00s</span></div>
@@ -509,6 +509,8 @@ function camera(spec,aspect,eye){
  }
  const pt=[center[0]+Math.sin(yaw)*Math.cos(pitch)*distance,
  center[1]+Math.sin(pitch)*distance,center[2]+Math.cos(yaw)*Math.cos(pitch)*distance];
+ // Never let a game-mode orbit camera go underground.
+ if(state.gameMode)pt[1]=Math.max(pt[1],.38);
  if(state.vr){const dir=norm(sub(center,pt)),right=norm(cross(dir,[0,1,0]));const offset=(eye===0?-1:1)*.032;
   for(let k=0;k<3;k++)pt[k]+=right[k]*offset;
  }
@@ -582,7 +584,7 @@ function renderFacet(idx,eye,pv,world){
 }
 function compose(eye,w,h,globalPV,modelFit){let half=state.vr?Math.floor(w/2):w, x=eye*half,tw=state.vr?(eye===1?w-half:half):w;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(x,0,tw,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(x,0,tw,h);gl.disable(gl.DEPTH_TEST);gl.useProgram(compProg);gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(compProg.aP);gl.vertexAttribPointer(compProg.aP,2,gl.FLOAT,false,0,0);
 for(let i=0;i<7;i++){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,offscreen[eye*(activeCameras().length+1)+Math.min(i,activeCameras().length)].tex);gl.uniform1i(compProg.tex[i],i);}
-const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:state.vizMode==='sector'?2:0);gl.uniform1f(compProg.uAnchorAlpha,state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
+const dynamic=anchoredLenses(eye,globalPV,modelFit);gl.uniform4fv(compProg.uLensRect,dynamic.rects);gl.uniform2fv(compProg.uLensUV,dynamic.sampling);gl.uniform2fv(compProg.uLensOffset,dynamic.offsets);gl.uniform1i(compProg.uN,state.eyeCount);gl.uniform1i(compProg.uMode,state.vizMode==='inspect'?1:state.vizMode==='sector'?2:0);gl.uniform1f(compProg.uAnchorAlpha,state.gameMode?Math.max(state.anchorAlpha,.80):state.anchorAlpha);gl.uniform1f(compProg.uLensScale,state.lensScale);gl.uniform1f(compProg.uLensPull,state.lensPull);gl.uniform1f(compProg.uVRFit,state.vr?1.10:1.0);gl.uniform1f(compProg.uFish,state.fish?1:0);gl.uniform1f(compProg.uFeather,state.feather);gl.uniform1f(compProg.uBlend,state.blend);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);gl.disable(gl.SCISSOR_TEST);}
 function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1);}let {w,h}=resize(),eyeW=state.vr?w/2:w;const cap=state.vr?540:700;const rw=Math.max(120,Math.min(cap,Math.floor(eyeW*.82))),rh=Math.max(120,Math.min(cap,Math.floor(h*.82)));const nTargets=(activeCameras().length+1)*(state.vr?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
 // Yaw is tracked relative to user-selected calibration, while eye-specific camera angles stay independent.
 const smoothing=state.vr?.38:.28;const sensed=sensorLive();
@@ -959,14 +961,14 @@ function setGameAction(a){
 function toggle3DSpace(force){const active=typeof force==='boolean'?force:!state.gameMode;
  if(active&&state.model!=='xbot'&&state.model!=='sword')changeModel('xbot');
  state.gameMode=active;
- if(active){state.actorPos=[0,0];state.actorYaw=0;state.gameAction='idle';setGameAction('idle');}
+ if(active){state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.dragYaw=0;state.dragPitch=0;state.viewYaw=0;state.viewPitch=0;state.lastGameUpdate=performance.now();state.gameAction='idle';setGameAction('idle');}
  else{state.actorPos=[0,0];state.center=[0,.88,0];}
  renderUI();toast(active?'3D空間操作：GameSir・WASD・画面ボタンに対応':'3D空間操作を終了');
 }
 function flipFacing(){state.facingBack=!state.facingBack;renderUI();toast(state.facingBack?'背面向き':'正面向き');}
 let gpPrev={},keyState={},lastPadStatusAt=0,lastPadConnected=false;
 function isPressed(p,n){return !!p?.buttons?.[n]?.pressed || (p?.buttons?.[n]?.value||0)>.65;}
-function deadAxis(v){const a=Math.abs(Number(v)||0),dead=.12;return a<=dead?0:Math.sign(v)*(a-dead)/(1-dead);}
+function deadAxis(v,dead=.18){const a=Math.abs(Number(v)||0);return a<=dead?0:Math.sign(v)*(a-dead)/(1-dead);}
 function chooseGamepad(){
  try{const pp=Array.from(navigator.getGamepads?.()||[]).filter(p=>p?.connected);
    if(!pp.length)return null;
@@ -1000,8 +1002,11 @@ function updateGameControl(now){
   // D-pad supported if this GameSir exposes digital rather than analog direction.
   ax+=(isPressed(pad,15)?1:0)-(isPressed(pad,14)?1:0);
   az+=(isPressed(pad,13)?1:0)-(isPressed(pad,12)?1:0);
-  state.gameLookYaw+=deadAxis(analog[2])*dt*1.85;
-  state.gameLookPitch=clamp(state.gameLookPitch+deadAxis(analog[3])*dt*1.35,-1.10,1.10);
+  // GameSir nonstandard modes may report resting triggers at -1 in axes 2/3.
+  if(pad.mapping==='standard' && analog.length>=4){
+    state.gameLookYaw+=deadAxis(analog[2],.24)*dt*1.20;
+    state.gameLookPitch=clamp(state.gameLookPitch+deadAxis(analog[3],.24)*dt*.80,-.30,.66);
+  }
   for(const [b,a] of [[0,'idle'],[1,'walk'],[2,'run'],[3,'punch']]){
     const down=isPressed(pad,b);if(down&&!gpPrev[b])setGameAction(a);gpPrev[b]=down;
   }
@@ -1020,6 +1025,7 @@ function updateGameControl(now){
   const speed=(running?2.5:1.25)*state.gameMoveSpeed;
   state.actorPos[0]+=(forward[0]*(-az)+right[0]*ax)*scale*speed*dt;
   state.actorPos[1]+=(forward[1]*(-az)+right[1]*ax)*scale*speed*dt;
+  state.actorPos[0]=clamp(state.actorPos[0],-8,8);state.actorPos[1]=clamp(state.actorPos[1],-8,8);
   if(state.gameAction==='idle')setGameAction(running?'run':'walk');
  }
  if(state.gameAction==='punch'&&now>state.gamePunchUntil)setGameAction('idle');
@@ -1033,7 +1039,13 @@ $('toggle3D').onclick=()=>toggle3DSpace();
 $('startVRGame').onclick=async()=>{toggle3DSpace(true);await beginVR();};
 $('saveDefaults').onclick=saveCurrentDefaults;$('resetDefaults').onclick=resetDefaultSettings;
 for(const [btn,action] of [['gameIdle','idle'],['gameWalk','walk'],['gameRun','run'],['gamePunch','punch']])$(btn).onclick=()=>setGameAction(action);
-$('gameReset').onclick=()=>{state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;recenter();};
+function resetGameView(){
+ state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;
+ state.zoom=1;state.center=[0,.88,0];state.gameInput={forward:false,back:false,left:false,right:false};
+ state.gameAction='idle';setGameAction('idle');recenter();toast('全身表示をリセットしました');
+}
+$('gameReset').onclick=resetGameView;
+$('gameHome').onclick=resetGameView;
 for(const [id,key] of [['armImageZoom','armImageZoom'],['legImageZoom','legImageZoom'],['coreImageZoom','coreImageZoom']]){
  $(id).oninput=e=>{state[key]=Number(e.target.value);$(id+'Label').textContent=state[key].toFixed(2)+'×';};
 }
@@ -1109,8 +1121,8 @@ async function startApplication(){
   showStatus('3Dモデルを読み込み中…');
   await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;applyDefaultSettings();
-  renderUI();showStatus('v26.2：透明グリッド・左右カメラ整合・GameSir診断');
-  window.__compoundTest={version:"26.2",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  renderUI();showStatus('v27.0：視点保護・透明グリッド・GameSir診断');
+  window.__compoundTest={version:"27.0",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
