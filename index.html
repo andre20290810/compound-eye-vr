@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v22: 3D関節座標を基準に局所カメラと個眼位置を追従、半透明の全身基準像と関節観察映像を分離。3〜6個眼・扇形・個眼比較。"><title>人工複眼 VR v26.1｜透明グリッド・GameSir対応</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v22: 3D関節座標を基準に局所カメラと個眼位置を追従、半透明の全身基準像と関節観察映像を分離。3〜6個眼・扇形・個眼比較。"><title>人工複眼 VR v26.2｜透明グリッド・左右カメラ整合</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -97,7 +97,7 @@ body.vr #gamepadStatus{display:none}
 body.vr #vrTapHint.on{display:block}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼 VR v26.1｜透明グリッド＋3D移動</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
+<header><div><h1>人工複眼 VR v26.2｜透明グリッド・左右カメラ整合</h1><p>全身基準像を残し、3D関節に追従する局所カメラを配置。楕円・扇形・個眼比較を切替。VRメニュー表示中はジャイロ操作を一時停止。GameSirなどの標準ゲームパッド、キーボード、画面操作で3D空間を移動できます。</p></div>
 <div class="group" style="margin:0"><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">🥽 VR開始</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">🎮 VRゲーム開始</button></div></header>
 <div class="main"><div><div id="screen"><canvas id="gl"></canvas><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
 <footer>X BotにBoxer 9動作、Swordの6動作を共通骨格で収録。AEGIS SILVER、AEGIS METALLIC BLUEも保持。対象外は初期状態で完全透過。VRの位置追跡・ゴーグル固有のレンズ歪み補正は未実装です。姿勢操作にはHTTPSのSafariとセンサー許可が必要です。</footer></div>
@@ -127,6 +127,7 @@ body.vr #vrTapHint.on{display:block}
 <div class="group"><button id="gameIdle">静止</button><button id="gameWalk">歩く</button><button id="gameRun">走る</button><button id="gamePunch">パンチ</button><button id="gameReset">位置リセット</button></div>
 <div id="gamepadStatus" class="sublabel" role="status" style="word-break:break-word;font-variant-numeric:tabular-nums">ゲームパッド未接続：GameSirのBluetooth接続後、ボタンを押して認識を確認してください。</div>
 <div class="sublabel">🎮 GameSir（標準Gamepad API）：左スティック移動／右スティック視点、A=静止・B=歩く・X=走る・Y=パンチ、RB=前後切替、START=正面合わせ。WASD・矢印キーにも対応します。3D操作モードで有効です。</div>
+<div class="sublabel" style="color:#ffd3a0">iPhoneではアプリ内の埋め込みブラウザでGameSirが検出されないことがあります。GameSir操作はSafariアプリで直接このGitHub PagesのURLを開いて確認してください。</div>
 <div class="group"><label class="label"><input type="file" id="localGlb" accept=".glb,model/gltf-binary" style="max-width:190px"> 追加モデルGLBの読み込み</label></div>
 <div class="slider"><span class="label">動作再生速度</span><input id="motionSpeed" type="range" min=".25" max="1.5" step=".05" value=".65"><span id="speedLabel">0.65×</span></div>
 <div class="slider"><span class="label">動作フレーム</span><input id="motionScrub" type="range" min="0" max="1.64" step=".01" value="0"><span id="motionTime">0.00s</span></div>
@@ -483,7 +484,8 @@ function anchoredLenses(eye,globalPV,modelFit){
   rects.set([center[0],center[1],radiusX,radiusY],i*4);
   const sample=(k==='core'?1.27:k==='leg'?1.43:k==='arm'?1.40:1.34)/lensZoom(i);
   sampling.set([sample,sample],i*2);
-  const localPV=camera(spec,viewAspect,eye);
+  // Use the same effective camera transform for rendering and anatomical alignment.
+  const localPV=camera(effectiveSpec(spec),viewAspect,eye);
   const local=joint?projectionUV(localPV,joint):null;
   if(local){
     offsets.set([local[0]-.5-(desired[0]-center[0])*sample,
@@ -983,7 +985,7 @@ function updateGameControl(now){
       const pushed=pad.buttons.map((b,i)=>b.pressed||b.value>.55?i:'').filter(x=>x!=='').join(',')||'なし';
       el.textContent='🎮 検出: '+pad.id+'｜方式 '+(pad.mapping||'非標準')+'｜軸 '+axes+'｜押下 '+pushed;
     }else el.textContent=typeof navigator.getGamepads==='function'?
-      '未検出：iPhoneのSafariで開き、GameSirをiOS対応モードでBluetooth接続後、Aボタンを押してください。':
+      '未検出：ChatGPT内の簡易ブラウザではゲームパッド入力が届かない場合があります。右上メニューからSafariで直接このURLを開き、GameSirをiOS対応モードで接続してボタンを押してください。':
       'このブラウザではGamepad API非対応です。外部SafariでURLを開くか画面操作をご利用ください。';
   }
  }
@@ -1107,8 +1109,8 @@ async function startApplication(){
   showStatus('3Dモデルを読み込み中…');
   await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;applyDefaultSettings();
-  renderUI();showStatus('v26：グリッド線・GameSir診断・個眼位置補正');
-  window.__compoundTest={version:"26",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  renderUI();showStatus('v26.2：透明グリッド・左右カメラ整合・GameSir診断');
+  window.__compoundTest={version:"26.2",state,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
