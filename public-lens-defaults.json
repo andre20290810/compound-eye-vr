@@ -1,6 +1,6 @@
 {
   "format": "compound-eye-lens-layout",
-  "version": 51,
+  "version": 52,
   "defaults": {
     "aegisCeramic": {
       "4": {
@@ -290,5 +290,16 @@
       "distance": 0.0,
       "scale": 1.0
     }
+  },
+  "markerVisualizationDefaults": {
+    "metric": "score",
+    "thresholds": {
+      "score": 30,
+      "linear": 0.12,
+      "angular": 0.7
+    },
+    "yellow": "value >= visible marker mean when mean is positive",
+    "red": "value below visible marker mean",
+    "selection": "multi-facet selection independent from numbered labels"
   }
 }

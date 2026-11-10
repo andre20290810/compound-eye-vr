@@ -799,7 +799,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v51',
+  app_version:'v52',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -826,7 +826,10 @@ function v47ExportJSON(){
   viewer:{
    eye_count:state.eyeCount,radial_distance:state.radialDistance,
    common_scale:state.radialScale,four_eye_horizontal_gap:state.fourEyeGap,
-   opacity:state.anchorAlpha,mode:state.vizMode,stereo:isStereoVR()
+   opacity:state.anchorAlpha,mode:state.vizMode,stereo:isStereoVR(),
+   selected_lens_indices:v52SelectedIndices(),marker_metric:state.markerMetric,
+   marker_unit:v52MetricInfo().unit,thresholds_by_metric:{...state.markerThresholds},
+   current_marker_average:state.markerVisibleAverage??null
   },
   source_kinematics:dataset.map(d=>({
    avatar_id:d.avatar,motion_id:d.motion,source_type:d.sourceType,
@@ -937,12 +940,13 @@ function v47DrawMarkers(projections){
  for(const item of items){
   const bone=modelData.world[item.id];if(!bone)continue;
   const point=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
-  const lensIndices=facetMode?(state.selectedLensOnly>=0?[state.selectedLensOnly]:
+  const selectedFacets=v52SelectedIndices();
+  const lensIndices=facetMode?(selectedFacets.length?selectedFacets:
     [...Array(activeCameras().length).keys()]):[-1];
   for(let eye=0;eye<projections.length;eye++)for(const lens of lensIndices){
-   if(lens>=0&&(!lensMarkerEnabled(lens)||!v51MaskOwner(lens,item.id)))continue;
-   if(lens<0&&state.selectedLensOnly>=0&&
-    (!lensMarkerEnabled(state.selectedLensOnly)||!v51MaskOwner(state.selectedLensOnly,item.id)))continue;
+   if(lens>=0&&(!v52FacetVisible(lens)||!lensMarkerEnabled(lens)||!v51MaskOwner(lens,item.id)))continue;
+   if(lens<0&&selectedFacets.length&&
+    !selectedFacets.some(i=>lensMarkerEnabled(i)&&v51MaskOwner(i,item.id)))continue;
    const mapped=lens>=0?
     projectV51LensMarker(projections,eye,lens,point):projectionUV(projections[eye],point);
    if(!mapped)continue;
