@@ -1,7 +1,7 @@
 {
-  "app_version": "v42",
-  "source_commit": "4139a5c1de06c0ab955309cf702c185156040ec5",
+  "app_version": "v43",
+  "source_commit": "362bfccc0320d4cb195d354e7e1377e3d10c4966",
   "source_branch": "main",
   "data_schema": "compound-eye-experiment-v1",
-  "note": "The source_commit points to the v42 application, calibration editor and documentation; this manifest may have a later commit."
+  "note": "source_commit identifies v43 application code and motion graph documentation; the manifest is committed separately."
 }
