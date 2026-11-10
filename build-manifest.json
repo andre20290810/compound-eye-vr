@@ -1,7 +1,7 @@
 {
-  "app_version": "v49",
-  "source_commit": "4bf84f596d7f8cb2868dc4700e355989ba45f49c",
+  "app_version": "v50",
+  "source_commit": "7a9bde64fddd6043207c8bea9ae9c543d7de29f9",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "source_commit identifies the v49 avatar motion, eye interaction, markers and zoom implementation; this manifest is committed separately."
+  "note": "source_commit identifies v50 eye-count preset, marker clipping and cross-browser renderer source; this manifest is committed separately."
 }
