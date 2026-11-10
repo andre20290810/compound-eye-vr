@@ -1,7 +1,8 @@
 {
-  "app_version": "v52",
-  "source_commit": "349d0d2e4a23d2e27bb20ce70eea0feb2c249e55",
+  "app_version": "v53",
+  "source_commit": "2f42d8f9065063a87d72dabb2cc9b548df980991",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "source_commit identifies v52 motion selection, AEGIS fist twist, multi-facet markers and 3-metric mean-color visualization. This manifest commit may be later."
+  "note": "source_commit is the v53 implementation with unified joint CSV, AEGIS retarget and punch centerline, VR 1-6 auto-cycle, mirrored quick controls and visible-number toggle; manifest committed separately.",
+  "unified_csv_schema": "compound-eye-single-motion-v1"
 }
