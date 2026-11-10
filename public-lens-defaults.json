@@ -249,5 +249,11 @@
   "uiDefaults": {
     "anchorAlpha": 0.2,
     "showLensLabels": true
+  },
+  "radialLayout": {
+    "mode": true,
+    "distance": 0.15,
+    "scale": 1.0,
+    "units": "normalized UV; scale is shared optical magnification factor"
   }
 }

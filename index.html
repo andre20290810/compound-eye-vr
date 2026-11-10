@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼VR v43｜単眼・双眼切替と動作グラフ</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼VR v44｜等倍放射レイアウト・回し蹴り・運動解析</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -191,7 +191,7 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
 @media(max-width:750px){#experimentCharts{grid-template-columns:1fr}#experimentKpis{gap:5px}#experimentKpis .metric{padding:7px}#experimentKpis .metric strong{font-size:15px}}
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="vrToggleStereo" type="button" aria-label="双眼と単眼を切り替える">双眼 → 単眼</button><button id="vrOpenMenu" type="button" aria-label="VRメニューを開く">メニュー（LB）</button><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼VR v43｜単眼・双眼切替と動作グラフ</h1></div>
+<header><div><h1>人工複眼VR v44｜等倍放射レイアウト・回し蹴り・運動解析</h1></div>
 <div class="group" style="margin:0"><label id="avatarHeader" style="font-size:12px;display:flex;align-items:center;gap:5px">アバター <select id="avatarHeaderSelect" style="min-width:135px;max-width:185px;padding:8px"><option value="xbot">X Bot</option><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">3D閲覧</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">VRゲーム</button><button id="openCompactLayout" type="button">調整画面</button></div></header>
 <div class="main"><div><div id="compactLayoutToolbar" role="toolbar" aria-label="画面とカメラの簡易校正">
  <strong style="font-size:13px">配置調整</strong>
@@ -210,7 +210,11 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
  <span style="display:flex;justify-content:space-between"><span>左右共通の中央寄せ（LT／RT）</span><output id="clInwardValue">0.000</output></span>
  <input id="clInward" type="range" min="0" max=".34" step=".002" value="0" style="width:100%" />
  </label>
- <div id="clFields" class="clGrid"></div>
+ <div id="clGlobal" class="clField" style="background:#173a4e;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:8px">
+  <label style="font-size:11px;display:flex;gap:8px;align-items:center">放射距離 <input id="clRadialDistance" type="range" min="0" max=".34" step=".005" value=".15" style="flex:1"><output id="clRadialDistanceLabel">0.150</output></label>
+  <label style="font-size:11px;display:flex;gap:8px;align-items:center">共通倍率 <input id="clRadialScale" type="range" min=".6" max="2.25" step=".05" value="1" style="flex:1"><output id="clRadialScaleLabel">1.00×</output></label>
+  <div id="clRadialHint" style="font-size:11px;color:#a9cfdb">放射モードでは全パーツ共通の2つだけを調整します。各個眼の細かな手動配置は旧配置モードで操作できます。</div>
+</div><div id="clFields" class="clGrid"></div>
  <details id="clAdvanced"><summary>画角・カメラ距離・映像内位置</summary><div id="clAdvancedFields" class="clGrid" style="padding-top:8px"></div></details>
  <div class="clActions">
   <button id="clResetLens" type="button">この個眼を初期化</button>
@@ -235,9 +239,19 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
 </section>
 
 <details id="lensEditorDisclosure" class="panel" style="margin-top:10px;padding:9px"><summary style="font-weight:650;cursor:pointer;touch-action:manipulation;padding:7px">個眼レイアウト調整を開く（誤操作防止）</summary><section id="lensEditor" aria-label="個眼レイアウト調整"><h2>個眼レイアウト調整（モデル別・視点数別）</h2>
+<div class="group" style="padding:10px;background:#173f52;border-radius:10px;margin:8px 0">
+  <label style="display:flex;gap:7px;align-items:center"><input type="checkbox" id="radialMode" checked> 基準モデルと等倍で放射状に配置する</label>
+  <label style="display:flex;align-items:center;gap:8px;margin:12px 0 6px">放射状に広げる距離
+    <input id="radialDistance" type="range" min="0" max=".34" step=".005" value=".15" style="flex:1;min-width:100px">
+    <output id="radialDistanceValue">0.150</output></label>
+  <label style="display:flex;align-items:center;gap:8px">全パーツ共通倍率
+    <input id="radialScale" type="range" min=".60" max="2.25" step=".05" value="1" style="flex:1;min-width:100px">
+    <output id="radialScaleValue">1.00×</output></label>
+  <div class="sublabel" style="margin-top:7px">距離0＝元の身体位置に等倍で重ねる。倍率1.00×＝基準モデルと同じ投影倍率。個眼の高さは元の骨格に追従します。</div>
+</div>
 <div class="editorInfo">中央の3D表示を見ながら調整できます。部位の位置、楕円の幅・高さ、カメラの引き（脚全体を表示）、画角を個別に編集します。</div>
 <div class="editorRow"><label for="lensEditorEye">調整するカメラ</label><select id="lensEditorEye"></select></div>
-<div class="editorGrid" id="lensEditorFields"></div>
+<div class="editorGrid" id="lensEditorFields"></div><label class="editorHint" style="display:flex;align-items:center;gap:8px;padding:9px 0"><input id="enableEllipseControls" type="checkbox"> 楕円の横幅・高さを個別に調整する（不要ならOFFで非表示）</label>
 <div class="editorRow"><button type="button" id="lensEditorResetOne">この部位をリセット</button><button type="button" id="lensEditorSave">このブラウザに保存</button><button type="button" id="lensEditorExport">公開初期値JSONを書き出す</button><button type="button" id="lensEditorCopy">公開初期値JSONをコピー</button><a style="color:#9ce7f2;font-size:12px" href="https://github.com/andre20290810/compound-eye-vr/edit/main/public-lens-defaults.json" target="_blank" rel="noopener noreferrer">GitHubで公開値を編集</a><button type="button" id="lensEditorImport">設定JSONを読み込む</button><input type="file" id="lensEditorFile" accept=".json,application/json" hidden></div>
 <p class="editorHint">ブラウザへの保存はこの端末のみです。公開初期値を更新するには、書き出した public-lens-defaults.json をGitHubリポジトリ直下の同名ファイルと置き換えてください。モデル・視点数ごとに設定を保持します。</p></section></details>
 <details id="experimentPanel" class="panel" style="margin-top:10px;padding:11px">
@@ -247,12 +261,12 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
 <div id="experimentAnalysisToolbar">
  <button id="experimentAnalyze" type="button">動作を解析・グラフ生成</button>
  <label style="font-size:12px">指標 <select id="experimentGraphMetric">
-  <option value="score">運動スコア（0–100）</option>
+
   <option value="linear">関節移動速度（モデル単位/秒）</option>
   <option value="angular">関節角速度（度/秒）</option>
  </select></label>
  <label style="font-size:12px">関節 <select id="experimentGraphJoint">
- <option value="top3">運動量の大きい3関節</option></select></label>
+ <option value="top3">移動速度の大きい3関節</option></select></label>
  <button id="experimentAnalysisCsv" type="button" disabled>グラフ数値をCSV保存</button>
 </div>
 <div id="experimentKpis">
@@ -262,7 +276,7 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
 </div>
 <div id="experimentCharts">
  <section><h3 id="experimentMotionTitle">関節運動の時系列</h3><div id="experimentMotionChart" role="img" aria-label="選択された動作の関節指標グラフ"></div></section>
- <section><h3>関節別の最大運動スコア（上位6）</h3><div id="experimentEyeChart" role="img" aria-label="関節別最大運動スコア上位6"></div></section>
+ <section><h3>身体部位ごとの最大移動速度の時刻（動作の順序）</h3><div id="experimentEyeChart" role="img" aria-label="関節別最大運動スコア上位6"></div></section>
 </div>
 <div id="experimentAnalysisNarrative" aria-live="polite"><p>「動作を解析・グラフ生成」で、選択したアニメーションから計算した動きの特徴を示します。</p></div>
 <details id="experimentRawDetails"><summary>詳細ログ・表示条件比較・従来のCSV／JSON保存を開く</summary>
@@ -294,6 +308,18 @@ body.vr #hmdStereoToggle,body.compact-layout #hmdStereoToggle{display:none}
 </details><footer hidden style="display:none">アバター：X Bot / Boxer（9動作）、AEGIS NAVY。複眼の自動調整は個眼の表示領域の面積のみ変更し、光学画角やカメラ映像倍率は変更しません。VR閲覧はジャイロ操作を使用しません。画面スリープ防止は対応端末のWake Lock機能を使用します。VRではLT/RTで左右の個眼を中央へ寄せ、Y長押しでアバター別保存、X長押しで2～6眼を10秒おきに切り替えます。</footer></div>
 <div class="panel"><h2>見たいもの・複眼数</h2>
 <div class="group"><span class="label">個眼数</span><div class="eyes"><button data-count="2">2</button><button data-count="3" class="active">3</button><button data-count="4">4</button><button data-count="5">5</button><button data-count="6">6</button></div></div>
+<div id="radialQuickBar" class="group" style="background:#193e52;border:1px solid #477d8b;border-radius:10px;padding:9px;display:flex;flex-direction:column;gap:8px">
+ <strong style="font-size:12px">等倍の身体部位を放射状に配置</strong>
+ <label style="display:flex;gap:8px;align-items:center;font-size:12px">広がり距離
+  <input type="range" id="radialQuickDistance" min="0" max=".34" step=".005" value=".15" style="flex:1;min-width:100px">
+  <output id="radialQuickDistanceLabel">0.150</output>
+ </label>
+ <label style="display:flex;gap:8px;align-items:center;font-size:12px">全パーツ共通倍率
+  <input type="range" id="radialQuickScale" min=".60" max="2.25" step=".05" value="1" style="flex:1;min-width:100px">
+  <output id="radialQuickScaleLabel">1.00×</output>
+ </label>
+ <span style="font-size:11px;color:#a9d0d9">0＝元の身体位置に重なる／1.00×＝中央モデルと等倍</span>
+</div>
 <div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRではGameSirのLBでメニューを開き、十字キー・スティックで選択、Aで決定、BでVRゲームに戻れます。</span></div>
 <div class="group"><span class="label">アバター</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option><option value="aegisSoldier">AEGIS SOLDIER（黄〜赤・発光チューブ）</option></select></div>
 <div class="group"><span class="label">動作</span><select id="motion"><option value="xbot_punch">元FBX・パンチ</option></select></div>
@@ -385,9 +411,9 @@ function currentScreenAngle(){
 }
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
-const state={model:'xbot',eyeCount:2,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.20,lensScale:1.10,lensPull:1.10,showLabels:true,showMotionMarkers:true};
-const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
-const MOTION_NAMES={xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）',armor_walk:'自然歩行（X Bot動作ベース）',armor_run:'自然走行（X Bot動作ベース）'};
+const state={radialMode:true,radialDistance:.15,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:2,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:.20,lensScale:1.10,lensPull:1.10,showLabels:true,showMotionMarkers:true};
+const MODEL_NAMES={xbot:'X Bot / Boxer・10動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
+const MOTION_NAMES={xbot_roundhouse:'Roundhouse Kick｜回し蹴り（提供FBX）',armor_roundhouse:'Roundhouse Kick｜回し蹴り（AEGIS用変換）',xbot_punch:'X Bot｜元FBXパンチ（52フレーム）',xbot_idle:'Boxer｜待機',xbot_fight_idle:'Boxer｜ファイト構え・弾む',xbot_hook:'Boxer｜フック',xbot_punch1:'Boxer｜パンチ①',xbot_punch2:'Boxer｜パンチ②',xbot_walk:'Boxer｜歩行①',xbot_walk2:'Boxer｜歩行②',xbot_run:'Boxer｜走行',idle:'静止',micro:'呼吸・微動',walk:'自然な歩行（簡易）',guard:'構え',punch:'構え→突き',block:'構え→受け',kick:'構え→前蹴り',spin:'自転／心拍',armor_breathe:'呼吸・微動',armor_raise:'右腕を上げる',armor_reach:'右腕を前に伸ばす',armor_bend:'肘を曲げる',armor_step:'軽い足踏み',armor_guard:'腕を構える',armor_punch:'パンチ（肩・肘の二関節IK）',armor_power_punch:'全身連動パンチ（腰・踏み込み・脚）',armor_walk:'自然歩行（X Bot動作ベース）',armor_run:'自然走行（X Bot動作ベース）'};
 state.lensOverrides={};state.vrLensOverrides={};state.vrLensSaved={};state.layoutPreviewVR=false;state.compactLayout=false;state.lensEditorIndex=0;state.compactLensIndex=0;state.experimentCondition='normal';state.studyBaseline=null;state.experimentRecording=null;state.punchGhost=true;state.viewMode='front';state.stereoMode=true;state.vrGameMode=false;state.vrAlignment={};state.vrSavedAlignment={};state.menuIndex=0;state.punchPlayback=1.7;state.poseAligned=true;state.outsideAlpha=0;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;state.gameMode=false;state.facingBack=false;state.actorPos=[0,0];state.actorYaw=0;state.gameLookYaw=0;state.gameLookPitch=0;state.gameAction='idle';state.gameInput={forward:false,back:false,left:false,right:false};state.padLastButtons=[];state.lastGameUpdate=0;state.gameMoveSpeed=1.4;state.pauseGyroUI=true;state.limbImageZoom=1.0;state.gyroSensitivity=1.6;state.gestureSensitivity=1.2;state.gestureEnabled=true;state.vrFraming=1.0;
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
@@ -562,7 +588,7 @@ let animations=(j.animations||[]).map(a=>({name:a.name||'',channels:a.channels.m
 return{geo,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
 const XBOT_CLIPS={xbot_idle:'Boxer_Idle',xbot_fight_idle:'Boxer_FightIdle',xbot_hook:'Boxer_Hook',xbot_punch1:'Boxer_Punching1',xbot_punch2:'Boxer_Punching2',xbot_walk:'Boxer_Walk',xbot_walk2:'Boxer_Walk2',xbot_run:'Boxer_Run'};
 function xbotClip(motion){return modelData?.animations.find(a=>a.name===XBOT_CLIPS[motion]||(motion==='xbot_punch'&&a.name==='XBot_Punching_Original52'));}
-function motionDuration(){let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
+function motionDuration(){if(/roundhouse/.test(state.motion))return roundhouseClip?.duration_s||2.5;let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
 function quatBetween(from,to){
  const a=norm(from),b=norm(to),d=clamp(a.reduce((t,v,i)=>t+v*b[i],0),-1,1);
  if(d<-.9999){const ax=norm(cross(a,Math.abs(a[0])<.7?[1,0,0]:[0,1,0]));return [ax[0],ax[1],ax[2],0];}
@@ -674,9 +700,72 @@ function aegisRetargetGait(nodes,T,R,motion,t){
    T[ids.Pelvis][2]+=(running?.008:.003)*Math.sin(phase);
  }
 }
+// Animations sampled at 30Hz from the user-provided 2.5 s Roundhouse Kick.fbx.
+// Source was a Mixamo-style skeleton; X Bot and AEGIS have distinct bone axes.
+let roundhouseClip=null;
+async function loadRoundhouseMotion(){
+ try{
+  const response=await fetch('roundhouse-kick.motion.json',{cache:'no-store'});
+  if(!response.ok)throw Error('HTTP '+response.status);
+  const clip=await response.json();
+  if(clip.format!=='compound-eye-motion-skeletal-v1'||clip.sample_count<3||!clip.tracks?.RightUpLeg||!clip.tracks?.LeftUpLeg)
+   throw Error('Invalid motion source');
+  roundhouseClip=clip;
+  console.info('Roundhouse motion loaded',clip.sample_count,'frames',Object.keys(clip.tracks).length,'bone tracks');
+ }catch(err){console.warn('Roundhouse motion unavailable',err);roundhouseClip=null;}
+}
+function roundhouseQuatXYZ(v,axisScale=[1,1,1]){
+ const ax=rad(v[0]*axisScale[0])*.5,ay=rad(v[1]*axisScale[1])*.5,az=rad(v[2]*axisScale[2])*.5;
+ const qx=[Math.sin(ax),0,0,Math.cos(ax)],qy=[0,Math.sin(ay),0,Math.cos(ay)],qz=[0,0,Math.sin(az),Math.cos(az)];
+ return qmul(qmul(qx,qy),qz);
+}
+function motionTrackAt(track,t){
+ if(!track||!roundhouseClip)return [0,0,0];
+ const phase=clamp(t,0,roundhouseClip.duration_s);
+ const u=(phase/roundhouseClip.duration_s)*(track.length-1);
+ const i=Math.floor(u),j=Math.min(track.length-1,i+1),alpha=u-i;
+ return track[i].map((v,k)=>lerp(v,track[j][k],alpha));
+}
+function applyRoundhouseMotion(md,nodes,T,R,motion,t){
+ if(!roundhouseClip)return;
+ const names=new Map(nodes.map((n,i)=>[n.name,i]));
+ const phase=((t%roundhouseClip.duration_s)+roundhouseClip.duration_s)%roundhouseClip.duration_s;
+ const tracks=roundhouseClip.tracks;
+ const sourceToTarget=motion==='xbot_roundhouse'?[
+  ['Hips','Hips',.65,[.65,.70,.65]],['Spine','Spine',.8,[1,1,1]],
+  ['Spine1','Spine1',.8,[1,1,1]],['Spine2','Spine2',.8,[1,1,1]],
+  ['Neck','Neck',.55,[.8,.8,.8]],['Head','Head',.55,[.8,.8,.8]],
+  ['RightShoulder','RightShoulder',.7,[1,1,1]],['LeftShoulder','LeftShoulder',.7,[1,1,1]],
+  ['RightArm','RightArm',.85,[1,1,1]],['RightForeArm','RightForeArm',.8,[1,1,1]],
+  ['RightHand','RightHand',.7,[1,1,1]],['LeftArm','LeftArm',.85,[1,1,1]],
+  ['LeftForeArm','LeftForeArm',.8,[1,1,1]],['LeftHand','LeftHand',.7,[1,1,1]],
+  ['RightUpLeg','RightUpLeg',.9,[1,1,1]],['RightLeg','RightLeg',.9,[1,1,1]],
+  ['RightFoot','RightFoot',.75,[1,1,1]],['RightToeBase','RightToeBase',.65,[1,1,1]],
+  ['LeftUpLeg','LeftUpLeg',.9,[1,1,1]],['LeftLeg','LeftLeg',.9,[1,1,1]],
+  ['LeftFoot','LeftFoot',.75,[1,1,1]],['LeftToeBase','LeftToeBase',.65,[1,1,1]]
+ ]:[
+  ['Hips','Pelvis',.65,[.15,.58,.12]],['Spine2','Chest',.6,[.8,.7,.8]],
+  ['RightArm','R_UpperArm',.7,[.9,.65,.7]],['RightForeArm','R_Forearm',.68,[.75,.6,.75]],
+  ['RightHand','R_Hand',.55,[.6,.5,.6]],
+  ['LeftArm','L_UpperArm',.7,[.9,.65,.7]],['LeftForeArm','L_Forearm',.68,[.75,.6,.75]],
+  ['LeftHand','L_Hand',.55,[.6,.5,.6]],
+  ['RightUpLeg','R_UpperLeg',.95,[1.35,.45,.48]],['RightLeg','R_LowerLeg',.84,[.9,.45,.55]],
+  ['LeftUpLeg','L_UpperLeg',.75,[.45,.35,.35]],['LeftLeg','L_LowerLeg',.70,[.65,.45,.45]]
+ ];
+ for(const [source,target,weight,scales] of sourceToTarget){
+  const i=names.get(target),curve=tracks[source];
+  if(i===undefined||!curve)continue;
+  const angles=motionTrackAt(curve,phase);
+  const bounded=angles.map((a,k)=>clamp(a,-115,115)*scales[k]);
+  const delta=roundhouseQuatXYZ(bounded);
+  R[i]=qmul(R[i],qSlerp([0,0,0,1],delta,weight));
+ }
+ // FBX root translation deliberately excluded: keep the subject in a stable observation space.
+}
+
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
-if(md.animations.length && !['armor_punch','armor_power_punch','armor_walk','armor_run'].includes(motion)){
+if(md.animations.length && !['armor_punch','armor_power_punch','armor_walk','armor_run','xbot_roundhouse','armor_roundhouse'].includes(motion)){
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
@@ -712,6 +801,7 @@ if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model)){
  if(motion==='armor_power_punch')aegisFullBodyPunch(nodes,T,R,t);
  if(motion==='armor_walk'||motion==='armor_run')aegisRetargetGait(nodes,T,R,motion,t);
 }
+if(motion==='xbot_roundhouse'||motion==='armor_roundhouse')applyRoundhouseMotion(md,nodes,T,R,motion,t);
 md.poseRot=R;
 const local=nodes.map((n,i)=>n.matrix?new Float32Array(n.matrix):matTRS(T[i],R[i],S[i]));const world=md.world;
 function calc(i){if(world[i])return world[i];world[i]=nodes[i].parent>=0?mul(calc(nodes[i].parent),local[i]):local[i];return world[i];}
@@ -842,7 +932,53 @@ function lensAnchorNames(i,defaultNames){
  return defaultNames;
 }
 const lensDiagnostics={perEye:[],worldJoints:[]};
+// All parts use the exact same reference projection as the central 2-eye model.
+// At distance=0 and scale=1, the local source pixel maps back to its reference
+// body location on screen, without a second camera's framing drift.
+function radialDirection(i,n){
+ const degrees={
+  2:[180,0],
+  3:[90,210,330],
+  4:[135,225,45,315],
+  5:[90,162,234,18,306],
+  6:[90,150,210,30,330,270]
+ }[n]||[];
+ const angle=(degrees[i]??0)*Math.PI/180;
+ return [Math.cos(angle),Math.sin(angle)];
+}
+function radialAnchoredLenses(eye,globalPV,modelFit){
+ const defs=JOINT_LENS_LAYOUT[state.eyeCount]||[];
+ const rects=new Float32Array(24),sampling=new Float32Array(12),offsets=new Float32Array(12),report=[];
+ const magnification=clamp(state.radialScale,.6,2.25),radius=clamp(state.radialDistance,0,.34);
+ for(let i=0;i<defs.length;i++){
+  const [track,laneX,laneY,rx,ry]=defs[i];
+  const bone=state.model==='xbot'?swapAnatomicalTrack(track):track;
+  const jointName=lensAnchorNames(i,bone),joint=nodeJointWorld(jointName,modelFit);
+  const ref=joint?projectionUV(globalPV,joint):null;
+  const source=ref||[laneX,laneY],dir=radialDirection(i,state.eyeCount);
+  const desired=[source[0]+dir[0]*radius,source[1]+dir[1]*radius];
+  const center=[clamp(desired[0],.015,.985),clamp(desired[1],.015,.985)];
+  const tune=getLensTune(state.model,state.eyeCount,i);
+  // Geometry-only mask sizes; every local mesh is rendered at identical scale.
+  const aspect=state.adjustEllipses?tune.w:1,stretch=state.adjustEllipses?tune.h:1;
+  const rxActual=clamp(rx*magnification*aspect,.06,.80);
+  const ryActual=clamp(ry*magnification*stretch,.07,.80);
+  const selection=state.focusAreas?.[i]||1;
+  rects.set([center[0],center[1],rxActual*Math.sqrt(selection),ryActual*Math.sqrt(selection)],i*4);
+  sampling.set([1/magnification,1/magnification],i*2);
+  // Use the same reference UV for both images, preserving all upward/downward
+  // skeletal movement, including pelvis and waist in six-eye mode.
+  offsets.set([source[0]-.5,source[1]-.5],i*2);
+  report.push({name:jointName,region:lensKind(i),joint3D:joint,anchorUV:source,
+   destUV:desired,centerUV:center,sourceUV:source,
+   offsetUV:Array.from(offsets.slice(i*2,i*2+2)),
+   cameraYaw:0,sample:1/magnification,radial:true});
+ }
+ lensDiagnostics.perEye[eye]=report;
+ return {rects,sampling,offsets};
+}
 function anchoredLenses(eye,globalPV,modelFit){
+ if(state.radialMode)return radialAnchoredLenses(eye,globalPV,modelFit);
  const defs=JOINT_LENS_LAYOUT[state.eyeCount]||[];
  const rects=new Float32Array(24),sampling=new Float32Array(12),offsets=new Float32Array(12),report=[];
  const viewAspect=(isStereoVR()?canvas.width*.5:canvas.width)/Math.max(canvas.height,1);
@@ -1257,12 +1393,12 @@ drawMotionMarkerOverlay(markerPVs);for(let eye=0;eye<(isStereoVR()?2:1);eye++){l
  for(let i=0;i<(state.viewMode==='pov'?0:f.length);i++){
   let spec=f[i];
   if(isVrRender()&&/(下半身|腰〜|足先|下半身)/.test(spec.name))spec={...spec,distance:spec.distance*1.18,fov:Math.max(spec.fov,46)};
-  renderFacet(i+1,eye,camera(spec,aspect,eye),world);
+  renderFacet(i+1,eye,state.radialMode?globalPV:camera(spec,aspect,eye),world);
  }
  compose(eye,w,h,globalPV,world);}
 updateCompactHandles();
 frameCount++;if(frameCount%10===0)updateCameraBadgePositions();if(frameCount%20===0){
- if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot')?(state.motion==='xbot_punch'?1.10:motionDuration()):1.64;$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
+ if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot'||/roundhouse/.test(state.motion))?(state.motion==='xbot_punch'?1.10:motionDuration()):1.64;$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
  const g=$('gyroReadout');const live=sensorLive();const text=live?'受信中（'+state.sensorPackets+'回）':state.gyro?'許可済み・未受信':'許可なし';
  if(g)g.textContent='ジャイロ: '+text+' ｜ Yaw: '+(state.yaw*180/Math.PI).toFixed(1)+'° ｜ Pitch: '+(state.pitch*180/Math.PI).toFixed(1)+'°'+(state.baseline?' ｜ 基準設定済み':' ｜ 基準未設定');
  if($('vrSensorText'))$('vrSensorText').textContent=state.vr?'ジャイロOFF｜LT左寄せ RT右寄せ Y長押し保存 X長押し10秒切替':live?'回転ジャイロ追従中  '+(state.viewYaw*180/Math.PI).toFixed(0)+'° / '+(state.viewPitch*180/Math.PI).toFixed(0)+'°':'ジャイロ未受信：タッチ操作可';if($('gyroRaw')){$('gyroRaw').textContent='α '+((state.rawEuler?.[0]??0).toFixed(1))+'° / β '+((state.rawEuler?.[1]??0).toFixed(1))+'° / γ '+((state.rawEuler?.[2]??0).toFixed(1))+'° / 画面 '+currentScreenAngle()+'° / '+(window.isSecureContext?'HTTPS利用可':'HTTPS必須')+' / '+(window.innerWidth>window.innerHeight?'横向き':'縦向き')+' / 基準α '+((state.baseGyro?.a??0).toFixed(1))+'°';}updateVRNotice(live);
@@ -1360,7 +1496,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_power_punch','armor_walk','armor_run','armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_roundhouse','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook','xbot_fight_idle','xbot_idle','xbot_walk','xbot_walk2','xbot_run','idle'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_roundhouse','armor_power_punch','armor_walk','armor_run','armor_guard','armor_punch','armor_reach','armor_raise','armor_bend','armor_step','armor_breathe','idle','spin'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -1401,6 +1537,16 @@ function renderUI(){
  $('vrFraming').value=state.vrFraming;
  const opa=$('anchorAlpha');if(opa){opa.value=state.anchorAlpha;$('anchorAlphaLabel').textContent=Math.round(state.anchorAlpha*100)+'%';}
  $('showLensLabels').checked=state.showLabels;
+ $('radialMode').checked=state.radialMode;
+ $('radialDistance').value=state.radialDistance;
+ $('radialDistanceValue').textContent=state.radialDistance.toFixed(3);
+ $('radialScale').value=state.radialScale;
+ $('radialScaleValue').textContent=state.radialScale.toFixed(2)+'×';
+ if($('radialQuickDistance'))$('radialQuickDistance').value=state.radialDistance;
+ if($('radialQuickDistanceLabel'))$('radialQuickDistanceLabel').textContent=state.radialDistance.toFixed(3);
+ if($('radialQuickScale'))$('radialQuickScale').value=state.radialScale;
+ if($('radialQuickScaleLabel'))$('radialQuickScaleLabel').textContent=state.radialScale.toFixed(2)+'×';
+ $('enableEllipseControls').checked=state.adjustEllipses;
  renderVrMenu();refreshCameraFields();renderCameraBadges();renderLensEditor();updateVRAlignmentReadout();renderExperimentUI();renderCompactLayoutUI();
 }
 function setEyeCount(n,reason='manual'){
@@ -1409,7 +1555,7 @@ function setEyeCount(n,reason='manual'){
  if(previous!==state.eyeCount)recordExperimentEvent('eye_count_change',{from:previous,to:state.eyeCount,reason});
  renderUI();toast(state.eyeCount+'視点へ切替');
 }
-function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
+function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot'||/roundhouse/.test(m))?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
 function nextModel(){const items=['xbot','aegisEmber','aegisSoldier'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
 function nextMotion(){const items=motionOptions();setMotion(items[(items.indexOf(state.motion)+1)%items.length]);}
 function renderCameraBadges(){const pane=$('cameraBadges');if(!pane)return;pane.innerHTML='';if(!state.showLabels)return;
@@ -2062,6 +2208,22 @@ $('vrAlignReset').onclick=resetCurrentVRAlignment;
 $('vrAlignLegacy').onclick=downloadLegacyVRAlignment;
 $('vrToggleStereo').onclick=toggleStereoMode;
 $('vrOpenMenu').onclick=()=>toggleMenu(true);
+$('radialMode').onchange=e=>{state.radialMode=e.target.checked;saveRadialSettings();renderUI();};
+$('radialDistance').oninput=e=>setRadialDistance(Number(e.target.value));
+$('radialScale').oninput=e=>{setRadialScale(Number(e.target.value));};
+$('radialQuickDistance').oninput=e=>setRadialDistance(Number(e.target.value));
+$('radialQuickScale').oninput=e=>setRadialScale(Number(e.target.value));
+function setRadialDistance(v){
+ state.radialDistance=clamp(Number(v)||0,0,.34);saveRadialSettings();
+ for(const id of ['radialDistance','radialQuickDistance','clRadialDistance'])if($(id))$(id).value=state.radialDistance;
+ for(const id of ['radialDistanceValue','radialQuickDistanceLabel','clRadialDistanceLabel'])if($(id))$(id).textContent=state.radialDistance.toFixed(3);
+}
+function setRadialScale(v){
+ state.radialScale=clamp(Number(v)||1,.6,2.25);saveRadialSettings();
+ for(const id of ['radialScale','radialQuickScale','clRadialScale'])if($(id))$(id).value=state.radialScale;
+ for(const id of ['radialScaleValue','radialQuickScaleLabel','clRadialScaleLabel'])if($(id))$(id).textContent=state.radialScale.toFixed(2)+'×';
+}
+$('enableEllipseControls').onchange=e=>{state.adjustEllipses=e.target.checked;renderLensEditor();};
 $('autoEye10').onchange=e=>{state.autoEye10=e.target.checked;state.nextEyeAt=performance.now()+10000;recordExperimentEvent('auto_cycle_toggle',{enabled:state.autoEye10,interval_ms:10000});toast(state.autoEye10?'10秒ごとに眼数切替':'手動切替');};$('model').onchange=e=>changeModel(e.target.value);$('motion').onchange=e=>setMotion(e.target.value);
 $('zoom').oninput=e=>{state.zoom=Number(e.target.value);renderUI();};$('angle').oninput=e=>{state.angle=Number(e.target.value);$('angleText').textContent=state.angle+'°';renderCameraBadges();};$('vertical').oninput=e=>{state.vertical=Number(e.target.value);$('verticalText').textContent=state.vertical+'°';};$('fish').onchange=e=>{state.fish=e.target.checked;};$('blend').oninput=e=>{state.blend=Number(e.target.value);$('blendText').textContent=Math.round(100*state.blend)+'%';};$('feather').oninput=e=>{state.feather=Number(e.target.value);$('featherText').textContent=Math.round(100*state.feather)+'%';};$('invertGyro').onchange=e=>{state.gyroInvert=e.target.checked;};document.querySelectorAll('[data-count]').forEach(b=>b.onclick=()=>setEyeCount(b.dataset.count));
 $('togglePause').onclick=()=>{state.paused=!state.paused;if(state.paused)state.pauseTime=(performance.now()*.001-state.timeStart)*state.motionSpeed;else state.timeStart=performance.now()*.001-state.pauseTime/state.motionSpeed;$('togglePause').textContent=state.paused?'動作再開':'動作停止';};
@@ -2092,6 +2254,19 @@ let frameCount=0;
 function loop(now){requestAnimationFrame(loop);try{updateGameControl(now);draw(now);updateGaze(now);drawErrorCount=0;}catch(e){console.error(e);drawErrorCount++;showStatus('描画エラー: '+e.message);if(drawErrorCount===1)showRenderFailure(e);ready=false;}}
 
 
+const RADIAL_SETTINGS_KEY='compoundeye.v44.radialSettings';
+function loadRadialSettings(){
+ try{
+  const v=JSON.parse(localStorage.getItem(RADIAL_SETTINGS_KEY)||'{}');
+  if(Number.isFinite(v.distance))state.radialDistance=clamp(v.distance,0,.34);
+  if(Number.isFinite(v.scale))state.radialScale=clamp(v.scale,.6,2.25);
+  if(typeof v.mode==='boolean')state.radialMode=v.mode;
+ }catch(e){console.warn('Radial settings not loaded',e);}
+}
+function saveRadialSettings(){
+ try{localStorage.setItem(RADIAL_SETTINGS_KEY,JSON.stringify({distance:state.radialDistance,scale:state.radialScale,mode:state.radialMode}));}
+ catch(e){console.warn('Radial settings not saved',e);}
+}
 const LENS_TUNE_KEY='compoundeye.v36.lensOverrides';
 const VR_LENS_TUNE_KEY='compoundeye.v42.vrLensOverrides';
 let PUBLIC_VR_LENS_TUNES={};
@@ -2161,6 +2336,7 @@ async function loadPublishedLensDefaults(){
     for(const [i,params] of Object.entries(cameras||{}))
      Object.assign(((next[model]??={})[n]??={})[i]??={},params);
   DEFAULT_LENS_TUNES=next;
+  if(config.radialLayout&&typeof config.radialLayout==='object'){if(Number.isFinite(config.radialLayout.distance))state.radialDistance=clamp(config.radialLayout.distance,0,.34);if(Number.isFinite(config.radialLayout.scale))state.radialScale=clamp(config.radialLayout.scale,.6,2.25);}
   if(config.uiDefaults&&typeof config.uiDefaults==='object'){
    if(Number.isFinite(config.uiDefaults.anchorAlpha))PUBLIC_UI_DEFAULTS.anchorAlpha=clamp(config.uiDefaults.anchorAlpha,0,1);
    if(typeof config.uiDefaults.showLensLabels==='boolean')PUBLIC_UI_DEFAULTS.showLensLabels=config.uiDefaults.showLensLabels;
@@ -2199,14 +2375,17 @@ function renderLensEditor(){
  select.value=String(selected);
  const t=getLensTune(state.model,n,selected);
  fields.replaceChildren();
- const configs=[
+ const configs=state.radialMode?[]:[
   ['x','左右位置',-.40,.40,.005],['y',lensKind(selected)==='pelvis'?'腰～股関節の高さ':lensKind(selected)==='core'?'首～胸の高さ':'上下位置',-.45,.45,.005],
-  ['w','楕円の横幅',.35,2,.01],['h','楕円の高さ',.35,2,.01],
+
   ['distance','カメラ距離（大きいほど引く）',.60,2.5,.01],
   ['fov','カメラ画角（大きいほど広域）',.65,1.85,.01]
  ];
- if(['pelvis','core'].includes(lensKind(selected))){
+ if(!state.radialMode&&['pelvis','core'].includes(lensKind(selected))){
    configs.splice(2,0,['imageY','部位映像の上下位置（＋で上）',-.30,.30,.005]);
+ }
+ if(state.adjustEllipses){
+   configs.push(['w','楕円の横幅',.35,2.5,.01],['h','楕円の高さ',.35,2.5,.01]);
  }
  configs.forEach(([key,label,min,max,step])=>{
  const wrap=document.createElement('label');wrap.className='editorField';
@@ -2275,6 +2454,11 @@ function renderCompactLayoutUI(){
  avatar.value=state.model;count.value=String(state.eyeCount);
  $('clPreview').value=state.layoutPreviewVR?'vr':'normal';
  $('clModeLabel').textContent=state.layoutPreviewVR?'VR双眼・専用配置':'通常ビュー';
+ $('clGlobal').style.display=state.radialMode?'flex':'none';
+ if($('clRadialDistance'))$('clRadialDistance').value=state.radialDistance;
+ if($('clRadialScale'))$('clRadialScale').value=state.radialScale;
+ if($('clRadialDistanceLabel'))$('clRadialDistanceLabel').textContent=state.radialDistance.toFixed(3);
+ if($('clRadialScaleLabel'))$('clRadialScaleLabel').textContent=state.radialScale.toFixed(2)+'×';
  $('clInwardRow').style.display=state.layoutPreviewVR?'flex':'none';
  $('clInward').value=String(getVRAlignment().inward);
  $('clInwardValue').textContent=getVRAlignment().inward.toFixed(3);
@@ -2302,8 +2486,8 @@ function renderCompactLayoutUI(){
    wrap.append(top,slider);root.append(wrap);
   }
  }
- fill('clFields',[['x','左右位置',-.45,.45,.005],['y','上下位置',-.45,.45,.005],['w','横幅倍率',.30,2.50,.02],['h','高さ倍率',.30,2.50,.02]]);
- fill('clAdvancedFields',[['imageY','映像内の上下',-.35,.35,.005],['distance','カメラ距離',.55,2.60,.01],['fov','カメラ画角',.65,1.90,.01]]);
+ fill('clFields',state.radialMode?[]:[['x','左右位置',-.45,.45,.005],['y','上下位置',-.45,.45,.005],['w','横幅倍率',.30,2.50,.02],['h','高さ倍率',.30,2.50,.02]]);
+ fill('clAdvancedFields',state.radialMode?[]:[['imageY','映像内の上下',-.35,.35,.005],['distance','カメラ距離',.55,2.60,.01],['fov','カメラ画角',.65,1.90,.01]]);
  $('clPlayPause').textContent=state.paused?'▶ 再生':'⏸ 一時停止';
  $('clSave').textContent=state.layoutPreviewVR?'VR用に保存':'通常用に保存';
  $('clResetAll').disabled=!state.layoutPreviewVR;
@@ -2359,6 +2543,8 @@ $('clAvatar').onchange=e=>{state.compactLensIndex=0;changeModel(e.target.value);
 $('clMotion').onchange=e=>{setMotion(e.target.value);state.paused=true;state.pauseTime=.25;renderCompactLayoutUI();};
 $('clEyeCount').onchange=e=>{state.compactLensIndex=0;setEyeCount(Number(e.target.value),'compact_layout');};
 $('clLens').onchange=e=>{state.compactLensIndex=Number(e.target.value);renderCompactLayoutUI();};
+$('clRadialDistance').oninput=e=>setRadialDistance(Number(e.target.value));
+$('clRadialScale').oninput=e=>setRadialScale(Number(e.target.value));
 $('clPlayPause').onclick=()=>{
  state.paused=!state.paused;
  if(!state.paused)state.timeStart=performance.now()/1000-state.pauseTime/Math.max(state.motionSpeed,.01);
@@ -2380,7 +2566,7 @@ $('clExport').onclick=()=>{
 bindCompactDrag($('clDragL'));
 
 function saveLensEditor(){
- try{localStorage.setItem(LENS_TUNE_KEY,JSON.stringify(state.lensOverrides));toast('この端末に個眼調整値を保存しました');}
+ try{saveRadialSettings();localStorage.setItem(LENS_TUNE_KEY,JSON.stringify(state.lensOverrides));toast('この端末に個眼調整値を保存しました');}
  catch(e){toast('ブラウザに保存できませんでした');}
 }
 function loadLensEditor(){
@@ -2396,7 +2582,7 @@ function publicLayoutExportData(){
    }
   }
  }
- return {format:'compound-eye-lens-layout',version:36,defaults:merged,overrides:{},uiDefaults:{anchorAlpha:state.anchorAlpha,showLensLabels:state.showLabels}};
+ return {format:'compound-eye-lens-layout',version:44,defaults:merged,overrides:{},radialLayout:{mode:state.radialMode,distance:state.radialDistance,scale:state.radialScale},uiDefaults:{anchorAlpha:state.anchorAlpha,showLensLabels:state.showLabels}};
 }
 function downloadLensEditor(){
  const data=publicLayoutExportData();
@@ -2441,8 +2627,9 @@ $('lensEditorFile').onchange=async e=>{
 const EXPERIMENT_SCHEMA_VERSION='compound-eye-experiment-v1';
 const EXPERIMENT_SAMPLE_INTERVAL_MS=1000/30;
 const EXPERIMENT_MAX_JOINT_ROWS=500000;
-let experimentBuildManifest={source_commit:'unverified',app_version:'v43'};
+let experimentBuildManifest={source_commit:'unverified',app_version:'v44'};
 const MATERIAL_REFERENCES={
+ roundhouse:{asset_id:'roundhouse-kick-motion',origin:'user-supplied Roundhouse Kick.fbx / Mixamo hierarchy',license:'not independently verified',skeleton_id:'mixamorig; retargeted'},
  xbot:{asset_id:'embedded-glb-xbot',origin:'bundled GLB (index.html)',license:'not specified / verify before redistribution',skeleton_id:'xbot-32-node-bones'},
  aegisEmber:{asset_id:'embedded-glb-aegis-ceramic-plus-navy-material',origin:'bundled AEGIS GLB+material variant (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'},
  aegisSoldier:{asset_id:'embedded-glb-aegis-navy-plus-soldier-tube-effect',origin:'bundled AEGIS GLB + procedural color effect (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'}
@@ -2623,7 +2810,7 @@ function getExperimentMetadata(){
    skeleton_definition:'native embedded model joint names and indices',
    timebase:'animation_time_s; relative_time_s uses performance clock'},
   timestamps:{started_iso:r.startedISO,ended_iso:r.stoppedISO||null,duration_s:Number(duration.toFixed(4))},
-  environment:{app_version:'v43',git_source_commit:experimentBuildManifest.source_commit,
+  environment:{app_version:'v44',git_source_commit:experimentBuildManifest.source_commit,
    source_commit_note:'implementation commit; metadata manifest may have a later commit',
    browser_family_version:experimentBrowserName(),vr_used:r.displayRows.some(x=>x[14]===1),
    avg_fps:fps===null?null:Number(fps.toFixed(3)),
@@ -2631,7 +2818,13 @@ function getExperimentMetadata(){
    frame_count:r.frameCount,sample_target_hz:r.sample_target_hz,
    actual_sample_hz:duration>0?Number((r.sampleCount/duration).toFixed(3)):null,
    sample_count:r.sampleCount,source_assets:MATERIAL_REFERENCES,
-   selected_source_asset:ref,initial_motion_id:r.initialMotionId,initial_playback_speed:r.initialPlaybackSpeed},
+   selected_source_asset:ref,initial_motion_id:r.initialMotionId,initial_playback_speed:r.initialPlaybackSpeed,
+   source_motion: /roundhouse/.test(r.initialMotionId)&&roundhouseClip?{
+    clip_id:roundhouseClip.clip_id,source_file_name:roundhouseClip.source_file_name,
+    original_sha256:roundhouseClip.source_sha256,
+    source_type:roundhouseClip.source_type,licensing:roundhouseClip.licensing,
+    retargeted:true,root_translation_included:false
+   }:null},
   comparison:{initial_baseline:r.baseline,conditions_used:r.conditionsEncountered,
    condition_A:'fixed five lenses, area multiplier 1, markers on',
    condition_B:'five lenses, motion-score adaptive selection and area scaling, markers on',
@@ -2665,6 +2858,7 @@ const ANALYSIS_METRICS={
 function analysisSourceDuration(md,motion){
  if(motion==='xbot_punch')return 1.10;
  if(motion==='armor_power_punch')return 1.65;
+ if(/roundhouse/.test(motion))return roundhouseClip?.duration_s||2.5;
  if(motion==='armor_walk'||motion==='armor_run'){
   const source=getModel('xbot');
   const name=motion==='armor_walk'?'Boxer_Walk':'Boxer_Run';
@@ -2745,8 +2939,9 @@ function analyzeCurrentMotion(){
   x.sumScore+=j.score;x.samples++;
  }
  const ranked=[...jointMap.values()].sort((a,b)=>b.maxScore-a.maxScore);
- const fast=[...jointMap.values()].sort((a,b)=>b.maxLinear-a.maxLinear)[0];
- const turning=[...jointMap.values()].sort((a,b)=>b.maxAngular-a.maxAngular)[0];
+ const majorJoints=[...jointMap.values()].filter(j=>!/Hand(?:Thumb|Index|Middle|Ring|Pinky)/i.test(j.name));
+ const fast=(majorJoints.length?majorJoints:[...jointMap.values()]).sort((a,b)=>b.maxLinear-a.maxLinear)[0];
+ const turning=(majorJoints.length?majorJoints:[...jointMap.values()]).sort((a,b)=>b.maxAngular-a.maxAngular)[0];
  currentMotionAnalysis={
   key:currentAnalysisKey(),avatar,motion,eyeCount,playbackFactor:factor,
   sourceType:'synthetic_animation',timescale:'display_seconds',sourceDuration:fullDuration,
@@ -2761,7 +2956,7 @@ function populateMotionAnalysisJointOptions(){
  if(!sel||!currentMotionAnalysis)return;
  const previous=sel.value;
  sel.replaceChildren();
- const top=document.createElement('option');top.value='top3';top.textContent='スコア上位3関節';sel.append(top);
+ const top=document.createElement('option');top.value='top3'; top.textContent='移動速度の大きい3関節';sel.append(top);
  for(const j of currentMotionAnalysis.joints){
   const opt=document.createElement('option');opt.value=String(j.index);
   opt.textContent=j.name+' (#'+j.index+')';sel.append(opt);
@@ -2782,7 +2977,9 @@ function renderMotionAnalysis(){
  if(!d)return;
  const metric=ANALYSIS_METRICS[$('experimentGraphMetric').value]||ANALYSIS_METRICS.score;
  const jointChoice=$('experimentGraphJoint').value;
- const selected=jointChoice==='top3'?d.joints.slice(0,3):
+ const major=d.joints.filter(j=>!/Hand(?:Thumb|Index|Middle|Ring|Pinky)/i.test(j.name));
+ const ranking=metric===ANALYSIS_METRICS.angular?[...major].sort((a,b)=>b.maxAngular-a.maxAngular):[...major].sort((a,b)=>b.maxLinear-a.maxLinear);
+ const selected=jointChoice==='top3'?ranking.slice(0,3):
   d.joints.filter(j=>String(j.index)===jointChoice);
  const graph=$('experimentMotionChart');graph.replaceChildren();
  const w=660,h=290,ml=60,mr=20,mt=28,mb=52,plotW=w-ml-mr,plotH=h-mt-mb;
@@ -2821,19 +3018,39 @@ function renderMotionAnalysis(){
  });
  graph.append(svg);
  $('experimentMotionTitle').textContent=metric.label+'｜'+selected.map(j=>j.name).join('・');
- // Second graph: peak score rankings; never conflate scores with skill quality.
- const ranking=$('experimentEyeChart');ranking.replaceChildren();
- const svg2=analysisElement('svg',{viewBox:'0 0 660 290','aria-label':'関節別最大運動スコア上位6'});
- const rowH=34,left=155,barMax=455;
- d.joints.slice(0,6).forEach((j,i)=>{
-  const y=24+i*rowH;
-  svg2.append(analysisElement('text',{x:left-10,y:y+14,'text-anchor':'end',fill:'#c6e0e8','font-size':12},j.name.length>18?j.name.slice(0,17)+'…':j.name));
-  svg2.append(analysisElement('rect',{x:left,y:y,width:barMax,height:18,rx:4,fill:'#1a394c'}));
-  svg2.append(analysisElement('rect',{x:left,y:y,width:Math.max(0,barMax*j.maxScore/100),height:18,rx:4,fill:i===0?'#55e4ed':'#60a6c6'}));
-  svg2.append(analysisElement('text',{x:left+barMax-5,y:y+13,'text-anchor':'end','font-size':11,fill:'#ffffff'},j.maxScore.toFixed(1)));
+ // Secondary chart: physically interpretable order of peak joint velocities.
+ // Each dot is a peak TIME, not an arbitrary rank or a skill score.
+ const timeline=$('experimentEyeChart');timeline.replaceChildren();
+ const w2=660,h2=338,ml2=168,mr2=88,plotW2=w2-ml2-mr2;
+ const svg2=analysisElement('svg',{viewBox:'0 0 '+w2+' '+h2,'aria-label':'身体部位ごとの最大移動速度の発生時刻'});
+ const preferred=['Hips','Pelvis','Spine2','Chest','RightArm','R_UpperArm','RightForeArm','R_Forearm',
+  'RightHand','R_Hand','LeftArm','L_UpperArm','LeftForeArm','L_Forearm',
+  'RightUpLeg','R_UpperLeg','RightLeg','R_LowerLeg','LeftUpLeg','L_UpperLeg','LeftLeg','L_LowerLeg'];
+ const rowSeen=new Set(),picked=[];
+ for(const name of preferred){
+  const joint=d.joints.find(x=>x.name===name);
+  if(!joint||rowSeen.has(joint.name)||joint.maxLinear<.03)continue;
+  rowSeen.add(joint.name);picked.push(joint);
+  if(picked.length>=8)break;
+ }
+ if(!picked.length)picked.push(...ranking.slice(0,Math.min(8,ranking.length)));
+ for(let q=0;q<=4;q++){
+  const x=ml2+plotW2*q/4;
+  svg2.append(analysisElement('line',{x1:x,y1:15,x2:x,y2:290,stroke:'#2c4b5d','stroke-width':1}));
+  svg2.append(analysisAxisText(x,318,(d.duration*q/4).toFixed(2)));
+ }
+ picked.forEach((j,i)=>{
+  const y=30+i*32;
+  svg2.append(analysisElement('line',{x1:ml2,y1:y,x2:ml2+plotW2,y2:y,stroke:'#26445c','stroke-width':1}));
+  svg2.append(analysisElement('text',{x:ml2-10,y:y+4,'text-anchor':'end',fill:'#d5ebf2','font-size':12},j.name.length>16?j.name.slice(0,15)+'…':j.name));
+  const x=ml2+plotW2*clamp(j.timeOfMaxLinear/d.duration,0,1);
+  svg2.append(analysisElement('circle',{cx:x,cy:y,r:7,fill:'#5adddf',stroke:'#e1ffff','stroke-width':1.3}));
+  svg2.append(analysisElement('text',{x:ml2+plotW2+8,y:y+4,fill:'#c2e9ee','font-size':11},j.maxLinear.toFixed(2)));
  });
- svg2.append(analysisAxisText(left+barMax/2,271,'最大スコア（表示制御用・0–100）'));
- ranking.append(svg2);
+ svg2.append(analysisAxisText(ml2+plotW2/2,333,'最大移動速度の発生時刻（表示秒）'));
+ svg2.append(analysisElement('text',{x:ml2+plotW2+8,y:16,fill:'#9fcddb','font-size':10},'速度'));
+ timeline.append(svg2);
+ d.timelineJoints=picked;
  $('analysisSampleCount').textContent=d.frames.length+'点';
  $('analysisPeakSpeed').textContent=d.fast?.maxLinear.toFixed(2)||'0';
  $('analysisPeakAngular').textContent=d.turning?(d.turning.maxAngular*180/Math.PI).toFixed(0)+'°/s':'0';
@@ -2843,17 +3060,17 @@ function renderMotionAnalysis(){
   const p=document.createElement('p');p.textContent=html;summary.append(p);
  };
  paragraph('解析対象：'+MODEL_NAMES[d.avatar]+'／'+(MOTION_NAMES[d.motion]||d.motion)+'。'+d.frames.length+'点、'+d.duration.toFixed(2)+'秒のモデル計算値を使用。');
- if(peak){
-  paragraph('表示用運動スコアが最も大きい関節は '+peak.name+'（最大'+peak.maxScore.toFixed(1)+'/100、表示時刻'+peak.timeOfMaxScore.toFixed(2)+'秒）です。');
+ if(d.timelineJoints?.length>=2){
+  const first=[...d.timelineJoints].sort((a,b)=>a.timeOfMaxLinear-b.timeOfMaxLinear);
+  const names=first.slice(0,4).map(j=>j.name+'（'+j.timeOfMaxLinear.toFixed(2)+'秒）');
+  paragraph('部位別の最大移動速度が生じた順序：'+names.join(' → ')+'。これはモデル内の時間差で、因果関係や正しい技の順番を示すものではありません。');
  }
  if(d.fast&&d.turning){
   paragraph('最大移動速度は '+d.fast.name+' の '+d.fast.maxLinear.toFixed(3)+' モデル単位/秒、最大角速度は '+d.turning.name+' の '+(d.turning.maxAngular*180/Math.PI).toFixed(1)+' 度/秒です。');
  }
  if(d.truncated)paragraph('このモーションは長いため、最初の6秒までを解析しています。');
- const saturated=d.joints.filter(j=>j.maxScore>=98).length;
- if(saturated>=3)paragraph('注意：表示用運動スコアが約100点に達する関節が'+saturated+'個あります。上限で値が飽和し細かな差を区別しにくいため、移動速度・角速度のグラフも確認してください。');
  if(d.joints.every(j=>j.maxScore<.05))paragraph('このモーションでは解析区間の速度・角速度の変化が小さいか、サンプル間差分で検出できませんでした。動作なしと断定する結果ではありません。');
- paragraph('読み取れるのは、この3Dアニメーション内部で動きが大きい部位と時刻です。角速度の急なピークにはアニメーション補間や骨格計算の不連続が含まれる可能性があります。正しいパンチ、熟練度、実際の筋活動、複眼表示の知覚効果を示した結果ではありません。なお、待機モーションも解析時のみ微小変化を計算しています。');
+ paragraph('このグラフは関節がどれほど速く動き、どの時刻に最大値をとるかを示します。数値の良し悪しや技の正確性は判定しません。急な角速度ピークにはFBXのキーフレーム補間・骨格計算の影響が混じる可能性があります。人体実測でも知覚実験の結果でもありません。');
  $('experimentAnalysisCsv').disabled=false;
  $('experimentCurrentSelection').textContent='解析済み：'+MODEL_NAMES[d.avatar]+'／'+(MOTION_NAMES[d.motion]||d.motion);
 }
@@ -2862,14 +3079,13 @@ function exportMotionAnalysisCsv(){
  const header=['source_type','avatar_id','motion_id','eye_count','playback_factor',
   'display_time_s','animation_time_s','joint_name','joint_id',
   'linear_speed_model_units_per_s','angular_speed_rad_per_s','angular_speed_deg_per_s',
-  'display_motion_score_0_to_100','joint_peak_score_0_to_100',
-  'joint_max_linear_model_units_per_s','joint_max_angular_deg_per_s'];
+  'joint_max_linear_model_units_per_s','joint_max_angular_deg_per_s','joint_peak_linear_time_s'];
  const map=new Map(d.joints.map(j=>[j.index,j]));
  const rows=d.frames.flatMap(frame=>frame.joints.map(j=>{
   const summary=map.get(j.index);
   return [d.sourceType,d.avatar,d.motion,d.eyeCount,d.playbackFactor,
    frame.time,frame.animationTime,j.name,j.index,j.linear,j.angular,j.angular*180/Math.PI,
-   j.score,summary.maxScore,summary.maxLinear,summary.maxAngular*180/Math.PI];
+   summary.maxLinear,summary.maxAngular*180/Math.PI,summary.timeOfMaxLinear];
  }));
  const content=['\ufeff'+csvEncodeRow(header),...rows.map(csvEncodeRow)].join('\r\n');
  downloadExperimentFile('compound-eye-'+d.avatar+'-'+d.motion+'-motion-analysis.csv',content,'text/csv;charset=utf-8');
@@ -3049,10 +3265,10 @@ async function warmOtherAssets(){
 async function startApplication(){
  try{
   showStatus('3Dモデルを読み込み中…');
-  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();loadVRAlignments();loadVRLensEditor();await unpackAssets();
-  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();applyDefaultSettings();
-  renderUI();showStatus('v43：単眼2個眼を初期表示・HMD双眼切替・運動グラフ解析');
-  window.__compoundTest={version:"43",state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  await loadRoundhouseMotion();await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();loadVRAlignments();loadVRLensEditor();await unpackAssets();
+  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();loadRadialSettings();applyDefaultSettings();
+  renderUI();showStatus('v44：等倍・放射状配置と上下追従／回し蹴りFBXモーション／動作タイミング解析');
+  window.__compoundTest={version:"44",state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
