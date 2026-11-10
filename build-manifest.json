@@ -1,7 +1,7 @@
 {
-  "app_version": "v46",
-  "source_commit": "02ba415e44d21c2e45872bbfef04dd57534fcf6e",
+  "app_version": "v47",
+  "source_commit": "f65cafc4d1075e14719aa5ee6e8b4177cc0d911c",
   "source_branch": "main",
-  "data_schema": "compound-eye-experiment-v1",
-  "note": "The source_commit points to v46 application code, new layout and documentation; this manifest is committed separately."
+  "data_schema": "compound-eye-motion-comparison-v1",
+  "note": "source_commit identifies v47 app implementation and analysis workbench; build manifest committed separately."
 }
