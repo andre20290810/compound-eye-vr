@@ -1,7 +1,7 @@
 {
-  "app_version": "v45",
-  "source_commit": "bf92cf47bb6da22464a2f7ce26c8a0818525374c",
+  "app_version": "v46",
+  "source_commit": "02ba415e44d21c2e45872bbfef04dd57534fcf6e",
   "source_branch": "main",
   "data_schema": "compound-eye-experiment-v1",
-  "note": "source_commit identifies the v45 application and documentation; this manifest is committed separately."
+  "note": "The source_commit points to v46 application code, new layout and documentation; this manifest is committed separately."
 }
