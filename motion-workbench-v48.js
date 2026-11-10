@@ -1,7 +1,7 @@
 // v47 motion-analysis workbench, resident in the app's existing IIFE.
 // All numbers describe embedded animation/model calculations, not human sensing.
-const V47_SCHEMA='compound-eye-motion-comparison-v1';
-const v47={A:null,B:null,comparison:null,currentTime:0,lastCursorAt:0,fitB:null,sourceA:null,sourceB:null,quality:[],on:false};
+const V47_SCHEMA='compound-eye-motion-comparison-v2';
+const v47={A:null,B:null,extras:[],pairs:[],extraControls:[],anyCrossSkeleton:false,comparison:null,currentTime:0,lastCursorAt:0,fitB:null,sourceA:null,sourceB:null,quality:[],on:false};
 const v47Models=['xbot','aegisEmber','aegisSoldier'];
 const v47Options=m=>{
  const old=state.model;state.model=m;
@@ -253,6 +253,56 @@ function v47OptionsFor(model,select,allowEmpty=false){
  }
  if([...select.options].some(o=>o.value===current))select.value=current;
 }
+
+const V48_SERIES_STYLE={
+ A:{dash:null,description:'実線'},B:{dash:'8 5',description:'破線'},
+ C:{dash:'2 5',description:'点線'},D:{dash:'13 5 3 5',description:'一点鎖線'},
+ E:{dash:'17 8',description:'長破線'}
+};
+function v48AllComparisons(){return v47.pairs||[];}
+function v48DataSets(){return [v47.A,...v48AllComparisons().map(c=>c.data)].filter(Boolean);}
+function v48SelectedComparison(){
+ const label=$('v48ActiveComparator')?.value||'B';
+ return v48AllComparisons().find(c=>c.label===label)||v48AllComparisons()[0]||null;
+}
+function v48PopulateComparatorTarget(){
+ const select=$('v48ActiveComparator');if(!select)return;
+ const previous=select.value;select.replaceChildren();
+ for(const c of v48AllComparisons()){
+  const option=document.createElement('option');option.value=c.label;
+  option.textContent=c.label+'：'+(MODEL_NAMES[c.data.avatar]||c.data.avatar)+' ／ '+
+   (MOTION_NAMES[c.data.motion]||c.data.motion);
+  select.append(option);
+ }
+ if([...select.options].some(o=>o.value===previous))select.value=previous;
+ select.disabled=!v48AllComparisons().length;
+}
+function v48AddComparator(){
+ const index=v47.extraControls.length;
+ if(index>=3){toast('最大5動作まで比較できます');return;}
+ const label=['C','D','E'][index];
+ const row=document.createElement('div');row.className='v48CompareRow';row.dataset.label=label;
+ const titleA=document.createElement('label');titleA.textContent='比較 '+label+'・アバター';
+ const avatar=document.createElement('select');avatar.dataset.series=label;avatar.dataset.field='avatar';
+ const titleM=document.createElement('label');titleM.textContent='比較 '+label+'・モーション';
+ const motion=document.createElement('select');motion.dataset.series=label;motion.dataset.field='motion';
+ const empty=document.createElement('option');empty.value='';empty.textContent='比較しない';avatar.append(empty);
+ for(const model of v47Models){
+  const option=document.createElement('option');option.value=model;option.textContent=MODEL_NAMES[model]||model;
+  avatar.append(option);
+ }
+ avatar.value='xbot';v47OptionsFor(avatar.value,motion);
+ avatar.onchange=()=>{motion.disabled=!avatar.value;v47OptionsFor(avatar.value||'xbot',motion);v47ResetSelection();};
+ motion.onchange=v47ResetSelection;
+ titleA.append(avatar);titleM.append(motion);row.append(titleA,titleM);
+ $('v48AdditionalRows').append(row);
+ v47.extraControls.push({label,row,avatar,motion});
+ $('v48AddComparison').disabled=v47.extraControls.length>=3;
+ $('v48AddComparison').textContent=v47.extraControls.length>=3?'最大5動作':'＋ 比較する動作を追加';
+ $('v48ComparisonCount').textContent='比較欄：A・B'+v47.extraControls.map(x=>'・'+x.label).join('')+'（最大5）';
+ v47ResetSelection();
+}
+
 function v47Init(){
  const createModels=(id,blank)=>{
   const el=$(id);el.replaceChildren();
@@ -266,6 +316,8 @@ function v47Init(){
  v47OptionsFor(state.model,$('v47MotionA'));$('v47MotionA').value=state.motion;
  $('v47AvatarB').value='';
  v47OptionsFor('xbot',$('v47MotionB'));
+ $('v48AddComparison').onclick=v48AddComparator;
+ $('v48ActiveComparator').onchange=()=>{v47DrawMarkers(v47.lastProjections||[]);};
  $('v47AvatarA').onchange=()=>{
   v47OptionsFor($('v47AvatarA').value,$('v47MotionA'));v47ResetSelection();
  };
@@ -295,7 +347,8 @@ function v47Init(){
  });
 }
 function v47ResetSelection(){
- v47.A=null;v47.B=null;v47.comparison=null;v47.on=false;
+ v47.A=null;v47.B=null;v47.extras=[];v47.pairs=[];v47.anyCrossSkeleton=false;v47.comparison=null;v47.on=false;
+ v48PopulateComparatorTarget();
  $('v47Readout').textContent='モーションを選択し「解析・比較を開始」を押してください';
  $('v47Chart').replaceChildren();$('v47Timeline').replaceChildren();$('v47Narrative').replaceChildren();
  $('v47Quality').textContent='比較前。データの対応付けと品質確認は解析時に実施します。';
@@ -311,17 +364,34 @@ function v47Analyze(){
   if(state.model!==a)changeModel(a);
   if(state.motion!==m)setMotion(m);
   const A=v47Sample(a,m,config),B=b&&mb?v47Sample(b,mb,config):null;
-  v47.A=A;v47.B=B;v47.comparison=v47Pair(A,B);v47.on=true;v47.currentTime=0;
+  const extras=[];
+  for(const control of v47.extraControls){
+   const avatar=control.avatar.value,motion=control.motion.value;
+   if(!avatar||!motion)continue;
+   const data=v47Sample(avatar,motion,config);
+   extras.push({label:control.label,data,pair:v47Pair(A,data)});
+  }
+  v47.A=A;v47.B=B;v47.comparison=v47Pair(A,B);
+  v47.extras=extras;
+  v47.pairs=[...(B?[{label:'B',data:B,pair:v47.comparison}]:[]),...extras];
+  v47.anyCrossSkeleton=v47.pairs.some(c=>c.pair?.differentSkeleton);
+  v47.on=true;v47.currentTime=0;
+  v48PopulateComparatorTarget();
   const selected=$('v47Joint').value,select=$('v47Joint');select.replaceChildren();
   const top=document.createElement('option');top.value='top3';top.textContent='速度の大きい3関節';select.append(top);
   for(const j of A.joints){
-   const opt=document.createElement('option');opt.value=j.key;opt.textContent=j.name+' ('+j.key+')';select.append(opt);
+   const opt=document.createElement('option');opt.value=j.key;opt.textContent=v48JointLabel(j);opt.title=j.name+' ('+j.key+')';select.append(opt);
   }
   if([...select.options].some(x=>x.value===selected))select.value=selected;
+  if(v47.pairs.length>=2&&select.value==='top3'){
+   const principal=[...A.joints].sort((x,y)=>y.peakLinear-x.peakLinear)[0];
+   if(principal)select.value=principal.key;
+  }
   $('v47Scrub').max=String(A.duration);$('v47Scrub').step=String(A.dt/4);
   $('v47Speed').value='1';state.motionSpeed=1;
   v47Seek(0,true);v47Render();
-  $('v47Readout').textContent='A：'+MODEL_NAMES[a]+'・'+(MOTION_NAMES[m]||m)+(B?'　B：'+MODEL_NAMES[b]+'・'+(MOTION_NAMES[mb]||mb):'');
+  $('v47Readout').textContent='A：'+MODEL_NAMES[a]+'・'+(MOTION_NAMES[m]||m)+
+   v47.pairs.map(c=>'　'+c.label+'：'+(MODEL_NAMES[c.data.avatar]||c.data.avatar)+'・'+(MOTION_NAMES[c.data.motion]||c.data.motion)).join('');
  }catch(err){console.error('v47 analysis failed',err);$('v47Readout').textContent='解析失敗：'+(err.message||err);}
 }
 function v47Selected(){
@@ -331,9 +401,9 @@ function v47Selected(){
 }
 function v47Metric(){
  return {
-  linear:{name:'関節移動速度',unit:v47.comparison?.differentSkeleton?'身長比/秒':'モデル単位/秒',key:'linear'},
+  linear:{name:'関節移動速度',unit:v47.anyCrossSkeleton?'身長比/秒':'モデル単位/秒',key:'linear'},
   angular:{name:'関節角速度',unit:'度/秒',key:'angular'},
-  accel:{name:'関節移動加速度',unit:v47.comparison?.differentSkeleton?'身長比/秒²':'モデル単位/秒²',key:'accel'},
+  accel:{name:'関節移動加速度',unit:v47.anyCrossSkeleton?'身長比/秒²':'モデル単位/秒²',key:'accel'},
   angularAccel:{name:'関節角加速度',unit:'度/秒²',key:'angularAccel'},
   jerk:{name:'ジャーク（数値参考）',unit:'モデル単位/秒³',key:'jerk'}
  }[$('v47Metric').value];
@@ -342,27 +412,103 @@ function v47Value(j,metric,index,data){
  if(!j)return 0;
  let v=j[metric.key]?.[index]??0;
  if(metric.key==='angular'||metric.key==='angularAccel')v*=180/Math.PI;
- if(v47.comparison?.differentSkeleton&&['linear','accel','jerk'].includes(metric.key))v/=data.height;
+ if(v47.anyCrossSkeleton&&['linear','accel','jerk'].includes(metric.key))v/=data.height;
  return Number.isFinite(v)?v:0;
+}
+// Public-facing Japanese joint labels. Internal names and CSV IDs remain stable
+// so old v47 trial logs and skeleton mappings stay backwards compatible.
+function v48JointLabel(j){
+ const item=typeof j==='string'?{name:j,key:v47MapName(j)}:j||{};
+ const key=String(item.key||v47MapName(item.name||'')).toLowerCase();
+ const core={
+  'pelvis':'骨盤','spine':'背骨','chest':'胸部','head':'頭部','neck':'首',
+  'left.full':'左半身','right.full':'右半身'
+ };
+ if(core[key])return core[key];
+ const sep=key.indexOf('.');
+ const side=sep>=0?key.slice(0,sep):'';
+ const part=sep>=0?key.slice(sep+1):key;
+ const prefix=side==='right'?'右':side==='left'?'左':'';
+ const mapped={
+  'shoulder':'肩','upperarm':'上腕','forearm':'前腕',
+  'hand':'手','thigh':'太もも','shin':'すね',
+  'foot':'足','toe':'つま先','leg':'脚','lowerleg':'すね',
+  'upperleg':'太もも','arm':'腕','hip':'股関節'
+ };
+ if(prefix&&mapped[part])return prefix+mapped[part];
+ const finger=/^(?:hand)?(thumb|index|middle|ring|pinky)(\d*)$/i.exec(part);
+ if(prefix&&finger){
+  const names={thumb:'親指',index:'人差し指',middle:'中指',ring:'薬指',pinky:'小指'};
+  return prefix+names[finger[1].toLowerCase()]+(finger[2]||'');
+ }
+ const simple={'hips':'骨盤','spine1':'背骨','spine2':'胸部','root':'基準骨','upperchest':'上胸部'};
+ if(simple[key])return simple[key];
+ // Never show an unexplained raw English bone name to the viewer.
+ return Number.isInteger(item.index)?'関節'+item.index:'未分類の関節';
+}
+function v48LineSample(pattern,color,label){
+ const row=document.createElement('span');row.className='v48LegendItem';
+ const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+ svg.setAttribute('viewBox','0 0 54 14');svg.setAttribute('width','54');svg.setAttribute('height','14');
+ svg.setAttribute('aria-hidden','true');
+ const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+ line.setAttribute('x1','2');line.setAttribute('y1','7');line.setAttribute('x2','52');line.setAttribute('y2','7');
+ line.setAttribute('stroke',color);line.setAttribute('stroke-width','3');
+ if(pattern==='dash')line.setAttribute('stroke-dasharray','7 5');
+ svg.append(line);row.append(svg);
+ const caption=document.createElement('span');caption.textContent=label;row.append(caption);
+ return row;
+}
+const V48_JOINT_COLORS=['#58e6e9','#f4b561','#b4a2fc'];
+
+function v48RenderLegend(selected){
+ const container=$('v48GraphLegend');if(!container)return;
+ container.replaceChildren();
+ const role=document.createElement('div');role.className='v48LegendRow';
+ const sources=[{label:'A',data:v47.A},...v48AllComparisons()];
+ for(const entry of sources){
+  if(!entry.data)continue;
+  const label=entry.label,model=entry.data.avatar,motion=entry.data.motion;
+  const style=V48_SERIES_STYLE[label]||V48_SERIES_STYLE.B;
+  const caption=label+' '+style.description+'：'+(MODEL_NAMES[model]||model)+
+    ' ／ '+(MOTION_NAMES[motion]||motion);
+  role.append(v48LineSample(style.dash?'dash':'solid','#d9eff9',caption));
+  // A single animated line sample with the exact actual dash pattern.
+  const line=role.lastElementChild?.querySelector('line');
+  if(line)style.dash?line.setAttribute('stroke-dasharray',style.dash):line.removeAttribute('stroke-dasharray');
+ }
+ container.append(role);
+ const joints=document.createElement('div');joints.className='v48LegendRow';
+ selected.forEach((joint,index)=>{
+  const color=V48_JOINT_COLORS[index%V48_JOINT_COLORS.length];
+  joints.append(v48LineSample('solid',color,v48JointLabel(joint)));
+ });
+ container.append(joints);
+ const tip=document.createElement('div');tip.className='v48LegendTip';
+ tip.textContent='同じ色＝同じ関節 ／ 実線・破線・点線・鎖線＝異なるモーション。Aを基準に最大5動作まで比較できます。';
+ container.append(tip);
 }
 function v47Render(){
  if(!v47.A)return;
- const A=v47.A,B=v47.B,pair=v47.comparison;
- const align=$('v47Alignment').value,metric=v47Metric(),selected=v47Selected();
+ const A=v47.A,align=$('v47Alignment').value,metric=v47Metric(),selected=v47Selected();
+ const comparisons=v48AllComparisons().filter(c=>c.pair?.safe);
  const width=900,height=330,left=84,right=20,top=32,bottom=59,plW=width-left-right,plH=height-top-bottom;
  const graph=$('v47Chart');graph.replaceChildren();
  const svg=analysisElement('svg',{viewBox:'0 0 '+width+' '+height,'aria-label':'関節運動特徴の時間同期グラフ'});
  let ymax=.0001;const plotData=[];
  for(const joint of selected){
-  const item=pair?.matched.find(x=>x.A.key===joint.key),bj=item?.B||null;
-  const a=A.frames.map((frame,i)=>({t:frame.time,v:v47Value(joint,metric,i,A)}));
-  const b=B&&bj?A.frames.map(frame=>{
-   const pt=v47Point(B,frame.time,'',align,A);
-   return {t:frame.time,v:v47Value(bj,metric,pt.i,B)};
-  }):null;
-  for(const x of a)ymax=Math.max(ymax,x.v);
-  if(b)for(const x of b)ymax=Math.max(ymax,x.v);
-  plotData.push({joint,a,b});
+  const lines=[{label:'A',data:A,joint,points:A.frames.map((frame,i)=>({t:frame.time,v:v47Value(joint,metric,i,A)}))}];
+  for(const c of comparisons){
+   const counterpart=c.pair.matched.find(x=>x.A.key===joint.key)?.B;
+   if(!counterpart)continue;
+   const points=A.frames.map(frame=>{
+    const pt=v47Point(c.data,frame.time,'',align,A);
+    return {t:frame.time,v:v47Value(counterpart,metric,pt.i,c.data)};
+   });
+   lines.push({label:c.label,data:c.data,joint:counterpart,points});
+  }
+  for(const item of lines)for(const point of item.points)ymax=Math.max(ymax,point.v);
+  plotData.push({joint,lines});
  }
  ymax=ymax*1.16||1;
  for(let n=0;n<=4;n++){
@@ -375,17 +521,21 @@ function v47Render(){
   svg.append(analysisElement('line',{x1:x,y1:top,x2:x,y2:height-bottom,stroke:'#244257','stroke-width':1}));
   svg.append(analysisAxisText(x,height-34,v47Format(A.duration*n/5,2)));
  }
- const colors=['#58e6e9','#f4b561','#b4a2fc'];
  const toPoints=items=>items.map(item=>[
   left+plW*item.t/A.duration,top+plH*(1-item.v/ymax)
  ].map(x=>x.toFixed(2)).join(',')).join(' ');
  plotData.forEach((part,k)=>{
-  svg.append(analysisElement('polyline',{points:toPoints(part.a),fill:'none',stroke:colors[k%3],
-   'stroke-width':2.35,'stroke-linejoin':'round','stroke-linecap':'round'}));
-  if(part.b)svg.append(analysisElement('polyline',{points:toPoints(part.b),fill:'none',stroke:'#f7cd7e',
-   'stroke-width':1.9,'stroke-dasharray':'7 4'}));
-  svg.append(analysisElement('text',{x:left+k*238,y:height-7,fill:colors[k%3],'font-size':11},
-   part.joint.name+(part.b?'（A実線・B点線）':'')));
+  const color=V48_JOINT_COLORS[k%V48_JOINT_COLORS.length],jointLabel=v48JointLabel(part.joint);
+  for(const item of part.lines){
+   const style=V48_SERIES_STYLE[item.label]||V48_SERIES_STYLE.B;
+   const attrs={points:toPoints(item.points),fill:'none',stroke:color,
+    'stroke-width':item.label==='A'?2.9:2.6,'stroke-linejoin':'round','stroke-linecap':'round',
+    'data-joint-key':part.joint.key,'data-series':item.label,
+    'aria-label':jointLabel+'・'+item.label+'・'+style.description};
+   if(style.dash)attrs['stroke-dasharray']=style.dash;
+   svg.append(analysisElement('polyline',attrs));
+  }
+  svg.append(analysisElement('text',{x:left+k*238,y:height-7,fill:color,'font-size':11},jointLabel));
  });
  svg.append(analysisElement('text',{x:left,y:16,fill:'#def4fb','font-size':12},metric.name+'（'+metric.unit+'）'));
  svg.append(analysisAxisText(left+plW/2,height-17,'Aの元アニメーション時刻（秒）'));
@@ -396,7 +546,7 @@ function v47Render(){
   const x=(ev.clientX-bounds.left)/bounds.width*width;
   v47Seek(clamp((x-left)/plW*A.duration,0,A.duration));
  });
- graph.append(svg);
+ graph.append(svg);v48RenderLegend(selected);
  v47RenderTimeline();v47RenderNarrative();v47UpdateCursor();
 }
 function v47SelectJoint(key,time){
@@ -404,85 +554,103 @@ function v47SelectJoint(key,time){
  if([...select.options].some(o=>o.value===key))select.value=key;
  v47Render();v47Seek(time);
 }
+
 function v47RenderTimeline(){
- const A=v47.A,B=v47.B,pair=v47.comparison,selected=v47Selected(),container=$('v47Timeline');
- container.replaceChildren();if(!A)return;
- const width=900,left=165,right=25,row=41,top=42,upper=Math.max(A.duration,B?.duration||0);
- const svg=analysisElement('svg',{viewBox:'0 0 '+width+' '+(top+selected.length*row+53),
-  'aria-label':'運動開始時刻と最大速度到達時刻の独立比較'});
+ const A=v47.A,comparisons=v48AllComparisons().filter(c=>c.pair?.safe),selected=v47Selected();
+ const container=$('v47Timeline');container.replaceChildren();if(!A)return;
+ const width=900,left=165,right=25,rowHeight=24,groupHeight=25+rowHeight*comparisons.length;
+ const top=48,upper=Math.max(A.duration,...comparisons.map(c=>c.data.duration));
+ const svg=analysisElement('svg',{viewBox:'0 0 '+width+' '+(top+selected.length*groupHeight+53),
+   'aria-label':'A～Eの運動開始と最大速度の時刻比較'});
  const xAt=t=>left+(width-left-right)*t/Math.max(.01,upper);
- for(let m=0;m<=5;m++){
-  const x=xAt(upper*m/5);
-  svg.append(analysisElement('line',{x1:x,y1:top-10,x2:x,y2:top+row*selected.length,stroke:'#24485b'}));
-  svg.append(analysisAxisText(x,top+row*selected.length+23,v47Format(upper*m/5,2)));
+ for(let k=0;k<=5;k++){
+  const x=xAt(upper*k/5);
+  svg.append(analysisElement('line',{x1:x,y1:top-12,x2:x,y2:top+groupHeight*selected.length,stroke:'#24485b'}));
+  svg.append(analysisAxisText(x,top+groupHeight*selected.length+26,v47Format(upper*k/5,2)));
  }
- svg.append(analysisElement('text',{x:left,y:19,fill:'#d6eff9','font-size':12},
- '● 運動開始　◆ 最大速度（上：A／下：B、元の時刻）'));
- selected.forEach((j,i)=>{
-  const y=top+i*row,bj=pair?.matched.find(x=>x.A.key===j.key)?.B;
-  svg.append(analysisElement('text',{x:left-12,y:y+12,'text-anchor':'end',fill:'#d9f0f6','font-size':11},j.name));
-  const diamond=(t,cy,color)=>{
-   const x=xAt(t),points=[x+','+(cy-6),(x+6)+','+cy,x+','+(cy+6),(x-6)+','+cy].join(' ');
-   svg.append(analysisElement('polygon',{points,fill:color}));
-  };
-  if(j.onset!==null){
-   const dot=analysisElement('circle',{cx:xAt(j.onset),cy:y,r:5,fill:'#62e4ef'});
-   dot.addEventListener('click',()=>v47SelectJoint(j.key,j.onset));svg.append(dot);
+ svg.append(analysisElement('text',{x:left,y:18,fill:'#d6eff9','font-size':12},
+   '● 動作開始　◆ 最大速度　 A～Eは左側の文字で区別（元の時刻）'));
+ const palette=['#62e4ef','#f5bd68','#b9a4ff','#92dfac','#f9a3b0'];
+ const plot=(joint,series,label,t,y,index)=>{
+  const c=palette[index%palette.length],xOn=joint.onset===null?null:xAt(joint.onset),xPk=xAt(joint.peakTime);
+  svg.append(analysisElement('text',{x:left-20,y:y+4,'text-anchor':'end',fill:c,'font-size':11},label));
+  if(xOn!==null){
+   const circle=analysisElement('circle',{cx:xOn,cy:y,r:5,fill:c});
+   circle.addEventListener('click',()=>v47SelectJoint(joint.key,
+     label==='A'?joint.onset:($('v47Alignment').value==='phase'?joint.onset*A.duration/series.duration:joint.onset)));
+   svg.append(circle);
   }
-  diamond(j.peakTime,y+8,'#62e4ef');
-  const peakClick=analysisElement('circle',{cx:xAt(j.peakTime),cy:y+8,r:10,fill:'transparent','pointer-events':'all'});
-  peakClick.addEventListener('click',()=>v47SelectJoint(j.key,j.peakTime));svg.append(peakClick);
-  if(bj){
-   if(bj.onset!==null)svg.append(analysisElement('circle',{cx:xAt(bj.onset),cy:y+19,r:5,fill:'#f5bd68'}));
-   diamond(bj.peakTime,y+26,'#f5bd68');
-   const bClick=analysisElement('circle',{cx:xAt(bj.peakTime),cy:y+26,r:10,fill:'transparent','pointer-events':'all'});
-   bClick.addEventListener('click',()=>{
-    const aTime=$('v47Alignment').value==='phase'?bj.peakTime*A.duration/B.duration:bj.peakTime;
-    v47SelectJoint(j.key,aTime);
-   });svg.append(bClick);
-  }
+  svg.append(analysisElement('polygon',{points:[
+    xPk+','+(y-6),(xPk+6)+','+y,xPk+','+(y+6),(xPk-6)+','+y
+   ].join(' '),fill:c}));
+  const hit=analysisElement('circle',{cx:xPk,cy:y,r:10,fill:'transparent','pointer-events':'all'});
+  const at=label==='A'?joint.peakTime:($('v47Alignment').value==='phase'?
+    joint.peakTime*A.duration/series.duration:joint.peakTime);
+  hit.addEventListener('click',()=>{
+   const select=$('v47Joint');const item=selected.find(x=>x.key===joint.key);
+   if(item)v47SelectJoint(item.key,at);
+  });svg.append(hit);
+ };
+ selected.forEach((joint,row)=>{
+  const base=top+row*groupHeight;
+  svg.append(analysisElement('text',{x:8,y:base+4,fill:'#d9f0f6','font-size':12},
+   v48JointLabel(joint)));
+  plot(joint,A,'A',0,base,0);
+  comparisons.forEach((c,index)=>{
+   const match=c.pair.matched.find(x=>x.A.key===joint.key);
+   if(match)plot(match.B,c.data,c.label,0,base+rowHeight*(index+1),index+1);
+  });
  });
  container.append(svg);
 }
+function v48PairMethodLabel(pair){
+ if(!pair)return '比較なし';
+ return pair.differentSkeleton?
+  '関節名の対応付け＋身長比で移動速度を正規化':
+  '関節名の対応付け（同じ骨格形式）';
+}
 function v47RenderNarrative(){
- const A=v47.A,B=v47.B,pair=v47.comparison;
+ const A=v47.A,comparisons=v48AllComparisons();
  const el=$('v47Narrative'),quality=$('v47Quality');el.replaceChildren();
  const line=txt=>{const p=document.createElement('p');p.textContent=txt;el.append(p);};
  line('基準A：'+MODEL_NAMES[A.avatar]+'／'+(MOTION_NAMES[A.motion]||A.motion)+
   '。元の長さ '+v47Format(A.duration)+'秒、'+A.framesN+'サンプル。');
  const selected=v47Selected();
- for(const j of selected.slice(0,4)){
-  line(j.name+'：開始 '+(j.onset===null?'検出不可':v47Format(j.onset)+'秒')+
+ for(const j of selected.slice(0,3)){
+  line(v48JointLabel(j)+'：開始 '+(j.onset===null?'検出不可':v47Format(j.onset)+'秒')+
    '／最大速度 '+v47Format(j.peakLinear,3)+'モデル単位/秒（'+v47Format(j.peakTime)+'秒）'+
    '／最大加速度 '+v47Format(j.peakAccel,3)+'（'+v47Format(j.peakAccelTime)+'秒）'+
    '／減速開始 '+(j.decelStart===null?'検出不可':v47Format(j.decelStart)+'秒')+'。');
  }
- if(B&&pair){
-  line('比較B：'+MODEL_NAMES[B.avatar]+'／'+(MOTION_NAMES[B.motion]||B.motion)+
-   '。対応関節 '+pair.matched.length+'、マッピング：'+pair.method+'。');
+ for(const c of comparisons){
+  const B=c.data,pair=c.pair;
+  line('比較'+c.label+'：'+MODEL_NAMES[B.avatar]+'／'+(MOTION_NAMES[B.motion]||B.motion)+
+   '。対応関節 '+pair.matched.length+'／'+(pair.safe?'比較可能':'共通関節が不足')+
+   '。対応方法：'+v48PairMethodLabel(pair)+'。');
   if(pair.safe)for(const j of selected.slice(0,3)){
    const match=pair.matched.find(x=>x.A.key===j.key);if(!match)continue;
    const d=v47FeatureComparison(match.A,match.B,A,B,pair);
-   line(j.name+'のB−A：開始 '+(d.onsetDelta===null?'検出不可':v47Format(d.onsetDelta,3)+'秒')+
+   line(v48JointLabel(j)+'の'+c.label+'−A：開始 '+
+    (d.onsetDelta===null?'検出不可':v47Format(d.onsetDelta,3)+'秒')+
     '／最大速度 '+v47Format(d.speedDelta,3)+(pair.differentSkeleton?'身長比/秒':'モデル単位/秒')+
-    '／ピーク時刻 '+v47Format(d.peakTimeDelta,3)+'秒。差は良し悪しを意味しません。');
+    '／ピーク時刻 '+v47Format(d.peakTimeDelta,3)+'秒。差は良し悪しを示しません。');
   }
  }
  if(selected[0]){
-  const j=selected[0];
-  line('参考：速度ピーク '+j.peaks+'回、ジャークRMS '+v47Format(j.jerkRMS,3)+
-   '（モデル単位/秒³）、推定SPARC '+(j.sparc===null?'必要サンプル数不足':v47Format(j.sparc,3))+
+  const j=selected[0];line('参考（'+v48JointLabel(j)+'）：速度ピーク '+j.peaks+
+   '回、ジャークRMS '+v47Format(j.jerkRMS,3)+'（モデル単位/秒³）、推定SPARC '+
+   (j.sparc===null?'必要サンプル数不足':v47Format(j.sparc,3))+
    '。平滑化とサンプル間隔に敏感な探索的指標です。');
  }
  line('再現性：独立した複数試行が登録されていないため評価不可。人体実測・技能評価・因果関係の証明ではありません。');
  const config=v47Config();
- const messages=[
-  '元素材の記録Hzは未確認。約30Hzはアニメーションを補間・再サンプリングした値。',
-  '開始時刻は最大速度比 '+Math.round(config.onsetRatio*100)+'％ と'+config.sustain+'連続サンプルで検出。',
-  '加速度・ジャークは位置の数値微分値。高周波・短い動作で誤差が増幅します。'
+ const warnings=[
+  '元モーションの収録Hzは未確認。約30Hzはアニメーション補間による再サンプリング値。',
+  '開始検出は最大速度比 '+Math.round(config.onsetRatio*100)+'％・'+config.sustain+'連続サンプルを使用。',
+  '加速度とジャークは位置の数値微分。高周波・短い動作で誤差が増幅する可能性があります。'
  ];
- if(B&&pair)messages.push(pair.warning);
- quality.textContent=messages.join('　／　');
+ for(const c of comparisons)if(c.pair?.warning)warnings.push(c.label+'：'+c.pair.warning);
+ quality.textContent=warnings.join('　／　');
 }
 function v47UpdateCursor(){
  const A=v47.A;if(!A)return;
@@ -535,16 +703,16 @@ function v47Tick(now){
 }
 
 
-function v47MatchedFeatureRows(){
- if(!v47.comparison?.safe)return [];
- return v47.comparison.matched.map(pair=>{
-  const feature=v47FeatureComparison(pair.A,pair.B,v47.A,v47.B,v47.comparison);
-  return {...feature,marker:v47Category(feature.onsetDelta,feature.speedRelative,feature.rangeRelative,v47Config())};
+function v47MatchedFeatureRows(selected=v48SelectedComparison()){
+ if(!selected?.pair?.safe)return [];
+ return selected.pair.matched.map(pair=>{
+  const feature=v47FeatureComparison(pair.A,pair.B,v47.A,selected.data,selected.pair);
+  return {...feature,comparison_id:selected.label,marker:v47Category(feature.onsetDelta,feature.speedRelative,feature.rangeRelative,v47Config())};
  });
 }
 function v47RawRows(){
  const result=[];
- for(const d of [v47.A,v47.B].filter(Boolean)){
+ for(const d of v48DataSets()){
   const names=new Map(d.joints.map(j=>[j.index,j]));
   d.frames.forEach((frame,i)=>{
    for(const [id,pose] of Object.entries(frame.joints)){
@@ -560,7 +728,7 @@ function v47RawRows(){
 }
 function v47ProcessedRows(){
  const rows=[];
- for(const d of [v47.A,v47.B].filter(Boolean)){
+ for(const d of v48DataSets()){
   for(const j of d.joints){
    for(let i=0;i<d.framesN;i++){
     rows.push([
@@ -595,25 +763,26 @@ function v47ExportCSV(){
  };
  exportRows('raw-synthetic-series',origin,v47RawRows());
  exportRows('derived-features',features,v47ProcessedRows());
- if(v47.comparison?.safe){
-  const headers=['schema','model_a','motion_a','model_b','motion_b','canonical_joint_id','joint_name',
-   'mapping_method','unit','alignment_mode',
-   'onset_delta_b_minus_a_s','peak_speed_delta_b_minus_a',
-   'peak_speed_relative_delta','peak_time_delta_b_minus_a_s',
+ const validPairs=v48AllComparisons().filter(c=>c.pair?.safe);
+ if(validPairs.length){
+  const headers=['schema','comparison_id','model_a','motion_a','model_comparison','motion_comparison',
+   'canonical_joint_id','joint_name','mapping_method','unit','alignment_mode',
+   'onset_delta_comparison_minus_a_s','peak_speed_delta_comparison_minus_a',
+   'peak_speed_relative_delta','peak_time_delta_comparison_minus_a_s',
    'peak_acceleration_delta','range_delta','marker_category'];
-  const rows=v47MatchedFeatureRows().map(f=>[
-   V47_SCHEMA,v47.A.avatar,v47.A.motion,v47.B.avatar,v47.B.motion,
-   f.key,f.display,v47.comparison.method,v47.comparison.unit,$('v47Alignment').value,
+  const rows=validPairs.flatMap(c=>v47MatchedFeatureRows(c).map(f=>[
+   V47_SCHEMA,c.label,v47.A.avatar,v47.A.motion,c.data.avatar,c.data.motion,
+   f.key,f.display,c.pair.method,c.pair.unit,$('v47Alignment').value,
    f.onsetDelta,f.speedDelta,f.speedRelative,f.peakTimeDelta,
    f.peakAccelerationDelta,f.rangeDelta,f.marker.id
-  ]);
+  ]));
   exportRows('comparison-differences',headers,rows);
  }
- toast('元時系列・導出特徴'+(v47.comparison?.safe?'・比較差分':'')+'のCSVを書き出しました');
+ toast('最大5動作の元時系列・導出特徴'+(validPairs.length?'・A対B～E比較差分':'')+'をCSV出力しました');
 }
 function v47ExportJSON(){
  if(!v47.A){toast('先に解析を実行してください');return;}
- const dataset=[v47.A,v47.B].filter(Boolean);
+ const dataset=v48DataSets();
  const raw={
   schema:V47_SCHEMA,kind:'original_synthetic_keyframe_samples',
   origin:'pre-existing GLB animation keyframes or procedural animation, resampled at ~30Hz',
@@ -630,7 +799,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v47',
+  app_version:'v48',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -640,7 +809,7 @@ function v47ExportJSON(){
    license:MATERIAL_REFERENCES?.[d.avatar]?.license||'not independently verified',
    model_height_native_units:d.height
   })),
-  quality_status:pair?.warning||'simulation-only',
+  quality_status:v48AllComparisons().map(c=>c.label+'：'+(c.pair?.warning||'データ品質未確認')).join(' ／ ')||'simulation-only',
   method:{
    interpolation:'GLB keyframe interpolation / procedural pose, approximately 30Hz uniform resampling',
    smoothing_window_samples:config.smooth,
@@ -650,7 +819,7 @@ function v47ExportJSON(){
    relative_motion_tolerance:config.relativeTolerance,
    comparison_time_alignment:$('v47Alignment').value,
    coordinate_mapping:pair?.method||'no comparison',
-   cross_skeleton_speed_unit:pair?.differentSkeleton?'body-heights-per-second':'native-model-units-per-second',
+   cross_skeleton_speed_unit:v47.anyCrossSkeleton?'body-heights-per-second':'native-model-units-per-second',
    sparc:'exploratory sampled-speed DFT arc length, max cutoff 10 Hz',
    repeatability:'not assessable without separate recorded trials'
   },
@@ -672,6 +841,12 @@ function v47ExportJSON(){
     jerk_rms:j.jerkRMS,sparc_exploratory:j.sparc
    }))
   })),
+  comparisons:v48AllComparisons().map(c=>({
+   comparison_id:c.label,avatar_id:c.data.avatar,motion_id:c.data.motion,
+   compatible:!!c.pair?.safe,matched_count:c.pair?.matched.length||0,
+   method:c.pair?.method||null,warning:c.pair?.warning||null,
+   differences:v47MatchedFeatureRows(c)
+  })),
   comparison:pair?.safe?{
    model_a:v47.A.avatar,motion_a:v47.A.motion,model_b:v47.B.avatar,motion_b:v47.B.motion,
    mapping_method:pair.method,mapping_count:pair.matched.length,unit:pair.unit,
@@ -688,19 +863,20 @@ function v47ExportJSON(){
  downloadExperimentFile('compound-eye-v47-analysis-metadata.json',JSON.stringify(results,null,2),'application/json;charset=utf-8');
  toast('元時系列と解析条件を分けたJSONを書き出しました');
 }
-function v47ClockForB(){
- const A=v47.A,B=v47.B;if(!A||!B)return 0;
+function v47ClockForB(B=v48SelectedComparison()?.data){
+ const A=v47.A;if(!A||!B)return 0;
  const liveSource=Number.isFinite(state._renderedAnimationTime)?state._renderedAnimationTime:v47.currentTime;
  const sourceTime=((liveSource%A.duration)+A.duration)%A.duration;
  return $('v47Alignment').value==='phase'?
   sourceTime*B.duration/Math.max(.001,A.duration):sourceTime;
 }
 function v47DrawReference(pv,world){
- if(!v47.on||!v47.B||!v47.comparison?.safe||!$('v47Ghost').checked||
+ const selected=v48SelectedComparison();
+ if(!v47.on||!selected?.pair?.safe||!$('v47Ghost').checked||
     $('v47DisplayMode').value!=='compare'||state.model!==v47.A.avatar)return;
- const B=v47.B,md=getModel(B.avatar);
+ const B=selected.data,md=getModel(B.avatar);
  const isSame=md===modelData;
- const renderTime=Math.min(B.duration-.0001,Math.max(0,v47ClockForB()));
+ const renderTime=Math.min(B.duration-.0001,Math.max(0,v47ClockForB(B)));
  const primaryTime=state._renderedAnimationTime;
  const originalStateModel=state.model;
  try{
@@ -724,7 +900,7 @@ function v47DrawReference(pv,world){
  }
 }
 function v47MarkerAtTime(f){
- const A=v47.A,B=v47.B,pair=v47.comparison;
+ const A=v47.A,selected=v48SelectedComparison(),B=selected?.data,pair=selected?.pair;
  if(!A||!B||!pair)return f.marker;
  const ref=pair.matched.find(x=>x.A.key===f.key);
  if(!ref)return f.marker;
@@ -748,7 +924,7 @@ function v47DrawMarkers(projections){
  const selected=v47Selected(),only=selected.length===1?selected[0]:null;
  const items=[];
  if(only)items.push({id:only.index,key:only.key,color:'#fff2a1',glyph:'◎',label:'選択'});
- if($('v47DisplayMode').value==='compare'&&v47.comparison?.safe&&$('v47Markers').checked){
+ if($('v47DisplayMode').value==='compare'&&v48SelectedComparison()?.pair?.safe&&$('v47Markers').checked){
   const comparisons=v47MatchedFeatureRows();
   const ranked=comparisons.sort((a,b)=>
     (Math.abs(b.onsetDelta||0)+Math.abs(b.speedRelative||0))-
@@ -768,8 +944,8 @@ function v47DrawMarkers(projections){
    if(!uv||uv[0]<0||uv[0]>1||uv[1]<0||uv[1]>1)continue;
    const ring=document.createElement('div');ring.className='v47DiffRing';
    ring.textContent=item.glyph;
-   ring.setAttribute('aria-label',item.key+' '+item.label);
-   ring.title=item.key+' '+item.label;
+   ring.setAttribute('aria-label',v48JointLabel({key:item.key,index:item.id})+' '+item.label);
+   ring.title=v48JointLabel({key:item.key,index:item.id})+' '+item.label;
    ring.style.color=item.color;
    ring.style.left=((eye+uv[0])*100/projections.length)+'%';
    ring.style.top=((1-uv[1])*100)+'%';
