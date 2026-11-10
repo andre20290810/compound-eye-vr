@@ -1,6 +1,6 @@
 {
   "format": "compound-eye-lens-layout",
-  "version": 50,
+  "version": 51,
   "defaults": {
     "aegisCeramic": {
       "4": {
@@ -261,7 +261,8 @@
     "3": 0.1,
     "4": 0.1,
     "5": 0.1,
-    "6": 0.1
+    "6": 0.1,
+    "1": 1.0
   },
   "fourEyeHorizontalGapDefault": 0.1,
   "eyeCountLayoutDefaults": {
@@ -283,6 +284,10 @@
     },
     "6": {
       "distance": 0.08,
+      "scale": 1.0
+    },
+    "1": {
+      "distance": 0.0,
       "scale": 1.0
     }
   }

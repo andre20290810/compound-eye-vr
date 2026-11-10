@@ -799,7 +799,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v50',
+  app_version:'v51',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -919,35 +919,36 @@ function v47DrawMarkers(projections){
   v47.currentTime=((state._renderedAnimationTime%v47.A.duration)+v47.A.duration)%v47.A.duration;
  v47MarkerLayer.replaceChildren();v47.lastProjections=projections;
  if(!v47.on||!v47.A||!Array.isArray(projections)||!projections.length||
-    state.model!==v47.A.avatar)return;
- if($('v47DisplayMode').value==='normal')return;
+    state.model!==v47.A.avatar||$('v47DisplayMode').value==='normal')return;
  const selected=v47Selected(),only=selected.length===1?selected[0]:null;
  const items=[];
  if(only)items.push({id:only.index,key:only.key,color:'#fff2a1',glyph:'◎',label:'選択'});
  if($('v47DisplayMode').value==='compare'&&v48SelectedComparison()?.pair?.safe&&$('v47Markers').checked){
-  const comparisons=v47MatchedFeatureRows();
-  const ranked=comparisons.sort((a,b)=>
-    (Math.abs(b.onsetDelta||0)+Math.abs(b.speedRelative||0))-
-    (Math.abs(a.onsetDelta||0)+Math.abs(a.speedRelative||0)));
-  const limit=Number($('v47MarkerLimit').value)||5;
-  for(const item of ranked.slice(0,limit)){
+  const ranked=v47MatchedFeatureRows().sort((a,b)=>
+   (Math.abs(b.onsetDelta||0)+Math.abs(b.speedRelative||0))-
+   (Math.abs(a.onsetDelta||0)+Math.abs(a.speedRelative||0)));
+  for(const item of ranked.slice(0,Number($('v47MarkerLimit').value)||5)){
    const category=v47MarkerAtTime(item);
    if(items.some(x=>x.key===item.key))continue;
    items.push({id:item.sourceA,key:item.key,color:category.color,glyph:category.glyph,label:category.label});
   }
  }
+ const facetMode=state.markerPlacement==='facet'&&state.eyeCount>=2&&state.viewMode!=='pov';
  for(const item of items){
   const bone=modelData.world[item.id];if(!bone)continue;
-  if(state.selectedLensOnly>=0&&(!lensMarkerEnabled()||
-   !v50MotionJointBelongs(modelData.nodes[item.id],state.selectedLensOnly)))continue;
-  const pos=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
-  for(let eye=0;eye<projections.length;eye++){
-   const uv=state.selectedLensOnly>=0?
-    projectV50LensMarker(projections,eye,state.selectedLensOnly,pos):
-    projectionUV(projections[eye],pos);
-   if(!uv)continue;
-   const x=Array.isArray(uv)?uv[0]:uv.x;
-   const y=Array.isArray(uv)?uv[1]:uv.y;
+  const point=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
+  const lensIndices=facetMode?(state.selectedLensOnly>=0?[state.selectedLensOnly]:
+    [...Array(activeCameras().length).keys()]):[-1];
+  for(let eye=0;eye<projections.length;eye++)for(const lens of lensIndices){
+   if(lens>=0&&(!lensMarkerEnabled(lens)||!v51MaskOwner(lens,item.id)))continue;
+   if(lens<0&&state.selectedLensOnly>=0&&
+    (!lensMarkerEnabled(state.selectedLensOnly)||!v51MaskOwner(state.selectedLensOnly,item.id)))continue;
+   const mapped=lens>=0?
+    projectV51LensMarker(projections,eye,lens,point):projectionUV(projections[eye],point);
+   if(!mapped)continue;
+   const fit=isVrRender()?1.10:1;
+   const x=lens>=0?mapped.x:.5+(mapped[0]-.5)/fit;
+   const y=lens>=0?mapped.y:.5+(mapped[1]-.5)/fit;
    if(x<0||x>1||y<0||y>1)continue;
    const ring=document.createElement('div');ring.className='v47DiffRing';
    ring.textContent=item.glyph;
@@ -956,20 +957,16 @@ function v47DrawMarkers(projections){
    ring.style.color=item.color;
    ring.style.left=((eye+x)*100/projections.length)+'%';
    ring.style.top=((1-y)*100)+'%';
+   ring.dataset.lensIndex=String(lens);ring.dataset.eye=String(eye);
    v47MarkerLayer.appendChild(ring);
-  }
-  const jointName=modelData.nodes[item.id].name;
-  let lens=motionLensForBone(jointName);
-  if(lens<0&&state.eyeCount===2)lens=/^(Right|R_)/.test(jointName)?1:0;
-  if(lens<0||(state.selectedLensOnly>=0&&lens!==state.selectedLensOnly))continue;
-  for(let eye=0;eye<projections.length;eye++){
-   const centroid=lensDiagnostics.perEye[eye]?.[lens]?.centerUV;
-   if(!centroid)continue;
-   const glow=document.createElement('div');glow.className='v47LensGlow';
-   glow.style.left=((eye+centroid[0])*100/projections.length)+'%';
-   glow.style.top=((1-centroid[1])*100)+'%';
-   v47MarkerLayer.appendChild(glow);
+   if(lens>=0){
+    const centroid=lensDiagnostics.perEye[eye]?.[lens]?.centerUV;
+    if(!centroid)continue;
+    const glow=document.createElement('div');glow.className='v47LensGlow';
+    glow.style.left=((eye+(.5+(centroid[0]-.5)/fit))*100/projections.length)+'%';
+    glow.style.top=((1-(.5+(centroid[1]-.5)/fit))*100)+'%';
+    v47MarkerLayer.appendChild(glow);
+   }
   }
  }
 }
-
