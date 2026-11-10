@@ -1,7 +1,7 @@
 {
-  "app_version": "v50",
-  "source_commit": "7a9bde64fddd6043207c8bea9ae9c543d7de29f9",
+  "app_version": "v51",
+  "source_commit": "dfdeb95d3be5b8951cb6747c387207593d6aa16b",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "source_commit identifies v50 eye-count preset, marker clipping and cross-browser renderer source; this manifest is committed separately."
+  "note": "v51 source commit for timestamp title, central-only eye 1, true facet-space markers, HMD quick controls and compact menu; manifest committed separately."
 }
