@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼シミュレーションシステム 更新：2026/11/11/06:27</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼シミュレーションシステム 更新：2026/11/11/06:34</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -360,7 +360,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 }
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="vrToggleStereo" type="button" aria-label="双眼と単眼を切り替える">双眼 → 単眼</button><button id="vrOpenMenu" type="button" aria-label="VRメニューを開く">メニュー（LB）</button><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼シミュレーションシステム 更新：2026/11/11/06:27</h1></div>
+<header><div><h1>人工複眼シミュレーションシステム 更新：2026/11/11/06:34</h1></div>
 <div class="group" style="margin:0"><label id="avatarHeader" style="font-size:12px;display:flex;align-items:center;gap:5px">アバター <select id="avatarHeaderSelect" style="min-width:135px;max-width:185px;padding:8px"><option value="xbot">X Bot</option><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">3D閲覧</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">VRゲーム</button><button id="cycleMarkerMetric" type="button" title="マーカーの判定指標を切り替えます">判定：運動量</button></div></header>
 <div class="main"><div><div id="compactLayoutToolbar" role="toolbar" aria-label="画面とカメラの簡易校正">
  <strong style="font-size:13px">配置調整</strong>
@@ -4768,7 +4768,7 @@ function v47Sample(avatar,motion,config){
  const sampledEnd=duration-.00001;
  const rootIndex=v47RootIndex(md);
  const allJointIds=md.skin?.joints?.length?md.skin.joints:[...md.nodes.keys()];
- const ids=[...new Set(allJointIds)].filter(i=>i>=0&&i<md.nodes.length&&jointNamePattern.test(md.nodes[i].name));
+ const ids=[...new Set(allJointIds)].filter(i=>i>=0&&i<md.nodes.length&&(config.includeAllSkinJoints===true||jointNamePattern.test(md.nodes[i].name)));
  const backup={avatar:state.model,motion:state.motion,rendered:state._renderedAnimationTime};
  const frames=[];
  try{

@@ -112,7 +112,7 @@ function v47Sample(avatar,motion,config){
  const sampledEnd=duration-.00001;
  const rootIndex=v47RootIndex(md);
  const allJointIds=md.skin?.joints?.length?md.skin.joints:[...md.nodes.keys()];
- const ids=[...new Set(allJointIds)].filter(i=>i>=0&&i<md.nodes.length&&jointNamePattern.test(md.nodes[i].name));
+ const ids=[...new Set(allJointIds)].filter(i=>i>=0&&i<md.nodes.length&&(config.includeAllSkinJoints===true||jointNamePattern.test(md.nodes[i].name)));
  const backup={avatar:state.model,motion:state.motion,rendered:state._renderedAnimationTime};
  const frames=[];
  try{
