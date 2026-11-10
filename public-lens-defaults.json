@@ -1,6 +1,6 @@
 {
   "format": "compound-eye-lens-layout",
-  "version": 36,
+  "version": 50,
   "defaults": {
     "aegisCeramic": {
       "4": {
@@ -252,9 +252,9 @@
   },
   "radialLayout": {
     "mode": true,
-    "distance": 0.15,
+    "distance": 0.08,
     "scale": 1.0,
-    "units": "normalized UV; scale is shared optical magnification factor"
+    "units": "normalized UI position; common optical scale"
   },
   "eyeCountOpacityDefaults": {
     "2": 0,
@@ -263,5 +263,27 @@
     "5": 0.1,
     "6": 0.1
   },
-  "fourEyeHorizontalGapDefault": 0.32
+  "fourEyeHorizontalGapDefault": 0.1,
+  "eyeCountLayoutDefaults": {
+    "2": {
+      "distance": 0.08,
+      "scale": 1.0
+    },
+    "3": {
+      "distance": 0.105,
+      "scale": 1.0
+    },
+    "4": {
+      "distance": 0.1,
+      "scale": 1.0
+    },
+    "5": {
+      "distance": 0.105,
+      "scale": 1.0
+    },
+    "6": {
+      "distance": 0.08,
+      "scale": 1.0
+    }
+  }
 }

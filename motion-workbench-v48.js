@@ -799,7 +799,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v49',
+  app_version:'v50',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -938,23 +938,30 @@ function v47DrawMarkers(projections){
  }
  for(const item of items){
   const bone=modelData.world[item.id];if(!bone)continue;
+  if(state.selectedLensOnly>=0&&(!lensMarkerEnabled()||
+   !v50MotionJointBelongs(modelData.nodes[item.id],state.selectedLensOnly)))continue;
   const pos=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
   for(let eye=0;eye<projections.length;eye++){
-   const uv=projectionUV(projections[eye],pos);
-   if(!uv||uv[0]<0||uv[0]>1||uv[1]<0||uv[1]>1)continue;
+   const uv=state.selectedLensOnly>=0?
+    projectV50LensMarker(projections,eye,state.selectedLensOnly,pos):
+    projectionUV(projections[eye],pos);
+   if(!uv)continue;
+   const x=Array.isArray(uv)?uv[0]:uv.x;
+   const y=Array.isArray(uv)?uv[1]:uv.y;
+   if(x<0||x>1||y<0||y>1)continue;
    const ring=document.createElement('div');ring.className='v47DiffRing';
    ring.textContent=item.glyph;
    ring.setAttribute('aria-label',v48JointLabel({key:item.key,index:item.id})+' '+item.label);
    ring.title=v48JointLabel({key:item.key,index:item.id})+' '+item.label;
    ring.style.color=item.color;
-   ring.style.left=((eye+uv[0])*100/projections.length)+'%';
-   ring.style.top=((1-uv[1])*100)+'%';
+   ring.style.left=((eye+x)*100/projections.length)+'%';
+   ring.style.top=((1-y)*100)+'%';
    v47MarkerLayer.appendChild(ring);
   }
   const jointName=modelData.nodes[item.id].name;
   let lens=motionLensForBone(jointName);
   if(lens<0&&state.eyeCount===2)lens=/^(Right|R_)/.test(jointName)?1:0;
-  if(lens<0)continue;
+  if(lens<0||(state.selectedLensOnly>=0&&lens!==state.selectedLensOnly))continue;
   for(let eye=0;eye<projections.length;eye++){
    const centroid=lensDiagnostics.perEye[eye]?.[lens]?.centerUV;
    if(!centroid)continue;

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ja"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼VR v49｜個眼選択・AEGIS動作・簡易ビューア</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#0b1626"><meta name="description" content="人工複眼VR v41: 左右個眼表示の交換、AEGISパンチの二関節IK、骨格運動量の上位3関節デバッグ、注目個眼の表示面積自動調整。"><title>人工複眼VR v50｜眼数別公開配置・マーカー閾値・描画統一</title>
 <style>
 :root{color-scheme:dark;--bg:#081726;--panel:#142940;--line:#3b5b72;--cyan:#62d1da;--txt:#eef7ff;--sub:#bad1e1;--pink:#ff747d}
 *{box-sizing:border-box}body,html{margin:0;background:var(--bg);color:var(--txt);font:14px -apple-system,BlinkMacSystemFont,'Hiragino Kaku Gothic ProN',Meiryo,sans-serif;min-height:100%;-webkit-text-size-adjust:100%}
@@ -255,7 +255,7 @@ body.compact-layout #viewerAllLenses{display:none!important}
 }
 </style></head><body>
 <div id="vrTapHint">設定操作中：ジャイロ・視線決定を停止（画面タップのみ）</div><button id="vrToggleStereo" type="button" aria-label="双眼と単眼を切り替える">双眼 → 単眼</button><button id="vrOpenMenu" type="button" aria-label="VRメニューを開く">メニュー（LB）</button><button id="leaveVR">VR終了</button><div id="vrNotice" role="status" aria-live="polite"></div><div id="renderFailure" role="alert"><div id="renderFailureText">描画エラー</div><button id="reloadOnError" type="button">画面を再読み込み</button><button id="exitOnError" type="button">VRを終了</button></div><button id="recenterVR">正面0°</button><div id="vrSensor"><span id="vrSensorText">センサー待機</span><span id="vrSensorText2">センサー待機</span></div><main class="app">
-<header><div><h1>人工複眼VR v49｜個眼選択・AEGIS動作・簡易ビューア</h1></div>
+<header><div><h1>人工複眼VR v50｜眼数別公開配置・マーカー閾値・描画統一</h1></div>
 <div class="group" style="margin:0"><label id="avatarHeader" style="font-size:12px;display:flex;align-items:center;gap:5px">アバター <select id="avatarHeaderSelect" style="min-width:135px;max-width:185px;padding:8px"><option value="xbot">X Bot</option><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><button id="allowGyro">ジャイロ許可</button><button id="centerNow">正面合わせ</button><button id="startVR">3D閲覧</button><button id="startVRGame" style="background:#16715e;border-color:#8bd8b9">VRゲーム</button><button id="openCompactLayout" type="button">調整画面</button></div></header>
 <div class="main"><div><div id="compactLayoutToolbar" role="toolbar" aria-label="画面とカメラの簡易校正">
  <strong style="font-size:13px">配置調整</strong>
@@ -450,6 +450,7 @@ body.compact-layout #viewerAllLenses{display:none!important}
   <output id="radialQuickScaleLabel">1.00×</output>
  </label>
  <span style="font-size:11px;color:#a9d0d9">0＝元の身体位置に重なる／1.00×＝中央モデルと等倍</span>
+ <button id="v50ResetPublishedLayout" type="button" style="font-size:11px;padding:7px 9px;align-self:flex-start">Edge基準の公開配置に戻す</button>
 </div>
 <div class="group"><label class="label"><input type="checkbox" id="autoEye10"> 10秒ごとに2→3→4→5→6眼を自動切替</label><span class="sublabel">VRではGameSirのLBでメニューを開き、十字キー・スティックで選択、Aで決定、BでVRゲームに戻れます。</span></div>
 <div class="group"><span class="label">アバター</span><select id="model"><option value="xbot">X Bot / Boxer（9動作）</option><option value="aegisEmber">AEGIS NAVY（濃紺・鋭角バイザー）</option><option value="aegisSoldier">AEGIS SOLDIER（黄〜赤・発光チューブ）</option></select></div>
@@ -469,6 +470,13 @@ body.compact-layout #viewerAllLenses{display:none!important}
 <div class="slider"><span class="label">ジャイロ視点感度</span><input id="gyroSensitivity" type="range" min="0.6" max="2.8" step=".1" value="1.6"><span id="gyroSensitivityLabel">1.6×</span></div>
 <div class="slider"><span class="label">首振り操作の感度</span><input id="gestureSensitivity" type="range" min="0.7" max="2.0" step=".1" value="1.2"><span id="gestureSensitivityLabel">1.2×</span></div>
 <div class="group"><label class="label"><input type="checkbox" id="gestureEnabled" checked> VRの首振り操作を有効にする</label><label class="label"><input type="checkbox" id="showMotionMarkers" checked> 動いている関節に赤い■を表示</label><label class="label"><input type="checkbox" id="showLensLabels"> 個眼の説明を表示</label></div>
+<div class="group" id="markerThresholdControls" style="padding:9px;background:#12384e;border-radius:9px;margin-top:4px">
+ <label class="label" for="markerScoreThreshold">関節マーカー表示閾値
+ <input type="range" id="markerScoreThreshold" min="0" max="100" step="1" value="7" style="width:190px">
+ </label>
+ <output id="markerScoreThresholdValue" style="font-size:12px;color:#a9eff0">7 / 100</output>
+ <small style="font-size:11px;color:#b4d1df">移動速度と角速度を組み合わせた表示用の運動量スコアです。高いほど動きが大きく、技能の良し悪しではありません。</small>
+ </div>
 <div class="cameraSettings" id="attentionControls">
 <h3>関節運動量で個眼の表示面積を制御（実験）</h3>
 <div class="group"><label class="label">注目先<select id="focusMode"><option value="auto">自動選択（関節運動量）</option><option value="manual">手動固定</option></select></label>
@@ -542,7 +550,7 @@ function currentScreenAngle(){
 }
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
-const state={fourEyeGap:.32,anchorAlphaCustom:false,radialMode:true,radialDistance:.15,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:2,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:0,lensScale:2.20,lensPull:1.10,showLabels:true,showMotionMarkers:true};
+const state={fourEyeGap:.100,anchorAlphaCustom:false,radialMode:true,radialDistance:.080,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:2,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:0,lensScale:2.20,lensPull:1.10,showLabels:true,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
 const MOTION_NAMES={
  xbot_idle:'静止',xbot_fight_idle:'構え',xbot_walk:'歩行A',xbot_walk2:'歩行B',xbot_run:'走行',
@@ -557,7 +565,7 @@ state.lensOverrides={};state.vrLensOverrides={};state.vrLensSaved={};state.layou
 state.focusMode='auto';state.manualLens=0;state.focusLens=-1;state.focusHoldAt=0;
 state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.20;state.focusTransitionMs=250;
 state.focusAreas=Array(6).fill(1);state.focusFrom=Array(6).fill(1);
-state.focusTo=Array(6).fill(1);state.focusTransitionAt=0;state.showMotionDebug=false;state.motionStats=[];
+state.focusTo=Array(6).fill(1);state.focusTransitionAt=0;state.showMotionDebug=false;state.motionStats=[];state.markerScoreThreshold=7;state.markerLensVisibility={};
 state.autoEye10=false;state.nextEyeAt=0;state.motionSensorAllowed=false;state.gestureState={lastHeadSign:0,headTurns:[],lastNodSign:0,nods:[],rollArmed:true,rollDirection:0,rollAt:0,rollCooldown:0,lookUpAt:0,lastShake:0,shakeCount:0,toastUntil:0};
 const scope=$('screen'),canvas=$('gl'),status=$('statusText');
 let gl,shaderProg,compProg,quad,offscreen=[],fboWidth=0,fboHeight=0,ready=false,modelData=null,modelCache={},angleNow=0,lastFrame=performance.now(),frames=0,fpsAt=performance.now(),hud=[],drawErrorCount=0;
@@ -673,7 +681,12 @@ void main(){
 }`
 function compile(type,src){let s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s;}
 function program(v,f){let p=gl.createProgram();gl.attachShader(p,compile(gl.VERTEX_SHADER,v));gl.attachShader(p,compile(gl.FRAGMENT_SHADER,f));gl.linkProgram(p);if(!gl.getProgramParameter(p,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(p));return p;}
-function initGL(){gl=canvas.getContext('webgl2',{alpha:false,antialias:true,depth:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});if(!gl)throw Error('WebGL2が利用できません');let vs=VS,fs=FS;shaderProg=program(vs,fs);
+function initGL(){gl=canvas.getContext('webgl2',{alpha:false,premultipliedAlpha:false,antialias:true,depth:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
+if(!gl)throw Error('WebGL2が利用できません');
+gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL,false);
+gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+try{if('drawingBufferColorSpace' in gl)gl.drawingBufferColorSpace='srgb';}catch(err){console.info('Color space uses browser default',err);}
+let vs=VS,fs=FS;shaderProg=program(vs,fs);
 for(const key of ['aP','aN','aColor','aJoints','aWeights'])shaderProg[key]=gl.getAttribLocation(shaderProg,key);
 for(const key of ['uPV','uWorld','uBones','uSkin','uPartMask','uPartActive','uOutsideAlpha','uNavy','uExclusive'])shaderProg[key]=gl.getUniformLocation(shaderProg,key==='uBones'?'uBones[0]':key==='uPartMask'?'uPartMask[0]':key);
 const CVS=`#version 300 es\nprecision highp float;in vec2 aP;out vec2 vUV;void main(){vUV=(aP+1.)*.5;gl_Position=vec4(aP,0.,1.);}`.replace('\\n','\n');
@@ -1202,7 +1215,7 @@ function lensAnchorNames(i,defaultNames){
  if(side&&kind==='full')return side+'Shoulder|'+(side==='Left'?'L_UpperArm':'R_UpperArm');
  return defaultNames;
 }
-const lensDiagnostics={perEye:[],worldJoints:[]};
+const lensDiagnostics={perEye:[],worldJoints:[],maskRectsPerEye:[]};
 // All parts use the exact same reference projection as the central 2-eye model.
 // At distance=0 and scale=1, the local source pixel maps back to its reference
 // body location on screen, without a second camera's framing drift.
@@ -1286,10 +1299,12 @@ function radialAnchoredLenses(eye,globalPV,modelFit){
               referenceY('RightUpLeg|R_UpperLeg',source[1]))*.5;
   const aligned6Y=state.eyeCount===6&&i===0?shoulderY:
                    state.eyeCount===6&&i===5?hipY:null;
-  const desired=[state.eyeCount===6&&(i===0||i===5)?.5:source[0]+dir[0]*lensRadius,
-    aligned6Y!==null?aligned6Y:
-    state.eyeCount===3&&i===2?
-      Math.max(.46,source[1]+dir[1]*lensRadius+.16):
+  const centerLeg3=state.eyeCount===3&&i===2;
+  // The 3-eye combined legs remain at their exact location in the
+  // original full-body view, regardless of the upper-body spread slider.
+  const desired=[centerLeg3?source[0]:state.eyeCount===6&&(i===0||i===5)?.5:source[0]+dir[0]*lensRadius,
+    centerLeg3?source[1]:aligned6Y!==null?aligned6Y:
+    state.eyeCount===3&&i===2?source[1]:
       source[1]+dir[1]*lensRadius];
   const center=[clamp(desired[0],.015,.985),clamp(desired[1],.015,.985)];
   const tune=getLensTune(state.model,state.eyeCount,i);
@@ -1306,7 +1321,7 @@ function radialAnchoredLenses(eye,globalPV,modelFit){
   report.push({name:jointName,region:lensKind(i),joint3D:joint,anchorUV:source,
    destUV:desired,centerUV:center,sourceUV:source,
    offsetUV:Array.from(offsets.slice(i*2,i*2+2)),
-   cameraYaw:0,sample:1/magnification,radial:true,torsoLocked});
+   cameraYaw:0,sample:1/magnification,radial:true,torsoLocked,centerLeg3});
  }
  lensDiagnostics.perEye[eye]=report;
  return {rects,sampling,offsets};
@@ -1576,6 +1591,7 @@ function renderFacet(idx,eye,pv,world){
 function compose(eye,w,h,globalPV,modelFit){let half=isStereoVR()?Math.floor(w/2):w, x=eye*half,tw=isStereoVR()?(eye===1?w-half:half):w;gl.bindFramebuffer(gl.FRAMEBUFFER,null);gl.viewport(x,0,tw,h);gl.enable(gl.SCISSOR_TEST);gl.scissor(x,0,tw,h);gl.disable(gl.DEPTH_TEST);gl.useProgram(compProg);gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.enableVertexAttribArray(compProg.aP);gl.vertexAttribPointer(compProg.aP,2,gl.FLOAT,false,0,0);
 for(let i=0;i<8;i++){gl.activeTexture(gl.TEXTURE0+i);gl.bindTexture(gl.TEXTURE_2D,offscreen[eye*(activeCameras().length+2)+Math.min(i,activeCameras().length+1)].tex);gl.uniform1i(compProg.tex[i],i);}
 const dynamic=anchoredLenses(eye,globalPV,modelFit);
+lensDiagnostics.maskRectsPerEye[eye]=new Float32Array(dynamic.rects);
 if(state.selectedLensOnly>=0){
  for(let i=0;i<activeCameras().length;i++){
   if(i!==state.selectedLensOnly)dynamic.rects.set([-10,-10,.001,.001],i*4);
@@ -1646,7 +1662,7 @@ function drawMotionMarkerOverlay(pvs){
  motionMarkerLayer.replaceChildren();
  if(!state.showMotionMarkers||!pvs||!modelData||!state.motionStats?.length)return;
  const projections=Array.isArray(pvs)?pvs:[pvs];
- for(const joint of state.motionStats.filter(x=>x.score>=7).slice(0,16)){
+ for(const joint of state.motionStats.filter(x=>x.score>=state.markerScoreThreshold).slice(0,16)){
   const bone=modelData.world[joint.index];if(!bone)continue;
   const p=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
   for(let eye=0;eye<projections.length;eye++){
@@ -1661,31 +1677,70 @@ function drawMotionMarkerOverlay(pvs){
   }
  }
 }
+function markerLensKey(index=state.selectedLensOnly){
+ return state.model+':'+state.eyeCount+':'+index;
+}
+function lensMarkerEnabled(index=state.selectedLensOnly){
+ return !!state.showMotionMarkers&&(index<0||state.markerLensVisibility[markerLensKey(index)]!==false);
+}
+function v50MotionJointBelongs(joint,index){
+ if(!joint||index<0)return false;
+ const name=joint.name||'';
+ const left=/^(Left|L_)/i.test(name),right=/^(Right|R_)/i.test(name);
+ const leg=/(UpLeg|Leg|Foot|Toe|Knee)/i.test(name);
+ const body=/(Hips|Pelvis)/i.test(name);
+ const upper=/(Shoulder|Arm|Forearm|Hand)/i.test(name);
+ const axial=/(Head|Neck|Spine|Chest)/i.test(name);
+ switch(state.eyeCount){
+ case 2:return index===0?left:index===1?right:false;
+ case 3:return index===0?left&&upper:index===1?right&&upper:leg||body;
+ case 4:return index===0?left&&upper:index===1?right&&upper:index===2?left&&leg:right&&leg;
+ case 5:return index===0?axial:index===1?left&&upper:index===2?left&&leg:index===3?right&&upper:right&&leg;
+ case 6:return index===0?axial:index===1?left&&upper:index===2?left&&leg:
+  index===3?right&&upper:index===4?right&&leg:body;
+ default:return false;
+ }
+}
+// The same inverse sampling transform as the compositing shader. Only emit
+// markers if they are inside the target eye's final elliptical lens region.
+function projectV50LensMarker(pvs,eye,index,worldPosition){
+ const d=lensDiagnostics.perEye[eye]?.[index],m=lensDiagnostics.maskRectsPerEye[eye];
+ if(!d||!m||!pvs[eye])return null;
+ const source=projectionUV(pvs[eye],worldPosition);
+ if(!source)return null;
+ const rect=Array.from(m.slice(index*4,index*4+4));
+ const anchor=d.sourceUV,center=d.centerUV;
+ if(!anchor||!center)return null;
+ const zoom=1/Math.max(.001,d.sample||1);
+ const x=center[0]+(source[0]-anchor[0])*zoom;
+ const y=center[1]+(source[1]-anchor[1])*zoom;
+ if(!(x>=0&&x<=1&&y>=0&&y<=1))return null;
+ const rx=rect[2]*2.20,ry=rect[3]*2.20;
+ if(rx<=0||ry<=0)return null;
+ const u=(x-rect[0])/rx,v=(y-rect[1])/ry;
+ if(u*u+v*v>.90*.90)return null;
+ return {x,y};
+}
 function drawSelectedLensMarkers(pvs){
- if(!state.showMotionMarkers||state.selectedLensOnly<0||!pvs?.length||!modelData?.world)return;
  motionMarkerLayer.replaceChildren();
  const index=state.selectedLensOnly;
- const selected=state.motionStats.filter(j=>{
-  if(state.eyeCount===2)return /^(Left|L_)/.test(j.name)?index===0:/^(Right|R_)/.test(j.name)?index===1:false;
-  return j.lens===index;
- }).slice(0,12);
- for(const joint of selected){
+ if(index<0||!lensMarkerEnabled(index)||!pvs?.length||!modelData?.world)return;
+ const candidates=state.motionStats.filter(j=>
+  j.score>=state.markerScoreThreshold&&v50MotionJointBelongs(j,index)).slice(0,20);
+ for(const joint of candidates){
   const bone=modelData.world[joint.index];if(!bone)continue;
-  const p=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
+  const pos=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
   for(let eye=0;eye<pvs.length;eye++){
-   const info=lensDiagnostics.perEye[eye]?.[index];
-   const uv=projectionUV(pvs[eye],p),src=info?.sourceUV,center=info?.centerUV;
-   if(!uv||!src||!center)continue;
-   const magnification=1/Math.max(info.sample||1,.001);
-   const x=center[0]+(uv[0]-src[0])*magnification;
-   const y=center[1]+(uv[1]-src[1])*magnification;
-   if(x<0||x>1||y<0||y>1)continue;
-   const label=document.createElement('span');
-   label.title=joint.name;
-   label.style.cssText='position:absolute;width:8px;height:8px;border:1px solid #fff;background:#ff3030;pointer-events:none;z-index:9;transform:translate(-50%,-50%)';
-   label.style.left=((eye+x)/pvs.length*100)+'%';
-   label.style.top=((1-y)*100)+'%';
-   motionMarkerLayer.append(label);
+   const local=projectV50LensMarker(pvs,eye,index,pos);
+   if(!local)continue;
+   const mark=document.createElement('span');
+   mark.title=joint.name+'／運動量 '+joint.score.toFixed(1)+'（閾値 '+state.markerScoreThreshold+'）';
+   mark.dataset.lensIndex=String(index);
+   mark.dataset.markerScore=joint.score.toFixed(2);
+   mark.style.cssText='position:absolute;width:8px;height:8px;border:1px solid #fff;background:#ff3030;pointer-events:none;z-index:9;transform:translate(-50%,-50%)';
+   mark.style.left=((eye+local.x)/pvs.length*100)+'%';
+   mark.style.top=((1-local.y)*100)+'%';
+   motionMarkerLayer.append(mark);
   }
  }
 }
@@ -1756,7 +1811,14 @@ function renderMotionDebug(){
  el.replaceChildren(title,summary,table);
  lastMotionDebugAt=performance.now();
 }
-function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1,'auto10');}let {w,h}=resize(),eyeW=isStereoVR()?w/2:w;const cap=isVrRender()?540:700;const rw=Math.max(120,Math.min(cap,Math.floor(eyeW*.82))),rh=Math.max(120,Math.min(cap,Math.floor(h*.82)));const nTargets=(activeCameras().length+2)*(isStereoVR()?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
+function draw(now){if(!gl||!ready||!modelData)return;if(state.autoEye10&&now>=state.nextEyeAt){state.nextEyeAt=now+10000;setEyeCount(state.eyeCount>=6?2:state.eyeCount+1,'auto10');}let {w,h}=resize(),eyeW=isStereoVR()?w/2:w;const cap=isVrRender()?540:700;
+const sourceW=Math.max(120,Math.floor(eyeW*.82)),sourceH=Math.max(120,Math.floor(h*.82));
+// Keep the source FBO aspect equal to the eye viewport aspect across desktop
+// Edge and mobile Safari. Prior code capped width and height independently,
+// creating a distorted crop on high-DPR and narrow devices.
+const uniformCap=Math.min(1,cap/sourceW,cap/sourceH);
+const rw=Math.max(96,Math.round(sourceW*uniformCap));
+const rh=Math.max(96,Math.round(sourceH*uniformCap));const nTargets=(activeCameras().length+2)*(isStereoVR()?2:1);if(offscreen.length!==nTargets||fboWidth!==rw||fboHeight!==rh)createTargets(rw,rh,nTargets);
 // Yaw is tracked relative to user-selected calibration, while eye-specific camera angles stay independent.
 const smoothing=isVrRender()?.38:.28;const sensed=!isVrRender()&&sensorLive();
  const yTarget=state.layoutPreviewVR?0:(state.vr&&state.menuOpen?state.viewYaw:(sensed?(state.gyroInvert?-state.yaw:state.yaw):state.dragYaw));
@@ -1888,7 +1950,7 @@ function updateSavedSelect(){const el=$('presetSaved');if(!el)return;let raw={};
  for(let name of Object.keys(raw).sort()){let op=document.createElement('option');op.value=name;op.textContent=name;el.append(op);}if(raw[prev])el.value=prev;
 }
 function loadViewPreset(){let name=$('presetSaved').value;try{let raw=JSON.parse(localStorage.getItem('compoundeye.v11.presets')||localStorage.getItem('compoundeye.v8.presets')||'{}');let v=raw[name];if(!v)return;
- state.cameras=cloneCameras(CAMERA_DEFAULTS);state.eyeCount=clamp(v.eyeCount,2,6);state.selectedCamera=0;changeModel(v.model);state.zoom=Number(v.zoom||1);setMotion(v.motion);renderUI();refreshCameraFields();toast('保存した視点に戻しました');
+ state.cameras=cloneCameras(CAMERA_DEFAULTS);state.eyeCount=clamp(v.eyeCount,2,6);applyEyeLayoutV50(state.eyeCount);state.selectedCamera=0;changeModel(v.model);state.zoom=Number(v.zoom||1);setMotion(v.motion);renderUI();refreshCameraFields();toast('保存した視点に戻しました');
 }catch(e){toast('設定を復元できません');}}
 function resetViewPreset(){state.cameras=cloneCameras(CAMERA_DEFAULTS);state.selectedCamera=0;refreshCameraFields();renderCameraBadges();toast('初期カメラ設定に戻しました');}
 function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,cameras:state.cameras,model:state.model,motion:state.motion};
@@ -1903,7 +1965,12 @@ function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML=
 function renderUI(){
  document.querySelectorAll('[data-count]').forEach(b=>b.classList.toggle('active',Number(b.dataset.count)===state.eyeCount));
  if($('viewerModelName'))$('viewerModelName').textContent='モデル：'+(MODEL_NAMES[state.model]||state.model).replace(/\s*[・/].*/,'');
- if($('viewerMarkerToggle')){$('viewerMarkerToggle').textContent=state.showMotionMarkers?'マーカーON':'マーカーOFF';$('viewerMarkerToggle').setAttribute('aria-pressed',String(state.showMotionMarkers));}
+ if($('viewerMarkerToggle')){
+  const enabled=lensMarkerEnabled();
+  $('viewerMarkerToggle').textContent=enabled?'マーカーON':'マーカーOFF';
+  $('viewerMarkerToggle').setAttribute('aria-pressed',String(enabled));
+  $('viewerMarkerToggle').title='現在の閾値 '+state.markerScoreThreshold+'/100';
+ }
  if($('viewerLabelToggle')){$('viewerLabelToggle').textContent=state.showLabels?'番号ON':'番号OFF';$('viewerLabelToggle').setAttribute('aria-pressed',String(state.showLabels));}
  if($('viewerAllLenses'))$('viewerAllLenses').style.display=state.selectedLensOnly>=0?'block':'none';
  if($('viewerZoom'))$('viewerZoom').value=String([.75,1,1.25,1.5,2].reduce((best,v)=>Math.abs(1/state.zoom-v)<Math.abs(1/state.zoom-best)?v:best,1));
@@ -1971,7 +2038,7 @@ function renderUI(){
 }
 function setEyeCount(n,reason='manual'){
  const previous=state.eyeCount;state.eyeCount=clamp(Number(n),2,6);
- state.selectedCamera=0;state.focusLens=-1;state.selectedLensOnly=-1;restoreVRAlignment();syncBodyOpacityDefault();
+ state.selectedCamera=0;state.focusLens=-1;state.selectedLensOnly=-1;applyEyeLayoutV50(state.eyeCount);restoreVRAlignment();syncBodyOpacityDefault();
  if(previous!==state.eyeCount)recordExperimentEvent('eye_count_change',{from:previous,to:state.eyeCount,reason});
  renderUI();toast(state.eyeCount+'視点へ切替');
 }
@@ -2307,6 +2374,7 @@ const ACTIONS=[
  {id:'eye6',label:'個眼6'}, {id:'stereo',label:'双眼 / 単眼'},
  {id:'model',label:'アバター切替'}, {id:'motion',label:'動作切替'},
  {id:'labels',label:'番号ON/OFF'}, {id:'markers',label:'マーカーON/OFF'},
+ {id:'markerThreshold',label:'マーカー閾値：7 / 100'},
  {id:'nextLens',label:'個眼を単独表示'}, {id:'allLenses',label:'個眼を全表示'},
  {id:'view',label:'正面 / 背面 / 主観'}, {id:'ghost',label:'X Bot残像 ON/OFF'},
  {id:'central',label:'中央全身：非表示'}, {id:'overhead',label:'見下ろし：OFF'}, {id:'center',label:'視点リセット'},
@@ -2353,6 +2421,7 @@ function renderVrMenu(){
   const i=Number(b.dataset.menuIndex);
   b.classList.toggle('focus',state.menuOpen&&i===state.menuIndex);
   if(b.dataset.action==='central')b.textContent=state.vrCentralVisible?'中央全身：表示中':'中央全身：非表示';
+  if(b.dataset.action==='markerThreshold')b.textContent='マーカー閾値：'+state.markerScoreThreshold+' / 100';
   if(b.dataset.action==='overhead')b.textContent=Math.abs(state.gameLookPitch)>=1.35?'見下ろし：ON':'見下ろし：OFF';
   b.classList.toggle('active',(b.dataset.action==='eye'+state.eyeCount)||(b.dataset.action==='stereo'&&!state.stereoMode)||(b.dataset.action==='ghost'&&state.punchGhost)||(b.dataset.action==='central'&&state.vrCentralVisible)||(b.dataset.action==='overhead'&&Math.abs(state.gameLookPitch)>=1.35));
  });
@@ -2376,6 +2445,7 @@ function doAction(id){
  else if(id==='view')cycleViewMode();
  else if(id==='labels')toggleLensLabels();
  else if(id==='markers')toggleViewerMarkers();
+ else if(id==='markerThreshold'){const values=[0,5,7,10,15,20,30,50];const idx=values.findIndex(v=>v>state.markerScoreThreshold);setMarkerScoreThreshold(values[idx<0?0:idx]);}
  else if(id==='nextLens')setSelectedLensOnly((state.selectedLensOnly+1)%state.eyeCount);
  else if(id==='allLenses')setSelectedLensOnly(-1);
  else if(id==='ghost'){state.punchGhost=!state.punchGhost;renderUI();}
@@ -2498,7 +2568,7 @@ function syncBodyOpacityDefault(){
  if(!state.anchorAlphaCustom)state.anchorAlpha=defaultBodyOpacity(state.eyeCount);
 }
 function loadFourEyeGap(){
- try{const val=Number(localStorage.getItem(FOUR_EYE_GAP_KEY));
+ try{const raw=localStorage.getItem(FOUR_EYE_GAP_KEY);const val=raw===null?NaN:Number(raw);
   if(Number.isFinite(val)&&val>=0&&val<=.49)state.fourEyeGap=val;
  }catch(err){console.warn('4-eye horizontal gap unavailable',err);}
 }
@@ -2513,7 +2583,8 @@ function refreshFourEyeGapControls(){
  }
 }
 function setFourEyeGap(v){
- state.fourEyeGap=Number.isFinite(Number(v))?clamp(Number(v),0,.49):.32;
+ state.fourEyeGap=Number.isFinite(Number(v))?clamp(Number(v),0,.49):.100;
+ saveEyeLayoutV50();
  try{localStorage.setItem(FOUR_EYE_GAP_KEY,String(state.fourEyeGap));}
  catch(err){console.warn('Cannot save four-eye gap',err);}
  refreshFourEyeGapControls();
@@ -2564,11 +2635,15 @@ function applyDefaultSettings(){
   syncBodyOpacityDefault();renderUI();return true;
  }catch(e){console.warn('デフォルト復元失敗',e);return false;}
 }
-function resetDefaultSettings(){try{localStorage.removeItem(CONFIG_KEY);}catch(e){}
+function resetDefaultSettings(){try{
+ localStorage.removeItem(CONFIG_KEY);localStorage.removeItem(V50_EYE_LAYOUT_KEY);
+ localStorage.removeItem(V50_RADIAL_MODE_KEY);
+ localStorage.removeItem(V50_MARKER_SETTINGS_KEY);
+ }catch(e){}
  state.lensScale=2.20;state.lensPull=1.10;state.anchorAlphaCustom=false;state.anchorAlpha=0;state.showLabels=PUBLIC_UI_DEFAULTS.showLensLabels;
  state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;
  state.limbImageZoom=1;state.facingBack=false;state.poseAligned=true;state.vizMode='lenses';state.cameras=cloneCameras(CAMERA_DEFAULTS);
- state.showMotionMarkers=true;state.focusMode='auto';state.manualLens=0;state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.2;state.focusTransitionMs=250;state.focusLens=-1;state.zoom=1;state.eyeCount=2;syncBodyOpacityDefault();state.outsideAlpha=0;state.vrFraming=1;
+ state.showMotionMarkers=true;state.markerScoreThreshold=7;state.markerLensVisibility={};state.focusMode='auto';state.manualLens=0;state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.2;state.focusTransitionMs=250;state.focusLens=-1;state.zoom=1;state.eyeCount=2;loadEyeLayoutsV50();setMarkerScoreThreshold(7);syncBodyOpacityDefault();state.outsideAlpha=0;state.vrFraming=1;
  renderUI();toast('保存設定を解除し、アプリ初期値に戻しました');
 }
 function setGameAction(a){
@@ -2738,21 +2813,22 @@ $('vrAlignReset').onclick=resetCurrentVRAlignment;
 $('vrAlignLegacy').onclick=downloadLegacyVRAlignment;
 $('vrToggleStereo').onclick=toggleStereoMode;
 $('vrOpenMenu').onclick=()=>toggleMenu(true);
-$('radialMode').onchange=e=>{state.radialMode=e.target.checked;saveRadialSettings();renderUI();};
+$('radialMode').onchange=e=>{state.radialMode=e.target.checked;saveRadialSettings();try{localStorage.setItem(V50_RADIAL_MODE_KEY,String(state.radialMode));}catch(err){}renderUI();};
 $('radialDistance').oninput=e=>setRadialDistance(Number(e.target.value));
 $('radialScale').oninput=e=>{setRadialScale(Number(e.target.value));};
 $('radialQuickDistance').oninput=e=>setRadialDistance(Number(e.target.value));
 $('radialQuickScale').oninput=e=>setRadialScale(Number(e.target.value));
+$('v50ResetPublishedLayout').onclick=resetPublishedLayoutV50;
 $('fourQuickGap').oninput=e=>setFourEyeGap(e.target.value);
 $('fourEyeGap').oninput=e=>setFourEyeGap(e.target.value);
 $('clFourGap').oninput=e=>setFourEyeGap(e.target.value);
 function setRadialDistance(v){
- state.radialDistance=clamp(Number(v)||0,0,.34);saveRadialSettings();
+ state.radialDistance=clamp(Number(v)||0,0,.34);saveRadialSettings();saveEyeLayoutV50();
  for(const id of ['radialDistance','radialQuickDistance','clRadialDistance'])if($(id))$(id).value=state.radialDistance;
  for(const id of ['radialDistanceValue','radialQuickDistanceLabel','clRadialDistanceLabel'])if($(id))$(id).textContent=state.radialDistance.toFixed(3);
 }
 function setRadialScale(v){
- state.radialScale=clamp(Number(v)||1,.6,2.25);saveRadialSettings();
+ state.radialScale=clamp(Number(v)||1,.6,2.25);saveRadialSettings();saveEyeLayoutV50();
  for(const id of ['radialScale','radialQuickScale','clRadialScale'])if($(id))$(id).value=state.radialScale;
  for(const id of ['radialScaleValue','radialQuickScaleLabel','clRadialScaleLabel'])if($(id))$(id).textContent=state.radialScale.toFixed(2)+'×';
 }
@@ -2772,9 +2848,13 @@ function setViewerZoom(magnification){
  if($('viewerZoom'))$('viewerZoom').value=String(factor);
 }
 function toggleViewerMarkers(){
- state.showMotionMarkers=!state.showMotionMarkers;
+ if(state.selectedLensOnly>=0){
+  const key=markerLensKey(),was=lensMarkerEnabled();
+  state.markerLensVisibility[key]=!was;
+  if(!state.showMotionMarkers){state.showMotionMarkers=true;state.markerLensVisibility[key]=true;}
+ }else state.showMotionMarkers=!state.showMotionMarkers;
  if($('showMotionMarkers'))$('showMotionMarkers').checked=state.showMotionMarkers;
- renderUI();
+ persistMarkerSettingsV50();renderUI();
 }
 function toggleLensLabels(){
  state.showLabels=!state.showLabels;
@@ -2790,7 +2870,28 @@ $('viewerLabelToggle').onclick=toggleLensLabels;
 $('viewerAllLenses').onclick=()=>setSelectedLensOnly(-1);
 $('viewerZoom').onchange=e=>setViewerZoom(e.target.value);
 $('showLensLabels').onchange=e=>{state.showLabels=e.target.checked;renderCameraBadges();renderUI();};
-$('showMotionMarkers').onchange=e=>{state.showMotionMarkers=e.target.checked;drawMotionMarkerOverlay(null);};
+const V50_MARKER_SETTINGS_KEY='compoundeye.v50.motionMarkerSettings';
+function loadMarkerSettingsV50(){
+ try{
+  const v=JSON.parse(localStorage.getItem(V50_MARKER_SETTINGS_KEY)||'{}');
+  if(Number.isFinite(v.threshold))state.markerScoreThreshold=clamp(v.threshold,0,100);
+  if(v.byLens&&typeof v.byLens==='object')state.markerLensVisibility=v.byLens;
+ }catch(err){console.warn('Marker settings',err);}
+}
+function persistMarkerSettingsV50(){
+ try{localStorage.setItem(V50_MARKER_SETTINGS_KEY,JSON.stringify({
+  threshold:state.markerScoreThreshold,byLens:state.markerLensVisibility
+ }));}catch(err){console.warn('Cannot save markers',err);}
+}
+function setMarkerScoreThreshold(value){
+ state.markerScoreThreshold=clamp(Math.round(Number(value)||0),0,100);
+ if($('markerScoreThreshold'))$('markerScoreThreshold').value=String(state.markerScoreThreshold);
+ if($('markerScoreThresholdValue'))$('markerScoreThresholdValue').textContent=state.markerScoreThreshold+' / 100';
+ persistMarkerSettingsV50();renderVrMenu();
+}
+$('markerScoreThreshold').oninput=e=>setMarkerScoreThreshold(e.target.value);
+
+$('showMotionMarkers').onchange=e=>{state.showMotionMarkers=e.target.checked;drawMotionMarkerOverlay(null);renderUI();};
 $('showMotionDebug').onchange=e=>{state.showMotionDebug=e.target.checked;$('motionDebugOverlay').classList.toggle('open',state.showMotionDebug);};
 $('focusMode').onchange=e=>{state.focusMode=e.target.value;state.focusLens=-1;renderUI();};
 $('manualLens').onchange=e=>{state.manualLens=Number(e.target.value);state.focusLens=-1;};
@@ -2811,6 +2912,75 @@ window.addEventListener('keydown',e=>{if(!state.gameMode&&['2','3','4','5'].incl
 let frameCount=0;
 function loop(now){requestAnimationFrame(loop);try{updateGameControl(now);draw(now);updateGaze(now);drawErrorCount=0;}catch(e){console.error(e);drawErrorCount++;showStatus('描画エラー: '+e.message);if(drawErrorCount===1)showRenderFailure(e);ready=false;}}
 
+
+const V50_EYE_FALLBACK={
+ 2:{distance:.080,scale:1},
+ 3:{distance:.105,scale:1},
+ 4:{distance:.100,scale:1},
+ 5:{distance:.105,scale:1},
+ 6:{distance:.080,scale:1}
+};
+let V50_EYE_PUBLISHED=JSON.parse(JSON.stringify(V50_EYE_FALLBACK));
+const V50_EYE_LAYOUT_KEY='compoundeye.v50.eyeCountLayout';
+const V50_RADIAL_MODE_KEY='compoundeye.v50.radialMode';
+function resetPublishedLayoutV50(){
+ state.eyeLayoutsV50=JSON.parse(JSON.stringify(V50_EYE_PUBLISHED));
+ try{localStorage.setItem(V50_EYE_LAYOUT_KEY,JSON.stringify(state.eyeLayoutsV50));}catch(err){}
+ state.radialMode=true;state.adjustEllipses=false;state.vizMode='lenses';
+ try{localStorage.setItem(V50_RADIAL_MODE_KEY,'true');}catch(err){}
+ state.zoom=1;state.viewerZoomUserSet=false;state.vrFraming=1;
+ state.selectedLensOnly=-1;state.showLabels=true;
+ state.limbImageZoom=1;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;
+ saveRadialSettings();applyEyeLayoutV50(state.eyeCount);
+ syncBodyOpacityDefault();renderUI();
+ toast('公開用のEdge基準配置を適用しました');
+}
+function loadEyeLayoutsV50(){
+ // One-time migration: the published Edge-reference arrangement takes
+ // precedence over stale per-browser radial settings on the first v50 load.
+ try{
+  if(!localStorage.getItem('compoundeye.v50.defaultsMigrated')){
+   state.radialMode=true;state.adjustEllipses=false;state.vizMode='lenses';
+   state.zoom=1;state.viewerZoomUserSet=false;state.vrFraming=1;
+   state.limbImageZoom=1;state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;
+   localStorage.setItem('compoundeye.v50.defaultsMigrated','1');
+  }
+ }catch(err){console.warn('Cannot persist v50 layout migration',err);}
+ // Never revive pre-v50 radial mode after Safari or Edge has migrated.
+ try{
+  const v=localStorage.getItem(V50_RADIAL_MODE_KEY);
+  state.radialMode=v===null?true:v==='true';
+  if(v===null)localStorage.setItem(V50_RADIAL_MODE_KEY,'true');
+ }catch(err){state.radialMode=true;}
+ let saved={};
+ try{saved=JSON.parse(localStorage.getItem(V50_EYE_LAYOUT_KEY)||'{}')||{};}catch(err){console.warn('Eye-count presets',err);}
+ state.eyeLayoutsV50={};
+ for(const n of [2,3,4,5,6]){
+  const v=saved[n]||V50_EYE_PUBLISHED[n]||V50_EYE_FALLBACK[n];
+  const fallback=V50_EYE_PUBLISHED[n]||V50_EYE_FALLBACK[n];
+  state.eyeLayoutsV50[n]={
+   distance:Number.isFinite(v.distance)?clamp(v.distance,0,n===4?.49:.34):fallback.distance,
+   scale:Number.isFinite(v.scale)?clamp(v.scale,.6,2.25):fallback.scale
+  };
+ }
+ applyEyeLayoutV50(state.eyeCount);
+}
+function applyEyeLayoutV50(n){
+ const preset=state.eyeLayoutsV50?.[n]||V50_EYE_PUBLISHED[n]||V50_EYE_FALLBACK[n];
+ state.radialScale=preset.scale;
+ if(Number(n)===4)state.fourEyeGap=preset.distance;
+ else state.radialDistance=preset.distance;
+}
+function saveEyeLayoutV50(){
+ if(!state.eyeLayoutsV50)return;
+ const n=state.eyeCount;
+ state.eyeLayoutsV50[n]={
+  distance:n===4?state.fourEyeGap:state.radialDistance,
+  scale:state.radialScale
+ };
+ try{localStorage.setItem(V50_EYE_LAYOUT_KEY,JSON.stringify(state.eyeLayoutsV50));}
+ catch(err){console.warn('Failed to save eye presets',err);}
+}
 
 const RADIAL_SETTINGS_KEY='compoundeye.v44.radialSettings';
 function loadRadialSettings(){
@@ -2894,6 +3064,14 @@ async function loadPublishedLensDefaults(){
     for(const [i,params] of Object.entries(cameras||{}))
      Object.assign(((next[model]??={})[n]??={})[i]??={},params);
   DEFAULT_LENS_TUNES=next;
+  if(config.eyeCountLayoutDefaults&&typeof config.eyeCountLayoutDefaults==='object'){
+   for(const n of [2,3,4,5,6]){
+    const cfg=config.eyeCountLayoutDefaults[n];
+    if(cfg&&Number.isFinite(cfg.distance)&&Number.isFinite(cfg.scale)){
+     V50_EYE_PUBLISHED[n]={distance:cfg.distance,scale:cfg.scale};
+    }
+   }
+  }
   if(config.radialLayout&&typeof config.radialLayout==='object'){if(Number.isFinite(config.radialLayout.distance))state.radialDistance=clamp(config.radialLayout.distance,0,.34);if(Number.isFinite(config.radialLayout.scale))state.radialScale=clamp(config.radialLayout.scale,.6,2.25);}
   if(config.uiDefaults&&typeof config.uiDefaults==='object'){
    if(Number.isFinite(config.uiDefaults.anchorAlpha))PUBLIC_UI_DEFAULTS.anchorAlpha=clamp(config.uiDefaults.anchorAlpha,0,1);
@@ -3145,7 +3323,7 @@ function publicLayoutExportData(){
    }
   }
  }
- return {format:'compound-eye-lens-layout',version:44,defaults:merged,overrides:{},radialLayout:{mode:state.radialMode,distance:state.radialDistance,scale:state.radialScale},uiDefaults:{anchorAlpha:state.anchorAlpha,showLensLabels:state.showLabels}};
+ return {format:'compound-eye-lens-layout',version:50,defaults:merged,overrides:{},eyeCountLayoutDefaults:state.eyeLayoutsV50,radialLayout:{mode:state.radialMode,distance:state.radialDistance,scale:state.radialScale},uiDefaults:{anchorAlpha:state.anchorAlpha,showLensLabels:state.showLabels}};
 }
 function downloadLensEditor(){
  const data=publicLayoutExportData();
@@ -3190,7 +3368,7 @@ $('lensEditorFile').onchange=async e=>{
 const EXPERIMENT_SCHEMA_VERSION='compound-eye-experiment-v1';
 const EXPERIMENT_SAMPLE_INTERVAL_MS=1000/30;
 const EXPERIMENT_MAX_JOINT_ROWS=500000;
-let experimentBuildManifest={source_commit:'unverified',app_version:'v49'};
+let experimentBuildManifest={source_commit:'unverified',app_version:'v50'};
 const MATERIAL_REFERENCES={
  xbot:{asset_id:'embedded-glb-xbot',origin:'bundled GLB (index.html)',license:'not specified / verify before redistribution',skeleton_id:'xbot-32-node-bones'},
  aegisEmber:{asset_id:'embedded-glb-aegis-ceramic-plus-navy-material',origin:'bundled AEGIS GLB+material variant (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'},
@@ -3271,8 +3449,8 @@ function recordExperimentFrame(now,animationTime){
  const condition=state.experimentCondition,selected=state.focusLens;
  const vrConvergence=getVRAlignment().inward;
  const stats=state.motionStats||[],byIndex=new Map(stats.map(j=>[j.index,j]));
- const markers=new Set(stats.filter(j=>j.score>=7).slice(0,16).map(j=>j.index));
- const markerVisible=state.showMotionMarkers&&!state.vr;
+ const markers=new Set(stats.filter(j=>j.score>=state.markerScoreThreshold).slice(0,16).map(j=>j.index));
+ const markerVisible=state.showMotionMarkers;
  for(const j of stats){
   const pos=j.position||[null,null,null];
   rec.jointRows.push([
@@ -3372,7 +3550,14 @@ function getExperimentMetadata(){
    skeleton_definition:'native embedded model joint names and indices',
    timebase:'animation_time_s; relative_time_s uses performance clock'},
   timestamps:{started_iso:r.startedISO,ended_iso:r.stoppedISO||null,duration_s:Number(duration.toFixed(4))},
-  environment:{app_version:'v49',git_source_commit:experimentBuildManifest.source_commit,
+  marker_visualization:{
+   score_threshold_0_100:state.markerScoreThreshold,
+   score_description:'motion magnitude heuristic, not a human-skill score',
+   selected_lens_index:state.selectedLensOnly,
+   lens_visibility_overrides:{...state.markerLensVisibility},
+   ui_mode:state.vizMode
+  },
+  environment:{app_version:'v50',git_source_commit:experimentBuildManifest.source_commit,
    source_commit_note:'implementation commit; metadata manifest may have a later commit',
    browser_family_version:experimentBrowserName(),vr_used:r.displayRows.some(x=>x[14]===1),
    avg_fps:fps===null?null:Number(fps.toFixed(3)),
@@ -3823,9 +4008,9 @@ async function startApplication(){
   showStatus('3Dモデルを読み込み中…');
   try{state.vrCentralVisible=localStorage.getItem('compoundeye.v45.vrCentralVisible')==='true';}catch(e){}
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();loadVRAlignments();loadVRLensEditor();await unpackAssets();
-  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();syncBodyOpacityDefault();
-  renderUI();v47Init();showStatus('v49：AEGIS腕振り・拳中央線／統一動作名／個眼番号選択・マーカー・ズーム');
-  window.__compoundTest={version:"49",v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
+  initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();setMarkerScoreThreshold(state.markerScoreThreshold);syncBodyOpacityDefault();
+  renderUI();v47Init();showStatus('v50：眼数別の公開配置・3眼両脚固定・閾値可変マーカー・描画比率統一');
+  window.__compoundTest={version:"50",v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
  setTimeout(()=>{warmOtherAssets().catch(e=>console.warn('optional assets loading error',e));},250);
  }catch(e){console.error(e);showStatus('起動エラー: '+e.message);showRenderFailure(e);}
@@ -4631,7 +4816,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v49',
+  app_version:'v50',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -4770,23 +4955,30 @@ function v47DrawMarkers(projections){
  }
  for(const item of items){
   const bone=modelData.world[item.id];if(!bone)continue;
+  if(state.selectedLensOnly>=0&&(!lensMarkerEnabled()||
+   !v50MotionJointBelongs(modelData.nodes[item.id],state.selectedLensOnly)))continue;
   const pos=mulPoint(state._modelFit,[bone[12],bone[13],bone[14]]);
   for(let eye=0;eye<projections.length;eye++){
-   const uv=projectionUV(projections[eye],pos);
-   if(!uv||uv[0]<0||uv[0]>1||uv[1]<0||uv[1]>1)continue;
+   const uv=state.selectedLensOnly>=0?
+    projectV50LensMarker(projections,eye,state.selectedLensOnly,pos):
+    projectionUV(projections[eye],pos);
+   if(!uv)continue;
+   const x=Array.isArray(uv)?uv[0]:uv.x;
+   const y=Array.isArray(uv)?uv[1]:uv.y;
+   if(x<0||x>1||y<0||y>1)continue;
    const ring=document.createElement('div');ring.className='v47DiffRing';
    ring.textContent=item.glyph;
    ring.setAttribute('aria-label',v48JointLabel({key:item.key,index:item.id})+' '+item.label);
    ring.title=v48JointLabel({key:item.key,index:item.id})+' '+item.label;
    ring.style.color=item.color;
-   ring.style.left=((eye+uv[0])*100/projections.length)+'%';
-   ring.style.top=((1-uv[1])*100)+'%';
+   ring.style.left=((eye+x)*100/projections.length)+'%';
+   ring.style.top=((1-y)*100)+'%';
    v47MarkerLayer.appendChild(ring);
   }
   const jointName=modelData.nodes[item.id].name;
   let lens=motionLensForBone(jointName);
   if(lens<0&&state.eyeCount===2)lens=/^(Right|R_)/.test(jointName)?1:0;
-  if(lens<0)continue;
+  if(lens<0||(state.selectedLensOnly>=0&&lens!==state.selectedLensOnly))continue;
   for(let eye=0;eye<projections.length;eye++){
    const centroid=lensDiagnostics.perEye[eye]?.[lens]?.centerUV;
    if(!centroid)continue;
