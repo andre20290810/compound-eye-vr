@@ -1,7 +1,7 @@
 {
-  "app_version": "v47",
-  "source_commit": "f65cafc4d1075e14719aa5ee6e8b4177cc0d911c",
+  "app_version": "v48",
+  "source_commit": "eced6da75956cd565f6f9897d37660af61a9583f",
   "source_branch": "main",
-  "data_schema": "compound-eye-motion-comparison-v1",
-  "note": "source_commit identifies v47 app implementation and analysis workbench; build manifest committed separately."
+  "data_schema": "compound-eye-motion-comparison-v2",
+  "note": "source_commit identifies v48 application, multi-motion comparison UI and AEGIS gait retargeting; this manifest is committed separately."
 }
