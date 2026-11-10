@@ -1,7 +1,7 @@
 {
-  "app_version": "v48",
-  "source_commit": "eced6da75956cd565f6f9897d37660af61a9583f",
+  "app_version": "v49",
+  "source_commit": "4bf84f596d7f8cb2868dc4700e355989ba45f49c",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "source_commit identifies v48 application, multi-motion comparison UI and AEGIS gait retargeting; this manifest is committed separately."
+  "note": "source_commit identifies the v49 avatar motion, eye interaction, markers and zoom implementation; this manifest is committed separately."
 }
