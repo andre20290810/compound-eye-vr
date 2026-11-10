@@ -1,7 +1,7 @@
 {
-  "app_version": "v51",
-  "source_commit": "dfdeb95d3be5b8951cb6747c387207593d6aa16b",
+  "app_version": "v52",
+  "source_commit": "349d0d2e4a23d2e27bb20ce70eea0feb2c249e55",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "v51 source commit for timestamp title, central-only eye 1, true facet-space markers, HMD quick controls and compact menu; manifest committed separately."
+  "note": "source_commit identifies v52 motion selection, AEGIS fist twist, multi-facet markers and 3-metric mean-color visualization. This manifest commit may be later."
 }
