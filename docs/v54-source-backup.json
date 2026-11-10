@@ -1,0 +1,9 @@
+{
+  "base_commit": "a406676cf2c92d8c537f4d5ed64f70fef675629f",
+  "backup_tag": "backup-v53-before-kinematics-20261111",
+  "files": {
+    "index.html": "fa9dc70721aeb22747b65db9c8d8a137e3a4adc9ca9474a77b4ccb9861d92bba",
+    "motion-workbench-v48.js": "d05da3fef06a7911cc0e2bce47a6657236400ef7dfd96fc4895d173f6d25d6a5",
+    "public-lens-defaults.json": "ccebef34b6f61dd4b57dd802abb476aa78499ef89ad5a310680e57ceef2f7b85"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "xbot": {
+    "sha256": "422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161",
+    "size": 2477140,
+    "asset_format": "glTF"
+  },
+  "aegisEmber": {
+    "sha256": "5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb",
+    "size": 1573776,
+    "asset_format": "GLB (runtime material-variant composite)"
+  },
+  "aegisCeramic": {
+    "sha256": "8d9c8b2e61a70efd315914db5280cbb2934cb7717c9c79027f05cf7e2521fc7b",
+    "size": 1573772,
+    "asset_format": "glTF"
+  },
+  "aegisSoldier": {
+    "sha256": "5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb",
+    "size": 1573776,
+    "asset_format": "GLB (runtime material-variant composite)"
+  }
+}

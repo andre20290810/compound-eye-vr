@@ -1,0 +1,42 @@
+const assert=require('assert/strict'),K=require('../kinematics-v54.js');
+const near=(x,y,tol,msg)=>assert.ok(Math.abs(x-y)<=tol,(msg||'')+': '+x+' vs '+y);
+const t=[.1,.133333,.166667,.2,.233333,.266667,.3],
+ hand=[.341566,.902538,1.799326,2.698009,3.092089,2.679728,1.696806],
+ hipAngular=[3.894095,5.381339,5.797907,4.936657,3.383748,1.768797,.736941];
+const h=K.derivative(hand,t),hip=K.derivative(hipAngular,t);
+near(h[3].value,19.391639,.002,'RightHand +19.39 @.2');
+near(hip[3].value,-36.212747,.002,'Hips -36.21 @.2');
+near(h[5].value,-20.929140,.003,'RightHand -20.93 @.266667');
+near(23.178718,23.178718,.001,'original acceleration magnitude distinct');
+const hp=K.peakCandidates(hand,t,.1,.3).candidates[0],
+ pp=K.peakCandidates(hipAngular,t,.1,.3).candidates[0];
+near(hp.time,.233333,1e-5,'RightHand peak');near(pp.time,.166667,1e-5,'Hips peak');
+near(hp.time-pp.time,.066666,1e-5,'event 66.7ms');
+const flat=K.peakCandidates([0,1,3,3,3,1,0],[0,1,2,3,4,5,6]).candidates[0];
+assert.equal(flat.start,2);assert.equal(flat.end,4);assert.equal(flat.quality,'plateau_time_interval');
+assert.equal(K.peakCandidates([0,0,0],[0,1,2]).status,'no_activity');
+assert.equal(K.ratio(3,0).status,'undefined_denominator_near_zero');
+assert.equal(K.quaternionAngle([0,0,0,1],[0,0,0,-1]),0);
+assert.ok(K.angularSpeed([[0,0,0,1],[0,0,0,-1],[0,0,0,1]],[0,.1,.2]).every(x=>x.value===0));
+const ct=Array.from({length:121},(_,i)=>i*.02),cp=ct.map(t=>[Math.cos(t),Math.sin(t),0]);
+const ca=K.positionKinematics(cp,ct,{window:1});
+assert.ok(ca.signedSpeedChange.slice(5,-5).every(x=>Math.abs(x.value)<.005),'circle constant speed');
+assert.ok(ca.accelerationMagnitude.slice(5,-5).every(x=>x.value>.95),'circle acceleration vector exists');
+assert.ok(K.states([.3,.6],[1,1],.1,.01).every(x=>x.state==='accelerating'));
+assert.ok(K.states([.6,.3],[-1,-1],.1,.01).every(x=>x.state==='decelerating'));
+assert.equal(K.derivative([0,1,2],[0,.1,.1])[2].reason,'duplicate_or_invalid_time');
+assert.equal(K.derivative([0,null,2],[0,.1,.2])[0].reason,'missing_source_value');
+const base={skeleton_id:'s',joint_id:1,unit:'m/s',peakTime:.2,peak:3,range:1,timeLag:.1,motion_revision_id:'v1',source_asset_sha256:'hash'};
+assert.equal(K.compareEvents(base,{...base}).peakTimeDelta,0);
+assert.equal(K.compareEvents(base,{...base}).rangeDelta,0);
+assert.equal(K.compareEvents(null,base).reason,'comparison_X_Y_not_selected');
+assert.equal(K.compareEvents(base,{...base,skeleton_id:'different'}).reason,'cross_skeleton_mapping_unverified');
+assert.equal(K.compareEvents(base,{...base,motion_revision_id:'new'}).reason,'motion_revision_mismatch');
+assert.equal(K.ratioCompatible({unit:'m/s',coord:'root',phase:'p',skeleton:'s'},{unit:'rad/s',coord:'root',phase:'p',skeleton:'s'},'linear').reason,'unit_mismatch');
+const legacy=K.legacyCSV('data_schema,skeleton_id,joint_id,motion_id,original_animation_time_s,linear_speed_model_units_per_s,angular_speed_rad_per_s,position_x_root_relative\nv1,s,1,x,0,1,1,2\nv1,s,1,x,0.1,2,3,2.5\nv1,s,1,x,0.2,3,5,3');
+assert.equal(legacy.records[1].position_x_root_relative,'2.5');
+assert.equal(legacy.records[1].linear_speed_change_rate_model_units_per_s2,'10');
+assert.equal(legacy.records[1].raw_position_x_root_relative,'');
+assert.equal(legacy.records[1].quaternion_x,'');
+assert.ok(legacy.warnings.includes('do_not_resmooth'));
+console.log('PASS fixed user CSV rates, peaks/lag, quaternion sign, flat peak, circle, missing/legacy, time and no double smoothing');

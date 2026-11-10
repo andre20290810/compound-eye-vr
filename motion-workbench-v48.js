@@ -128,9 +128,13 @@ function v47Sample(avatar,motion,config){
     joints[id]={
      p:[world[12]-center[0],world[13]-center[1],world[14]-center[2]],
      q:Array.from(md.poseRot?.[id]||md.nodes[id].rotation),
+     localTranslation:Array.from(md.poseTrans?.[id]||md.nodes[id].translation),
+     worldPosition:[world[12],world[13],world[14]]
     };
    }
-   frames.push({time:t,joints});
+   frames.push({time:t,joints,rootModelMatrix:root?Array.from(root):null,
+    rootModelPosition:center.slice(),
+    rootLocalQuaternion:Array.from(md.poseRot?.[rootIndex]||md.nodes[rootIndex].rotation)});
   }
  }finally{
   state.model=backup.avatar;
