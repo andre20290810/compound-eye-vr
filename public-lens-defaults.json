@@ -247,7 +247,7 @@
   },
   "overrides": {},
   "uiDefaults": {
-    "anchorAlpha": 0.2,
+    "anchorAlpha": 0.1,
     "showLensLabels": true
   },
   "radialLayout": {
