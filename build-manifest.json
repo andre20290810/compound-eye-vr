@@ -1,8 +1,8 @@
 {
   "app_version": "v53",
-  "source_commit": "2f42d8f9065063a87d72dabb2cc9b548df980991",
+  "source_commit": "1aa118ed48f7d5ef3503fd9ea4317af1eca3b7d0",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "source_commit is the v53 implementation with unified joint CSV, AEGIS retarget and punch centerline, VR 1-6 auto-cycle, mirrored quick controls and visible-number toggle; manifest committed separately.",
+  "note": "v53 implementation including all 32 X Bot skinned joints in the unified motion CSV; build manifest committed independently.",
   "unified_csv_schema": "compound-eye-single-motion-v1"
 }
