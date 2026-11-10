@@ -1,7 +1,8 @@
 {
-  "app_version": "v43",
-  "source_commit": "362bfccc0320d4cb195d354e7e1377e3d10c4966",
+  "app_version": "v44",
+  "source_commit": "5713d68d2f98f40baf5892bfbb9f0311b69fe5e9",
   "source_branch": "main",
   "data_schema": "compound-eye-experiment-v1",
-  "note": "source_commit identifies v43 application code and motion graph documentation; the manifest is committed separately."
+  "motion_asset": "roundhouse-kick.motion.json",
+  "note": "source_commit identifies the v44 implementation and documentation; this manifest may be committed separately."
 }
