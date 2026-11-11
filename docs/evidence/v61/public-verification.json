@@ -1,0 +1,263 @@
+{
+  "checked_at": "2026-11-11T17:30:12.256Z",
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "source_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+  "physical_hardware_test": false,
+  "manifest": {
+    "app_version": "v61",
+    "source_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/12 02:26（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "unified_csv_columns": 86,
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "model_geometry_revision": "aegis-v60-adjustable-visor-no-shoulder-armor",
+    "motion_revision": "punch-sequences-v61-001",
+    "source_files_sha256": {
+      "index.html": "7c2959df98d62f88ab3399642f93840a4c9103b850b3ae4fbeff8d688b5df21b",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "a5c491151d994a4a927ff4705d4f1ebeda1cc84925fa82803301184743fc7090",
+      "kinematic-view-v54.js": "7e1b6d4574dc5eb3348d5b14b6ee234d89b890b7c1dc4e1f6cec1f6950d989cd",
+      "motion-workbench-v48.js": "28c09c84931c8b4ee489f6e74a18e298435e102285ac6ff33473be1f40f4b309",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+      "aegis-details-v58.js": "e748384d6c8830f843462f678153624342327e1a74de5f1955aa9a9bbe5bcee4",
+      "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
+      "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
+      "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
+      "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
+      "punch-sequences-v61.js": "2e2748d400c50463d6cc24cfe7dd390bcd46bb21f5d8a872086694496f5122bb"
+    },
+    "public_appearance_config": {
+      "path": "public-appearance.json",
+      "revision_at_release": "appearance-2026-11-11T17:02:32.300Z",
+      "sha256_at_release": "47f856756274c77c3fc3edd5a66e76ed418a253c0740ca78de3d0b52e7af9365",
+      "preserved_from_latest_user_edit": true,
+      "optional_shape_key": "visor",
+      "legacy_files_supported": true,
+      "requires_authenticated_repository_commit": true
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "2ecd099812c5446eeed12886e2b26aa930acb10b614150ed3e67c6a452712047",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "6ff638a9f3a5dda3a7ab044c62932e9bf6e4052c1398fb51067022c169bbb2c6",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "4ba2bd5aebc9b633b4b21bf69825068ac6ba8721346b101538092298bf7e2d69",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "visor-regression": {
+        "sha256": "b5eef14da644c5effeae14ed09d6b4547098d6b0abb8db076c8652de83440ac9",
+        "summary": {
+          "passed": 13,
+          "failed": 0
+        }
+      },
+      "punch-regression": {
+        "sha256": "6d41c57f3f437e78175d23ff7d31775cbd2ee9f8dbb15235b8854bb337b5690b",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 40,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 63,
+      "failed": 0
+    },
+    "backup_tag": "backup-v60-before-v61-20261112",
+    "backup_commit": "11ed59c94a88b86dedcaa60d4ab967c4e662110c",
+    "untested": [
+      "physical iPhone/Safari",
+      "physical HMD",
+      "physical GameSir",
+      "physical collision/contact",
+      "human motor-learning efficacy"
+    ],
+    "note": "X Bot D=A+C; AEGIS B is source-track retarget of X Bot C; AEGIS C alternates mirrored A. Five AEGIS menu modes removed. Public palette and adjustable visor preserved. Source commit precedes manifest/evidence-only commits.",
+    "generated_at_utc": "2026-11-11T17:30:03.086809+00:00"
+  },
+  "html_sha256": "7c2959df98d62f88ab3399642f93840a4c9103b850b3ae4fbeff8d688b5df21b",
+  "public_appearance_revision": "appearance-2026-11-11T17:02:32.300Z",
+  "browser": "Edg/157.0.4341.46",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=61&build=ef2e602",
+  "boot": {
+    "version": "61",
+    "title": "人工複眼シミュレーションシステム",
+    "eyes": 1,
+    "updated": "最終更新：2026/11/12 02:26（日本時間）",
+    "palette": "appearance-2026-11-11T17:02:32.300Z"
+  },
+  "motions": [
+    {
+      "model": "xbot",
+      "motion": "xbot_hook",
+      "options": [
+        "xbot_idle",
+        "xbot_fight_idle",
+        "xbot_walk",
+        "xbot_walk2",
+        "xbot_run",
+        "xbot_punch",
+        "xbot_punch1",
+        "xbot_punch2",
+        "xbot_hook"
+      ],
+      "duration": 2.323333349227905,
+      "columns": 86,
+      "joints": 32,
+      "source_time": 1.65,
+      "app": "v61",
+      "implementation_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+      "composition": {
+        "source": [
+          "xbot_punch",
+          "xbot_punch2"
+        ],
+        "order": "A then C",
+        "transition_seconds": 0.12,
+        "duration_seconds": 2.323333349227905
+      },
+      "shoulders": 0,
+      "error": 0
+    },
+    {
+      "model": "aegisEmber",
+      "motion": "armor_punch",
+      "options": [
+        "armor_breathe",
+        "armor_walk",
+        "armor_run",
+        "armor_power_punch",
+        "armor_punch",
+        "armor_alternate_punch"
+      ],
+      "duration": 0.9833333492279053,
+      "columns": 86,
+      "joints": 13,
+      "source_time": 0.49,
+      "app": "v61",
+      "implementation_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+      "composition": {
+        "source": "xbot_punch2",
+        "source_clip": "Boxer_Punching2",
+        "method": "world segment directions and torso rotations; X reflection for named sides; target bone lengths retained",
+        "source_duration_seconds": 0.9833333492279053,
+        "limitations": [
+          "AEGIS has no separate shoulder, ankle, toe or finger bones",
+          "not identical surface geometry or physical contact"
+        ]
+      },
+      "shoulders": 0,
+      "error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "motion": "armor_punch",
+      "options": [
+        "armor_breathe",
+        "armor_walk",
+        "armor_run",
+        "armor_power_punch",
+        "armor_punch",
+        "armor_alternate_punch"
+      ],
+      "duration": 0.9833333492279053,
+      "columns": 86,
+      "joints": 13,
+      "source_time": 0.49,
+      "app": "v61",
+      "implementation_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+      "composition": {
+        "source": "xbot_punch2",
+        "source_clip": "Boxer_Punching2",
+        "method": "world segment directions and torso rotations; X reflection for named sides; target bone lengths retained",
+        "source_duration_seconds": 0.9833333492279053,
+        "limitations": [
+          "AEGIS has no separate shoulder, ankle, toe or finger bones",
+          "not identical surface geometry or physical contact"
+        ]
+      },
+      "shoulders": 0,
+      "error": 0
+    },
+    {
+      "model": "aegisEmber",
+      "motion": "armor_alternate_punch",
+      "options": [
+        "armor_breathe",
+        "armor_walk",
+        "armor_run",
+        "armor_power_punch",
+        "armor_punch",
+        "armor_alternate_punch"
+      ],
+      "duration": 3.54,
+      "columns": 86,
+      "joints": 13,
+      "source_time": 2.42,
+      "app": "v61",
+      "implementation_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+      "composition": {
+        "source": "armor_power_punch",
+        "order": "right then left mirrored full-body A",
+        "transition_seconds": 0.12,
+        "duration_seconds": 3.54
+      },
+      "shoulders": 0,
+      "error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "motion": "armor_alternate_punch",
+      "options": [
+        "armor_breathe",
+        "armor_walk",
+        "armor_run",
+        "armor_power_punch",
+        "armor_punch",
+        "armor_alternate_punch"
+      ],
+      "duration": 3.54,
+      "columns": 86,
+      "joints": 13,
+      "source_time": 2.42,
+      "app": "v61",
+      "implementation_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+      "composition": {
+        "source": "armor_power_punch",
+        "order": "right then left mirrored full-body A",
+        "transition_seconds": 0.12,
+        "duration_seconds": 3.54
+      },
+      "shoulders": 0,
+      "error": 0
+    }
+  ],
+  "seek": {
+    "rendered": 2.4,
+    "gl": 0
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
