@@ -3,7 +3,7 @@
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
 const puppeteer=require(process.env.PUPPETEER_MODULE||'puppeteer');
 const K=require('../kinematics-v54.js'),root=path.resolve(__dirname,'..');
-const output=path.join(root,'docs','evidence','v56');fs.mkdirSync(output,{recursive:true});
+const output=path.join(root,'docs','evidence','v57');fs.mkdirSync(output,{recursive:true});
 const report={tested_at:new Date().toISOString(),environment:{platform:process.platform,node:process.version,real_HMD:false,real_GameSir:false,Safari:false,inputs:'desktop headless Edge; mocked Gamepad API'},tests:[],page_errors:[]};
 let browser;const servers=[];
 const serve=folder=>new Promise(ok=>{const s=http.createServer((req,res)=>{
