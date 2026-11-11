@@ -1,0 +1,174 @@
+{
+  "checked_at": "2026-11-11T19:32:56.876Z",
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "source_commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
+  "physical_HMD": false,
+  "physical_GameSir": false,
+  "physical_iPhone": false,
+  "manifest": {
+    "app_version": "v62",
+    "source_commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "unified_csv_columns": 86,
+    "data_schema": "compound-eye-single-motion-v2",
+    "model_geometry_revision": "aegis-closed-fists-stabilized-v62",
+    "motion_revision": "xbot-ybot-known-perturbation-v62",
+    "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62",
+    "source_files_sha256": {
+      "index.html": "87a04cb5ff9bebc58f05e01500fa85ad58481284ab84ee7d2026d37045c4f9bd",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "13ae9832edaedb95f8878f2b3f23f6a816aef85dfa36bb46f98059be54815db4",
+      "kinematic-view-v54.js": "c936c18420e0aea6b86fc452d25df76e24e001ab3f1c9c751f884ce3780c2927",
+      "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "aegis-details-v58.js": "e748384d6c8830f843462f678153624342327e1a74de5f1955aa9a9bbe5bcee4",
+      "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
+      "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
+      "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
+      "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
+      "punch-sequences-v61.js": "9c340e23e451894e5a0c120dcceee7f9f277dac0385866fdd5bd8121bdf7a893",
+      "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
+      "ybot-runtime-v62.js": "029f01926c23027e2b2488959fe79c96dd316a20b050690964d02d2e41c21639",
+      "motion-timeline-v62.js": "1749076dedfaff66026b51fc921a17347c16d3b29179f5f679bf6cb9f394a280",
+      "timeline-ui-v62.js": "7ac341e5ca7cc05874063361ef4682e8428747fb2c3b61d383416bd987dbed4f",
+      "aegis-fists-v62.js": "9ea64860346823e197f58863b9be6d53dc965139ca4637769b8b2f934f6c23ec"
+    },
+    "public_appearance": {
+      "path": "public-appearance.json",
+      "revision_at_release": "appearance-2026-11-11T17:02:32.300Z",
+      "sha256": "47f856756274c77c3fc3edd5a66e76ed418a253c0740ca78de3d0b52e7af9365",
+      "preserved_existing_user_settings": true
+    },
+    "ybot_config": {
+      "path": "ybot-modifications.json",
+      "revision": "ybot-known-shifts-v62-001",
+      "sha256": "ab555d82a9abd6c485bd9c7b46728681ebc10db40e4a943231cf4e7490be812a",
+      "synthetic_not_beginner": true
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "6a801907186aba4ffe3c2c0245f9f4dcf872710b4972c9bace4ed7c9e12b05e6",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "29ac3db526c5e85054f2ff08c2a162fe509a6eb1608116c0d9c497d94dbec8a1",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "fb1991d499cdbe13c1bafd9199c5e033b77a29b621521ed6cb41cc4d293a859e",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "visor-regression": {
+        "sha256": "16507df3a0d76f7014a4a3193c5b6e0051751c7bbc0ef1488f3987415b8529b1",
+        "summary": {
+          "passed": 13,
+          "failed": 0
+        }
+      },
+      "punch-regression": {
+        "sha256": "6ea6bdd1257b7d5fee66963788d59a2ca9b0279633a0907caba0fef678fbf4af",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "timeline-regression": {
+        "sha256": "a0a2771a7b1a363e1b4a0e19fe947450d9e04c3928066a4023adc316c1e73de8",
+        "summary": {
+          "passed": 15,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 48,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 78,
+      "failed": 0
+    },
+    "backup_tag": "backup-v61-before-v62-20261112",
+    "backup_commit": "0ed45180fdf2838abf53d51a7f1bae54e8ba5094",
+    "untested": [
+      "physical iPhone Safari",
+      "physical HMD",
+      "physical GameSir",
+      "physical collisions and human motion validity",
+      "kinetic forces, torques, energy transfer or causal inference"
+    ],
+    "note": "Source commit identifies implementation. Current main may later include manifest and public verification-only commits. YBot copies XBot rig/mesh, with motion revision metadata. AEGIS B is adjusted and not numerically identical to old B.",
+    "generated_at_utc": "2026-11-11T19:32:34.472145+00:00"
+  },
+  "html_sha256": "87a04cb5ff9bebc58f05e01500fa85ad58481284ab84ee7d2026d37045c4f9bd",
+  "browser": "Edg/157.0.4341.46",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=62&build=ddd3ba5",
+  "boot": {
+    "version": "62",
+    "eyes": 1,
+    "title": "人工複眼シミュレーションシステム",
+    "updated": "最終更新：2026/11/12 04:29（日本時間）",
+    "timeline": true
+  },
+  "ybot": {
+    "skeletonMatched": true,
+    "skinJoints": 32,
+    "sameGLBVertices": true,
+    "config": "ybot-known-shifts-v62-001",
+    "observed": [
+      {
+        "joint": 7,
+        "requested": 0.04,
+        "actual": 0.033333333333333326,
+        "revision": "ybot-xbot_punch-eb98b8d8-ybot-known-shifts-v62-001"
+      }
+    ]
+  },
+  "timeline": {
+    "ok": true,
+    "rows": 7,
+    "events": 6,
+    "exportEvents": 22,
+    "notice": "表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。円の大きさは各部位・各指標の区間内 |速度変化率| 最大値を100％とした相対値です。異なる部位や異なる単位間の力の大小は比較できません。● X・○ Y／緑 増速・橙 減速・黄 ピーク・灰 低活動・薄灰 欠損。"
+  },
+  "models": [
+    {
+      "model": "aegisEmber",
+      "joints": 13,
+      "closedFists": 2,
+      "legacyGloveHidden": 1,
+      "columns": 86,
+      "app": "v62",
+      "commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
+      "gl": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "joints": 13,
+      "closedFists": 2,
+      "legacyGloveHidden": 1,
+      "columns": 86,
+      "app": "v62",
+      "commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
+      "gl": 0
+    }
+  ],
+  "different_skeleton": {
+    "ok": false,
+    "reason": "関節対応が検証されていないため比較不可",
+    "code": "skeleton_mismatch"
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
