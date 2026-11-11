@@ -31,10 +31,12 @@ const V54_MORE_HEADERS=[
  'dataset_id','trial_id','motion_revision_id','source_asset_version','source_asset_sha256',
  'app_version','implementation_commit','analysis_config','filter_method','filter_window_samples',
  'endpoint_handling','differentiation_method','root_relative_definition','angular_acceleration_definition',
- 'position_raw_origin','data_quality_status','unavailable_reason'
+ 'position_raw_origin','data_quality_status','unavailable_reason',
+ 'joint_local_scale_x','joint_local_scale_y','joint_local_scale_z'
 ];
 const V54_SCHEMA='compound-eye-single-motion-v2';
 let v54LastExport=null,v54Imported=null;
+const v54TrialIds=new Map();
 function v54Revision(avatar,motion){
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-v54-001':
@@ -46,16 +48,18 @@ function v54SourceMetadata(avatar,motion){
  return {...base,source_asset_sha256:base.source_sha256,motion_revision_id:v54Revision(avatar,motion)};
 }
 function v54Number(value){return K54.finite(value)?value:'';}
+function v54CSVRow(row){return csvEncodeRow(row.map((v,i)=>i>=29&&K54.finite(v)?Number(v.toPrecision(15)).toString():v));}
 function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const md=getModel(avatar);if(!md?.nodes?.length)throw Error('model_not_loaded');
  const settings={...v47Config(),smooth:3,includeAllSkinJoints:true};
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.source_commit||'unverified_build';
+ const runtime=experimentBuildManifest?.app_version==='v54'?experimentBuildManifest.source_commit:'unverified_build_v54';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
- const trialId=params.trialId||'trial_'+Date.now().toString(36);
- const modelToWorld=Array.from(state._modelFit||ID());
+ const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
+ v54TrialIds.set(datasetId,trialId);
+ const modelToWorld=avatar===state.model&&state._modelFit?Array.from(state._modelFit):null;
  const config={
   source_type:'synthetic_animation_not_human_measurement',
   interpolation:'embedded_keyframes_or_procedural_animation',
@@ -69,6 +73,12 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   model_to_world:'viewer_actor_transform_snapshot_not_gameplay_time_series',
   previous_angular_acceleration:'absolute_derivative_of_angular_speed_scalar_not_angular_acceleration_vector',
   original_29_columns_unchanged:true,
+  legacy_linear_derivative:{method:'central_secant_nominal_dt;one_sided_endpoints',nominal_dt:data.dt,endpoint_sample:'duration_minus_0.00001'},
+  legacy_angular_speed:{method:'backward_shortest_quaternion_angle/nominal_dt;first_uses_next',filter:'moving_average_3_truncated_window',nominal_dt:data.dt},
+  legacy_angular_acceleration:'abs(central_secant_of_smoothed_angular_speed_nominal_dt)',
+  signed_speed_derivative:'central_secant_of_preserved_legacy_speed_actual_timestamps;one_sided_endpoints',
+  jerk:'third_vector_derivative_of_position_actual_timestamps',
+  repeated_synthetic_exports_are_not_independent_human_trials:true,
   source_revision:asset.motion_revision_id
  };
  const rows=[],byJoint={};
@@ -82,7 +92,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   const signedAngular=K54.derivative(joint.angular,times);
   const q=data.frames.map(f=>K54.normalizeQuaternion(f.joints[i]?.q)||null);
   const analysis=K54.positionKinematics(raw,times,{window:3});
-  const angularCross=K54.angularSpeed(q,times);
+  // Legacy angular speed is deliberately retained; its exact recipe is in config.
   let score=0;
   const frameRows=[];
   for(let k=0;k<data.framesN;k++){
@@ -120,7 +130,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     node.parent??'',...node.translation.map(v54Number),...node.rotation.map(v54Number),
     ...node.scale.map(v54Number),...(point?.localTranslation||[null,null,null]).map(v54Number),
     ...rootP.map(v54Number),...rootQ.map(v54Number),
-    rootM?JSON.stringify(rootM):'',JSON.stringify(modelToWorld),
+    rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
     'v54',runtime,JSON.stringify(config),
@@ -128,7 +138,8 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
     'unfiltered_resampled_GLTF_pose_not_raw_human_measurement',
-    reason.length?'partial':'synthetic_interpolated',reason.join('|')
+    reason.length?'partial':'synthetic_interpolated',reason.join('|'),
+    ...(point?.localScale||[null,null,null]).map(v54Number)
    ];
    if(legacy.length!==V54_V1_HEADERS.length||extra.length!==V54_MORE_HEADERS.length)
     throw Error('CSV column mismatch '+legacy.length+' '+extra.length);
@@ -148,9 +159,10 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   coordinate_system:'GLB model units; root-relative subtracts only root translation',
   model_to_world_matrix_snapshot:modelToWorld,
   nodes:md.nodes.map((n,i)=>({id:i,name:n.name,parent_id:n.parent,
-   bind_translation:n.translation,bind_rotation_xyzw:n.rotation,bind_scale:n.scale})),
+   bind_translation:n.translation,bind_rotation_xyzw:n.rotation,bind_scale:n.scale,bind_matrix:n.matrix?Array.from(n.matrix):null})),
   skin_joint_ids:md.skin?.joints||[],
   root_node_id:md.nodes.findIndex(n=>/^(Hips|Pelvis)$/.test(n.name)),
+  per_frame_local_node_poses:data.frames.map(f=>({t:f.time,nodes:f.nodeLocalPoses})),
   per_frame_root_poses:data.frames.map(f=>({
    t:f.time,model_matrix:f.rootModelMatrix,model_position:f.rootModelPosition,
    local_quaternion_xyzw:f.rootLocalQuaternion
@@ -176,7 +188,7 @@ function v54ExportSingleCsv(){
  try{
   const result=v54ExportData();
   v54LastExport=result;
-  const csv=['\uFEFF'+csvEncodeRow(result.headers),...result.rows.map(csvEncodeRow)].join('\r\n');
+  const csv=['\uFEFF'+csvEncodeRow(result.headers),...result.rows.map(v54CSVRow)].join('\r\n');
   downloadExperimentFile('compound-eye-'+result.avatar+'-'+result.motion+'-all-joints-v2.csv',
    csv,'text/csv;charset=utf-8');
   $('v54QualityNote').textContent=result.data.joints.length+'関節×'+result.times.length+
@@ -202,10 +214,13 @@ function v54ImportLegacyCsvFile(event){
  const file=event.target.files?.[0];if(!file)return;
  file.text().then(content=>{
   const loaded=K54.legacyCSV(content);v54Imported=loaded;
+  const missing=loaded.warnings.filter(v=>v.includes('unrecorded'));
   const note=$('v54LegacyStatus');
-  if(note)note.textContent='旧CSV '+loaded.records.length+'行を読込。元位置・クォータニオン・骨格の姿勢は未収録です。'+
-   '速度と時刻は再平滑化せず保持します。';
-  toast('旧CSV読込：推測による元データ補完は行いません');
+  if(note)note.textContent='統合CSV '+loaded.records.length+'行を読込。'+
+   (missing.length?'未収録：'+missing.join(' / '):'収録済みの元姿勢・版情報は保持。')+
+   '。保存済みの位置・速度へ再平滑化はしません。';
+  if(typeof v54UseImportedCSV==='function')v54UseImportedCSV(loaded);
+  toast('CSV読込：欠損を推測補完せず、元の時刻と計算値を保持');
  }).catch(err=>{$('v54LegacyStatus').textContent='読込失敗：'+err.message});
 }
 $('v53UnifiedCsv').onclick=v54ExportSingleCsv;

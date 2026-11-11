@@ -1,0 +1,6 @@
+
+# Development and local browser artifacts
+node_modules/
+_splitmotion.js
+_syntaxv54.js
+_v54.syntax.js

@@ -1,0 +1,65 @@
+{
+  "method": "Weighted skinned right-glove vertex centroid and model-space bone origins; original animation seconds, playback=1",
+  "geometry_sampled_model": "aegisEmber",
+  "same_geometry_other_model": "aegisSoldier shares skeleton/mesh; rendered independently in screenshot evidence",
+  "forearm_length_model_units": 0.14422898569452133,
+  "engineering_tolerance_fractions_of_forearm": {
+    "lateral": 0.1,
+    "jaw_height": 0.1,
+    "elbow_height": 0.15,
+    "forward_min": 1.5
+  },
+  "absolute_tolerances": {
+    "lateral": 0.014422898569452135,
+    "jaw_height": 0.014422898569452135,
+    "elbow_height": 0.0216343478541782,
+    "bone_relative_change": 0.005,
+    "forward_min": 0.21634347854178199
+  },
+  "full_extension_samples": [
+    {
+      "original_animation_time_s": 0.65,
+      "metrics_model_units": {
+        "lateral": 0.004596084135579732,
+        "jaw_height": 0.0042594534312059285,
+        "elbow_height": 0.019883187428550886,
+        "upper_bone_relative_change": 6.297653343256826e-08,
+        "forearm_relative_change": 2.743700278085015e-08,
+        "forward": 0.5138013540278468
+      },
+      "checks": {
+        "lateral": true,
+        "jaw_height": true,
+        "elbow_height": true,
+        "upper": true,
+        "forearm": true,
+        "forward": true
+      }
+    },
+    {
+      "original_animation_time_s": 0.75,
+      "metrics_model_units": {
+        "lateral": 0.004596084135579732,
+        "jaw_height": 0.0042594534312059285,
+        "elbow_height": 0.019883187428550886,
+        "upper_bone_relative_change": 6.297653343256826e-08,
+        "forearm_relative_change": 2.743700278085015e-08,
+        "forward": 0.5138013540278468
+      },
+      "checks": {
+        "lateral": true,
+        "jaw_height": true,
+        "elbow_height": true,
+        "upper": true,
+        "forearm": true,
+        "forward": true
+      }
+    }
+  ],
+  "limitations": [
+    "Engineering visual acceptance, not human biomechanics or karate standard",
+    "Jaw proxy is Head origin minus 0.14 model units, not an anatomical skin landmark",
+    "AEGIS has no independent finger/ankle/toe bones; fingers cannot be articulated as a separate closed fist",
+    "Collision/contact, HMD display and human training efficacy are not validated"
+  ]
+}

@@ -12,6 +12,10 @@ const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
 const err=(reason)=>({value:null,reason});
 const ok=(value)=>finite(value)?{value,reason:null}:err('nonfinite');
 const near=(a,b,tol=1e-8)=>Math.abs(a-b)<=tol;
+function timeWindowValid(times,lo,hi){
+ for(let j=lo;j<=hi;j++)if(!finite(times[j])||(j>lo&&times[j]<=times[j-1]))return false;
+ return true;
+}
 const vecNorm=v=>Array.isArray(v)&&v.every(finite)?Math.hypot(...v):null;
 function derivative(values,times) {
  const n=values.length;
@@ -20,8 +24,8 @@ function derivative(values,times) {
   const lo=i===0?0:i===n-1?n-2:i-1;
   const hi=i===0?1:i===n-1?n-1:i+1;
   const a=values[lo],b=values[hi],dt=times[hi]-times[lo];
-  if(!finite(times[lo])||!finite(times[hi])||!finite(dt)||dt<=EPS)return err('duplicate_or_invalid_time');
-  if(!finite(a)||!finite(b))return err('missing_source_value');
+  if(!timeWindowValid(times,lo,hi)||!finite(dt)||dt<=EPS)return err('duplicate_or_invalid_time');
+  if(!finite(values[i])||!finite(a)||!finite(b))return err('missing_source_value');
   return ok((b-a)/dt);
  });
 }
@@ -65,8 +69,8 @@ function angularSpeed(quats,times){
   const lo=i===0?0:i===n-1?n-2:i-1;
   const hi=i===0?1:i===n-1?n-1:i+1;
   const dt=times[hi]-times[lo],angle=quaternionAngle(quats[lo],quats[hi]);
-  if(!finite(dt)||dt<=EPS)return err('duplicate_or_invalid_time');
-  return angle===null?err('missing_quaternion'):ok(angle/dt);
+  if(!timeWindowValid(times,lo,hi)||!finite(dt)||dt<=EPS)return err('duplicate_or_invalid_time');
+  return angle===null||!normalizeQuaternion(quats[i])?err('missing_quaternion'):ok(angle/dt);
  });
 }
 function positionKinematics(rawPoints,times,settings={}){
@@ -99,7 +103,10 @@ function parseCSV(csv){
   else token+=c;
  }
  if(token.length||row.length){row.push(token);lines.push(row);}
+ if(quoted)throw Error('unterminated_CSV_quote');
  const header=lines.shift()||[];
+ if(new Set(header).size!==header.length)throw Error('duplicate_CSV_header');
+ if(lines.some(r=>r.some(v=>v!=='')&&r.length!==header.length))throw Error('CSV_column_count_mismatch');
  return {header,rows:lines.filter(a=>a.some(v=>v!=='')),records:lines.filter(a=>a.some(v=>v!=='')).map(r=>Object.fromEntries(header.map((name,i)=>[name,r[i]??''])))};
 }
 function legacyCSV(csv){
@@ -108,13 +115,14 @@ function legacyCSV(csv){
  if(required.some(k=>!data.header.includes(k)))throw Error('missing_legacy_required_columns');
  const groups=new Map();
  for(const [i,row] of data.records.entries()){
-  const key=row.skeleton_id+':'+row.joint_id+':'+row.motion_id;
+  const key=JSON.stringify([row.dataset_id||'',row.trial_id||'',row.skeleton_id,row.joint_id,row.motion_id,row.motion_revision_id||'']);
   if(!groups.has(key))groups.set(key,[]);
   groups.get(key).push({index:i,row});
  }
  const typed=v=>(v===''||v===null||v===undefined)?null:(finite(Number(v))?Number(v):null);
  for(const group of groups.values()){
-  group.sort((a,b)=>typed(a.row.original_animation_time_s)-typed(b.row.original_animation_time_s));
+  // Preserve original row order and reject nonmonotonic/duplicate times; never silently repair them.
+  if(group.some((g,i)=>{const t=typed(g.row.original_animation_time_s);return t===null||(i>0&&t<=typed(group[i-1].row.original_animation_time_s));}))throw Error('duplicate_or_nonmonotonic_time');
   const times=group.map(g=>typed(g.row.original_animation_time_s));
   const linear=derivative(group.map(g=>typed(g.row.linear_speed_model_units_per_s)),times);
   const angular=derivative(group.map(g=>typed(g.row.angular_speed_rad_per_s)),times);
@@ -124,13 +132,18 @@ function legacyCSV(csv){
     r.linear_speed_change_rate_model_units_per_s2=linear[i].reason?'':String(linear[i].value);
    if(!('angular_speed_change_rate_rad_per_s2' in r)||r.angular_speed_change_rate_rad_per_s2==='')
     r.angular_speed_change_rate_rad_per_s2=angular[i].reason?'':String(angular[i].value);
-   r._legacy_quality='resampled_smoothed_positions_only;raw_positions_unrecorded;quaternions_unrecorded;no_repeat_smoothing';
+   const missing=[];
+   if(!['quaternion_x','quaternion_y','quaternion_z','quaternion_w'].every(k=>typed(r[k])!==null))missing.push('quaternions_unrecorded');
+   if(!['raw_position_x_root_relative','raw_position_y_root_relative','raw_position_z_root_relative'].every(k=>typed(r[k])!==null))missing.push('raw_positions_unrecorded');
+   if(!r.root_model_matrix_16)missing.push('root_transform_unrecorded');
+   r._legacy_quality=[...missing,'no_repeat_smoothing'].join(';');
+   r._rate_quality=[linear[i].reason,angular[i].reason].filter(Boolean).join(';');
    if(r.quaternion_x===undefined)for(const name of ['quaternion_x','quaternion_y','quaternion_z','quaternion_w'])r[name]='';
    if(r.raw_position_x_root_relative===undefined)for(const name of ['raw_position_x_root_relative','raw_position_y_root_relative','raw_position_z_root_relative'])r[name]='';
   });
  }
- return {schema:'legacy-v1-or-signed-rates',records:data.records,
-  warnings:['raw_position_unrecorded','quaternion_unrecorded','skeleton_transform_unrecorded','do_not_resmooth'],
+ return {schema:data.records[0]?.data_schema||'legacy-v1-or-signed-rates',headers:data.header,records:data.records,
+  warnings:['do_not_resmooth',...new Set(data.records.flatMap(r=>r._legacy_quality.split(';')))],
   groupCount:groups.size
  };
 }
@@ -143,7 +156,7 @@ function peakCandidates(values,times,from=0,to=Infinity,config={}){
   if(times[i]<from||times[i]>to||!finite(values[i])){i++;continue;}
   let j=i;while(j+1<values.length&&finite(values[j+1])&&Math.abs(values[j+1]-values[i])<=tieTol)j++;
   const left=values[i-1],right=values[j+1],height=values[i];
-  if(finite(left)&&finite(right)&&height>threshold&&height>left+tieTol&&height>right+tieTol){
+  if(times[i-1]>=from&&times[j+1]<=to&&finite(left)&&finite(right)&&height>threshold&&height>left+tieTol&&height>right+tieTol){
    out.push({start:times[i],end:times[j],time:(times[i]+times[j])/2,value:height,
     quality:j>i?'plateau_time_interval':'local_peak_candidate',
     flat:j>i});
@@ -155,6 +168,11 @@ function peakCandidates(values,times,from=0,to=Infinity,config={}){
 function detectOnset(speed,times,from,to,threshold,hold=3){
  if(!Number.isInteger(hold)||hold<2)return {time:null,status:'invalid_hold'};
  const inds=times.map((t,i)=>t>=from&&t<=to?i:-1).filter(i=>i>=0);
+ // If movement is already above threshold at the selected interval's left
+ // edge, the onset occurred before the observation window or is ambiguous.
+ // Never mislabel the first sample (especially t=0) as a confirmed onset.
+ if(inds.length>=hold&&inds.slice(0,hold).every(i=>finite(speed[i])&&speed[i]>=threshold))
+  return {time:null,status:'already_active_at_interval_start',threshold,hold};
  for(let k=0;k<=inds.length-hold;k++){
   if(inds.slice(k,k+hold).every((i,j,a)=>finite(speed[i])&&speed[i]>=threshold&&(j===0||i===a[j-1]+1)))
    return {time:times[inds[k]],status:'candidate',threshold,hold};
@@ -203,9 +221,10 @@ function sameSource(a,b) {
 }
 function compareEvents(x,y,allowCross=false){
  if(!x||!y)return {ok:false,reason:'comparison_X_Y_not_selected'};
- const hasID=(obj)=>obj.skeleton_id&&obj.joint_id!==undefined&&obj.joint_id!=='';
+ const hasID=(obj)=>obj.skeleton_id&&obj.joint_id!==undefined&&obj.joint_id!==null&&obj.joint_id!=='';
  if(!hasID(x)||!hasID(y))return {ok:false,reason:'joint_id_missing'};
  if(x.skeleton_id!==y.skeleton_id&&!allowCross)return {ok:false,reason:'cross_skeleton_mapping_unverified'};
+ if(x.skeleton_id===y.skeleton_id&&String(x.joint_id)!==String(y.joint_id))return {ok:false,reason:'joint_id_mismatch'};
  if(x.unit!==y.unit)return {ok:false,reason:'unit_mismatch'};
  if(x.motion_revision_id&&y.motion_revision_id&&x.motion_revision_id!==y.motion_revision_id&&x.source_asset_sha256===y.source_asset_sha256)
   return {ok:false,reason:'motion_revision_mismatch'};

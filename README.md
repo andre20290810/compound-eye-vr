@@ -1,3 +1,11 @@
+## v54 — 再解析CSV・部位間の時間関係・AEGIS修正
+
+公開版はv54です。パンチA・歩行・走行の修正、全関節86列CSV、元姿勢・骨格JSON、部位間の開始／ピーク／増減と速度比、同一骨格のX/Y差分を追加しました。解析は設定内で明示的に開く方式で、通常の複眼・単眼／双眼・VR操作を維持します。
+
+[実装・列定義・使い方・テスト・制約](docs/V54_IMPLEMENTATION.md) ／ [ブラウザ検証結果](docs/evidence/v54/browser-regression.json) ／ [NAVYの動作比較](docs/evidence/v54/navy-after-punch-a.png) ／ [SOLDIERの動作比較](docs/evidence/v54/soldier-after-punch-a.png)
+
+実機HMD・実機GameSir・Safariは未検証です。合成アニメーションの参考解析であり、技能の採点・因果判定・人体実測としては扱いません。
+
 # 人工複眼VR｜研究用プロトタイプ
 
 公開サイト：<https://andre20290810.github.io/compound-eye-vr/>

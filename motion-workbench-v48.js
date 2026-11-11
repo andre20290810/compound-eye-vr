@@ -113,10 +113,10 @@ function v47Sample(avatar,motion,config){
  const rootIndex=v47RootIndex(md);
  const allJointIds=md.skin?.joints?.length?md.skin.joints:[...md.nodes.keys()];
  const ids=[...new Set(allJointIds)].filter(i=>i>=0&&i<md.nodes.length&&(config.includeAllSkinJoints===true||jointNamePattern.test(md.nodes[i].name)));
- const backup={avatar:state.model,motion:state.motion,rendered:state._renderedAnimationTime};
+ const backup={avatar:state.model,motion:state.motion,rendered:state._renderedAnimationTime,gameMode:state.gameMode,gaitBlend:md.gaitBlendPose};
  const frames=[];
  try{
-  state.model=avatar;
+  state.model=avatar;state.gameMode=false;md.gaitBlendPose=null;
   for(let k=0;k<framesN;k++){
    const t=Math.min(sampledEnd,k*dt);
    animateModel(md,motion,t);
@@ -129,15 +129,17 @@ function v47Sample(avatar,motion,config){
      p:[world[12]-center[0],world[13]-center[1],world[14]-center[2]],
      q:Array.from(md.poseRot?.[id]||md.nodes[id].rotation),
      localTranslation:Array.from(md.poseTrans?.[id]||md.nodes[id].translation),
+     localScale:Array.from(md.poseScale?.[id]||md.nodes[id].scale),
      worldPosition:[world[12],world[13],world[14]]
     };
    }
-   frames.push({time:t,joints,rootModelMatrix:root?Array.from(root):null,
+   const nodeLocalPoses=md.nodes.map((n,i)=>({id:i,t:md.poseTrans[i].slice(),q:md.poseRot[i].slice(),s:md.poseScale[i].slice(),matrix:n.matrix?Array.from(n.matrix):null}));
+   frames.push({time:t,joints,nodeLocalPoses,rootModelMatrix:root?Array.from(root):null,
     rootModelPosition:center.slice(),
     rootLocalQuaternion:Array.from(md.poseRot?.[rootIndex]||md.nodes[rootIndex].rotation)});
   }
  }finally{
-  state.model=backup.avatar;
+  state.model=backup.avatar;state.gameMode=backup.gameMode;md.gaitBlendPose=backup.gaitBlend;
   const restoreT=Number.isFinite(backup.rendered)?backup.rendered:0;
   if(backup.avatar===avatar)animateModel(md,backup.motion,restoreT);
  }
@@ -184,7 +186,7 @@ function v47Sample(avatar,motion,config){
    peakAccelTime:frames[accIndex].time,peakAccel:accel[accIndex],
    decelStart:decelIndex===null?null:frames[decelIndex].time,
    peaks:v47PeakCount(linear),jerkRMS:Math.sqrt(sumJerk/Math.max(1,jerkNorm.length)),
-   sparc:v47SPARC(linear,dt),range:Math.max(...smoothed.map(p=>v47Norm3(p.map((v,k)=>v-smoothed[0][k]))))
+   sparc:null,sparcStatus:'unverified_disabled',range:Math.max(...smoothed.map(p=>v47Norm3(p.map((v,k)=>v-smoothed[0][k]))))
   });
  }
  return {
@@ -198,10 +200,10 @@ function v47Sample(avatar,motion,config){
 }
 function v47Pair(A,B){
  if(!B)return null;
- const out=[],indexB=new Map();
- for(const joint of B.joints)if(!indexB.has(joint.key))indexB.set(joint.key,joint);
+ const out=[],indexB=new Map(),sameSkeleton=A.skeletonId===B.skeletonId;
+ for(const joint of B.joints){const key=sameSkeleton?joint.index+':'+joint.name:joint.key;if(!indexB.has(key))indexB.set(key,joint);}
  for(const joint of A.joints){
-  const b=indexB.get(joint.key);
+  const b=indexB.get(sameSkeleton?joint.index+':'+joint.name:joint.key);
   if(b)out.push({key:joint.key,A:joint,B:b,display:joint.name});
  }
  const differentSkeleton=A.skeletonId!==B.skeletonId;
@@ -643,7 +645,7 @@ function v47RenderNarrative(){
  if(selected[0]){
   const j=selected[0];line('参考（'+v48JointLabel(j)+'）：速度ピーク '+j.peaks+
    '回、ジャークRMS '+v47Format(j.jerkRMS,3)+'（モデル単位/秒³）、推定SPARC '+
-   (j.sparc===null?'必要サンプル数不足':v47Format(j.sparc,3))+
+   (j.sparc===null?'未検証のため無効':v47Format(j.sparc,3))+
    '。平滑化とサンプル間隔に敏感な探索的指標です。');
  }
  line('再現性：独立した複数試行が登録されていないため評価不可。人体実測・技能評価・因果関係の証明ではありません。');
@@ -803,7 +805,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v53',
+  app_version:'v54',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -824,7 +826,7 @@ function v47ExportJSON(){
    comparison_time_alignment:$('v47Alignment').value,
    coordinate_mapping:pair?.method||'no comparison',
    cross_skeleton_speed_unit:v47.anyCrossSkeleton?'body-heights-per-second':'native-model-units-per-second',
-   sparc:'exploratory sampled-speed DFT arc length, max cutoff 10 Hz',
+   sparc:'unverified reference implementation; disabled in v54',
    repeatability:'not assessable without separate recorded trials'
   },
   viewer:{
