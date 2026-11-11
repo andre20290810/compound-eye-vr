@@ -1,94 +1,106 @@
 {
-  "app_version": "v61",
-  "source_commit": "ef2e60292c0f100087fd0294a00320063b66687d",
+  "app_version": "v62",
+  "source_commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
-  "viewer_last_updated_label": "最終更新：2026/11/12 02:26（日本時間）",
-  "data_schema": "compound-eye-motion-comparison-v2",
-  "unified_csv_schema": "compound-eye-single-motion-v2",
   "unified_csv_columns": 86,
-  "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
-  "model_geometry_revision": "aegis-v60-adjustable-visor-no-shoulder-armor",
-  "motion_revision": "punch-sequences-v61-001",
+  "data_schema": "compound-eye-single-motion-v2",
+  "model_geometry_revision": "aegis-closed-fists-stabilized-v62",
+  "motion_revision": "xbot-ybot-known-perturbation-v62",
+  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62",
   "source_files_sha256": {
-    "index.html": "7c2959df98d62f88ab3399642f93840a4c9103b850b3ae4fbeff8d688b5df21b",
+    "index.html": "87a04cb5ff9bebc58f05e01500fa85ad58481284ab84ee7d2026d37045c4f9bd",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "a5c491151d994a4a927ff4705d4f1ebeda1cc84925fa82803301184743fc7090",
-    "kinematic-view-v54.js": "7e1b6d4574dc5eb3348d5b14b6ee234d89b890b7c1dc4e1f6cec1f6950d989cd",
-    "motion-workbench-v48.js": "28c09c84931c8b4ee489f6e74a18e298435e102285ac6ff33473be1f40f4b309",
+    "motion-csv-v54.js": "13ae9832edaedb95f8878f2b3f23f6a816aef85dfa36bb46f98059be54815db4",
+    "kinematic-view-v54.js": "c936c18420e0aea6b86fc452d25df76e24e001ab3f1c9c751f884ce3780c2927",
+    "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
     "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
-    "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
     "aegis-details-v58.js": "e748384d6c8830f843462f678153624342327e1a74de5f1955aa9a9bbe5bcee4",
     "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
     "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
     "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
     "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
-    "punch-sequences-v61.js": "2e2748d400c50463d6cc24cfe7dd390bcd46bb21f5d8a872086694496f5122bb"
+    "punch-sequences-v61.js": "9c340e23e451894e5a0c120dcceee7f9f277dac0385866fdd5bd8121bdf7a893",
+    "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
+    "ybot-runtime-v62.js": "029f01926c23027e2b2488959fe79c96dd316a20b050690964d02d2e41c21639",
+    "motion-timeline-v62.js": "1749076dedfaff66026b51fc921a17347c16d3b29179f5f679bf6cb9f394a280",
+    "timeline-ui-v62.js": "7ac341e5ca7cc05874063361ef4682e8428747fb2c3b61d383416bd987dbed4f",
+    "aegis-fists-v62.js": "9ea64860346823e197f58863b9be6d53dc965139ca4637769b8b2f934f6c23ec"
   },
-  "public_appearance_config": {
+  "public_appearance": {
     "path": "public-appearance.json",
     "revision_at_release": "appearance-2026-11-11T17:02:32.300Z",
-    "sha256_at_release": "47f856756274c77c3fc3edd5a66e76ed418a253c0740ca78de3d0b52e7af9365",
-    "preserved_from_latest_user_edit": true,
-    "optional_shape_key": "visor",
-    "legacy_files_supported": true,
-    "requires_authenticated_repository_commit": true
+    "sha256": "47f856756274c77c3fc3edd5a66e76ed418a253c0740ca78de3d0b52e7af9365",
+    "preserved_existing_user_settings": true
+  },
+  "ybot_config": {
+    "path": "ybot-modifications.json",
+    "revision": "ybot-known-shifts-v62-001",
+    "sha256": "ab555d82a9abd6c485bd9c7b46728681ebc10db40e4a943231cf4e7490be812a",
+    "synthetic_not_beginner": true
   },
   "test_reports": {
     "browser-regression": {
-      "sha256": "2ecd099812c5446eeed12886e2b26aa930acb10b614150ed3e67c6a452712047",
+      "sha256": "6a801907186aba4ffe3c2c0245f9f4dcf872710b4972c9bace4ed7c9e12b05e6",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "ui-regression": {
-      "sha256": "6ff638a9f3a5dda3a7ab044c62932e9bf6e4052c1398fb51067022c169bbb2c6",
+      "sha256": "29ac3db526c5e85054f2ff08c2a162fe509a6eb1608116c0d9c497d94dbec8a1",
       "summary": {
         "passed": 8,
         "failed": 0
       }
     },
     "additions-regression": {
-      "sha256": "4ba2bd5aebc9b633b4b21bf69825068ac6ba8721346b101538092298bf7e2d69",
+      "sha256": "fb1991d499cdbe13c1bafd9199c5e033b77a29b621521ed6cb41cc4d293a859e",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "visor-regression": {
-      "sha256": "b5eef14da644c5effeae14ed09d6b4547098d6b0abb8db076c8652de83440ac9",
+      "sha256": "16507df3a0d76f7014a4a3193c5b6e0051751c7bbc0ef1488f3987415b8529b1",
       "summary": {
         "passed": 13,
         "failed": 0
       }
     },
     "punch-regression": {
-      "sha256": "6d41c57f3f437e78175d23ff7d31775cbd2ee9f8dbb15235b8854bb337b5690b",
+      "sha256": "6ea6bdd1257b7d5fee66963788d59a2ca9b0279633a0907caba0fef678fbf4af",
       "summary": {
         "passed": 14,
+        "failed": 0
+      }
+    },
+    "timeline-regression": {
+      "sha256": "a0a2771a7b1a363e1b4a0e19fe947450d9e04c3928066a4023adc316c1e73de8",
+      "summary": {
+        "passed": 15,
         "failed": 0
       }
     }
   },
   "unit_tests": {
-    "passed": 40,
+    "passed": 48,
     "failed": 0
   },
   "browser_tests": {
-    "passed": 63,
+    "passed": 78,
     "failed": 0
   },
-  "backup_tag": "backup-v60-before-v61-20261112",
-  "backup_commit": "11ed59c94a88b86dedcaa60d4ab967c4e662110c",
+  "backup_tag": "backup-v61-before-v62-20261112",
+  "backup_commit": "0ed45180fdf2838abf53d51a7f1bae54e8ba5094",
   "untested": [
-    "physical iPhone/Safari",
+    "physical iPhone Safari",
     "physical HMD",
     "physical GameSir",
-    "physical collision/contact",
-    "human motor-learning efficacy"
+    "physical collisions and human motion validity",
+    "kinetic forces, torques, energy transfer or causal inference"
   ],
-  "note": "X Bot D=A+C; AEGIS B is source-track retarget of X Bot C; AEGIS C alternates mirrored A. Five AEGIS menu modes removed. Public palette and adjustable visor preserved. Source commit precedes manifest/evidence-only commits.",
-  "generated_at_utc": "2026-11-11T17:30:03.086809+00:00"
+  "note": "Source commit identifies implementation. Current main may later include manifest and public verification-only commits. YBot copies XBot rig/mesh, with motion revision metadata. AEGIS B is adjusted and not numerically identical to old B.",
+  "generated_at_utc": "2026-11-11T19:32:34.472145+00:00"
 }
