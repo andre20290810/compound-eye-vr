@@ -49,6 +49,17 @@ test('linear/angular speed are separate units and no mixed-unit ratio is produce
  assert.equal(a.rows[0].X.unit,'model_units/s');assert.equal(a.rows[1].X.unit,'rad/s');
  assert.ok(!Object.keys(a).some(k=>k.includes('speed_ratio')));
 });
+test('phase alignment rescales the selected X time interval to Y source duration before detecting peaks',()=>{
+ const x=fixture(),y=fixture('xbot-32-node-bones',.02);y.data.duration=2;
+ for(const key of Object.keys(y.byJoint))for(const row of y.byJoint[key])row.time*=2;
+ const a=T.analyze(x,y,[0,1,2],{0:'linear',1:'linear',2:'linear'},{from:.2,to:.6,prominence:.10,alignment:'phase'});
+ const row=a.rows[1];
+ assert.equal(a.compatibility.ok,true);
+ assert.ok(row.Y.peak);
+ assert.ok(Math.abs(row.Y.peak.time-.68)<.03);
+ assert.ok(Math.abs(row.X.peak.time-.32)<.03);
+ assert.ok(row.delta.phase_peak_position_pp!==null);
+});
 test('closed fist replaces open fingers in B only and retains hand-bone attachment',()=>{
  const meshes=F.geometry();assert.equal(meshes.length,2);
  assert.deepEqual(meshes.map(m=>m.bone),[5,8]);

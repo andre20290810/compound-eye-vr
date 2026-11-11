@@ -41,7 +41,10 @@ function at(row,time,config){
 }
 function analyze(a,b,selected,metrics,options={}){
  const config={...defaultConfig,...options},compat=b?strictCompatibility(a,b,selected,metrics):{ok:true};
- const rows=selected.map(jointId=>{const metric=metrics[jointId]||'linear';return{jointId,metric,X:series(a,jointId,metric,config),Y:compat.ok&&b?series(b,jointId,metric,config):null};});
+ const durationX=a.data.duration||1,durationY=b?.data?.duration||durationX;
+ const configX={...config},configY={...config};
+ if(config.alignment==='phase'&&b){configY.from=config.from/durationX*durationY;configY.to=config.to/durationX*durationY;}
+ const rows=selected.map(jointId=>{const metric=metrics[jointId]||'linear';return{jointId,metric,X:series(a,jointId,metric,configX),Y:compat.ok&&b?series(b,jointId,metric,configY):null};});
  const events=rows.filter(r=>r.X?.peak).map(r=>({joint_id:r.jointId,joint_name:r.X.joint.name,metric:r.metric,unit:r.X.unit,peak_time:r.X.peak.time,peak_value:r.X.peak.value,kind:'peak'}))
    .sort((a,b)=>a.peak_time-b.peak_time||a.joint_id-b.joint_id).map((e,i,all)=>({...e,order:i+1,next_event_delta_ms:i+1<all.length?+(1000*(all[i+1].peak_time-e.peak_time)).toFixed(2):null}));
  const yEvents=rows.filter(r=>r.Y?.peak).map(r=>({joint_id:r.jointId,time:r.Y.peak.time})).sort((x,y)=>x.time-y.time||x.joint_id-y.joint_id);

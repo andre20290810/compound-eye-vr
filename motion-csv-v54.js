@@ -59,7 +59,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v63'?experimentBuildManifest.source_commit:'unverified_build_v63';
+ const runtime=experimentBuildManifest?.app_version==='v64'?experimentBuildManifest.source_commit:'unverified_build_v63';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -137,7 +137,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v63',runtime,JSON.stringify(config),
+    'v64',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -177,7 +177,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v63',
+   motion_revision_id:asset.motion_revision_id,app_version:'v64',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
    motion_composition:avatar==='ybot'?{

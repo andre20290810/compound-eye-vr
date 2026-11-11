@@ -164,4 +164,5 @@ function tl62Init(){
  for(const side of ['X','Y'])tl62$('tl62CSV'+side).onchange=async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>4e6)throw Error('CSV exceeds 4MB');timeline62['import'+side]=tl62SourceFromCSV(await file.text());tl62$('tl62'+side).value='csv';tl62Motions('tl62Motion'+side,'csv');timeline62.lastKey='';tl62Analyze();}catch(err){tl62$('tl62Quality').textContent='CSV読込不可：'+err.message;}};
  panel.addEventListener('toggle',()=>{if(panel.open){timeline62.enabled=true;tl62Analyze();}else timeline62.enabled=false;});
  window.__TimelineUI62={active:()=>timeline62.enabled&&timeline62.show3d&&!!timeline62.analysis,current:()=>timeline62.analysis,at:TL62.at,seek:tl62Seek,refresh:tl62Analyze,loadCSV:tl62SourceFromCSV,source:timeline62};
+ if(typeof v64InstallLiveDynamics==='function')v64InstallLiveDynamics();
 }

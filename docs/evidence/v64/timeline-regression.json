@@ -1,0 +1,139 @@
+{
+  "date": "2026-11-11T22:15:24.125Z",
+  "environment": "Windows Edge WebGL2 headless; mobile viewport emulation, no physical HMD",
+  "checks": [
+    {
+      "name": "always-visible timeline beside the single-view model with numeric panel still below",
+      "status": "PASS",
+      "details": {
+        "dockVisible": true,
+        "side": true,
+        "sameRow": true,
+        "numericPanel": true,
+        "numericPanelClosed": true,
+        "mainSvg": true,
+        "waveformStillAvailable": true
+      }
+    },
+    {
+      "name": "live bubbles follow rendered time and use TL62 color and radius",
+      "status": "PASS",
+      "details": {
+        "first": {
+          "time": 0.16,
+          "cx": 95.45454545454544,
+          "radius": 5.516634007311248,
+          "fill": "#58c99a",
+          "expected": {
+            "state": "accelerating",
+            "color": "#58c99a",
+            "radius": 5.516634007311248,
+            "time": 0.16666666666666666,
+            "speed": 0.9416138029094177,
+            "signed_speed_change": 2.723086745015377,
+            "unit": "model_units/s",
+            "normalized_within_joint": true,
+            "peak": false
+          }
+        },
+        "second": {
+          "time": 0.48,
+          "cx": 162.36363636363635,
+          "radius": 6.365591632924318,
+          "fill": "#58c99a",
+          "expected": {
+            "state": "accelerating",
+            "color": "#58c99a",
+            "radius": 6.365591632924318,
+            "time": 0.4666666666666667,
+            "speed": 0.5024047042052208,
+            "signed_speed_change": 3.641688834421524,
+            "unit": "model_units/s",
+            "normalized_within_joint": true,
+            "peak": false
+          }
+        },
+        "readout": "再生位置 0.480 s"
+      }
+    },
+    {
+      "name": "compound-eye places timeline above model and moves viewer controls below",
+      "status": "PASS",
+      "details": {
+        "mode": "true",
+        "dockAbove": true,
+        "controlsBelow": true,
+        "movedButton": "viewerControlShelf",
+        "rows": 7,
+        "chartHeight": 221,
+        "plotHeight": 310,
+        "canvas": 0
+      }
+    },
+    {
+      "name": "X/Y comparison overlays only verified XBot/YBot poses and applies editable diff tint",
+      "status": "PASS",
+      "details": {
+        "overlay": true,
+        "changedJoints": 1,
+        "compatible": true,
+        "avatars": [
+          "xbot",
+          "ybot"
+        ],
+        "gl": 0
+      }
+    },
+    {
+      "name": "difference color preference persists across reload and remains editable",
+      "status": "PASS",
+      "details": {
+        "before": {
+          "value": "#cc22ff",
+          "saved": "#cc22ff"
+        },
+        "after": "#cc22ff"
+      }
+    },
+    {
+      "name": "mobile viewport stacks timeline above viewer without horizontal overflow",
+      "status": "PASS",
+      "details": {
+        "dockAbove": true,
+        "mode": "true",
+        "eyeCount": 4,
+        "scrollWidth": 390,
+        "width": 390,
+        "plotWidth": 350,
+        "chartHeight": 221,
+        "svgHeight": "221",
+        "svgBox": 221,
+        "plotHeight": 299,
+        "rows": 7,
+        "gl": 0
+      }
+    },
+    {
+      "name": "mobile single-view keeps all default part rows visible above the model",
+      "status": "PASS",
+      "details": {
+        "mode": "false",
+        "dockAbove": true,
+        "rows": 7,
+        "chartHeight": 319,
+        "plotHeight": 320,
+        "overflow": 0
+      }
+    },
+    {
+      "name": "no JavaScript runtime failures",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 8,
+    "failed": 0
+  }
+}
