@@ -1,0 +1,487 @@
+{
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "checked_at": "2026-11-11T14:32:49.242Z",
+  "source_commit": "5efedb472c6b18e9aa90f9ba0d9e3951206836c4",
+  "physical_hardware_test": false,
+  "manifest": {
+    "app_version": "v58",
+    "source_commit": "5efedb472c6b18e9aa90f9ba0d9e3951206836c4",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/11 23:32（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "unified_csv_columns": 86,
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "model_geometry_revision": "aegis-v58-forward-cameras-single-antenna-white-marks",
+    "source_files_sha256": {
+      "index.html": "5ed9884d0128e8dab1617485fd73c0a6a80fd6443327694e03c6ed8283e39f27",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "2bbb361139c1fac507f718815f007cdb4ebef738bfbf031b662c11c81c496cd0",
+      "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+      "motion-workbench-v48.js": "d8d6bf0090017313dbefacc171cc21f16748c2373e6d3f9d9a21a24686a45a35",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+      "aegis-details-v58.js": "4ad023b91e375ca2fc998c44e6706df7bf86a23af2db0d664a67902637c513ca",
+      "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
+      "appearance-v58.js": "683eccfbc8faba9f0507dc12a043cc017a3d42482e9140672d47bef225ed682c",
+      "appearance-ui-v58.js": "8d447695bdf2dcc114f7f45c6305367b56a9c0cd77afae1806c387c1bc51a150"
+    },
+    "public_appearance_config": {
+      "path": "public-appearance.json",
+      "revision_at_release": "v58-20261111T2332",
+      "sha256_at_release": "1a13f513a68bbd3f8b1af7c490f2758ee39abd6021ce83bf2e0a48c4fed7d47d",
+      "editable_without_code_change": true,
+      "requires_authenticated_repository_commit": true
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "abc285f816b482bd399b8148bb45011e19e6e7f66ea385d12d2daccd4e82648e",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "800fb52bccac47eedfad6f2e1a4de95acfc7d984348bfc3c57e177b3a1f48888",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "84ec84c275c1494de58fdace5386ac20f5a9433b8a52891036b542d22f0cecb4",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 23,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 36,
+      "failed": 0
+    },
+    "backup_tag": "backup-v57-before-v58-20261111",
+    "backup_commit": "31b85a4efbb820f69af461d41fc76a0db0ecb50d",
+    "untested": [
+      "physical iPhone/Safari",
+      "physical HMD",
+      "physical GameSir",
+      "physical collision/contact",
+      "human motor-learning efficacy"
+    ],
+    "note": "Implementation and test files are identified by source_commit; a later manifest/evidence commit may be main. Public palette JSON is intentionally editable separately. Local save/export alone does not publish.",
+    "generated_at_utc": "2026-11-11T14:32:43.079231+00:00"
+  },
+  "html_sha256": "5ed9884d0128e8dab1617485fd73c0a6a80fd6443327694e03c6ed8283e39f27",
+  "public_appearance": {
+    "schema": "compound-eye-appearance-v1",
+    "revision": "v58-20261111T2332",
+    "models": {
+      "aegisEmber": {
+        "mask": {
+          "mode": "solid",
+          "colorA": "#b8b8b8",
+          "colorB": "#b8b8b8",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "jet": {
+          "mode": "original",
+          "colorA": "#999999",
+          "colorB": "#999999",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "decor": {
+          "mode": "original",
+          "colorA": "#999999",
+          "colorB": "#999999",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "body": {
+          "mode": "original",
+          "colorA": "#16325c",
+          "colorB": "#16325c",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "heat": {
+          "mode": "original",
+          "colorA": "#ffe000",
+          "colorB": "#ff250c",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "visorBars": {
+          "mode": "solid",
+          "colorA": "#ffffff",
+          "colorB": "#ffffff",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "chestMarks": {
+          "mode": "solid",
+          "colorA": "#ffffff",
+          "colorB": "#ffffff",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "gauges": {
+          "mode": "original",
+          "colorA": "#ffcc06",
+          "colorB": "#ffcc06",
+          "brightness": 1,
+          "axis": "y"
+        }
+      },
+      "aegisSoldier": {
+        "mask": {
+          "mode": "solid",
+          "colorA": "#b8b8b8",
+          "colorB": "#b8b8b8",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "jet": {
+          "mode": "original",
+          "colorA": "#999999",
+          "colorB": "#999999",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "decor": {
+          "mode": "original",
+          "colorA": "#999999",
+          "colorB": "#999999",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "body": {
+          "mode": "original",
+          "colorA": "#16325c",
+          "colorB": "#16325c",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "heat": {
+          "mode": "original",
+          "colorA": "#ffe000",
+          "colorB": "#ff250c",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "visorBars": {
+          "mode": "solid",
+          "colorA": "#ffffff",
+          "colorB": "#ffffff",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "chestMarks": {
+          "mode": "solid",
+          "colorA": "#ffffff",
+          "colorB": "#ffffff",
+          "brightness": 1,
+          "axis": "y"
+        },
+        "gauges": {
+          "mode": "original",
+          "colorA": "#ffcc06",
+          "colorB": "#ffcc06",
+          "brightness": 1,
+          "axis": "y"
+        }
+      }
+    }
+  },
+  "browser": "Edg/157.0.4341.46",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=58&build=5efedb4",
+  "boot": {
+    "version": "58",
+    "eyeCount": 1,
+    "title": "人工複眼シミュレーションシステム",
+    "updated": "最終更新：2026/11/11 23:32（日本時間）",
+    "paletteButton": true,
+    "publicRevision": "v58-20261111T2332"
+  },
+  "models": [
+    {
+      "model": "aegisEmber",
+      "joints": 13,
+      "antennae": [
+        {
+          "name": "temple_antenna_left",
+          "side": -1,
+          "angle": 41.50469999298711
+        }
+      ],
+      "cameraLensCounts": [
+        3,
+        3
+      ],
+      "visor": {
+        "group": "visorBars",
+        "mode": 1,
+        "a": [
+          1,
+          1,
+          1
+        ],
+        "b": [
+          1,
+          1,
+          1
+        ],
+        "axis": 1,
+        "range": [
+          1.173,
+          1.18
+        ],
+        "brightness": 1,
+        "unlit": 1
+      },
+      "chest": {
+        "group": "chestMarks",
+        "mode": 1,
+        "a": [
+          1,
+          1,
+          1
+        ],
+        "b": [
+          1,
+          1,
+          1
+        ],
+        "axis": 1,
+        "range": [
+          0.975,
+          1.055
+        ],
+        "brightness": 1,
+        "unlit": 1
+      },
+      "mask": {
+        "group": "mask",
+        "mode": 1,
+        "a": [
+          0.7215686274509804,
+          0.7215686274509804,
+          0.7215686274509804
+        ],
+        "b": [
+          0.7215686274509804,
+          0.7215686274509804,
+          0.7215686274509804
+        ],
+        "axis": 1,
+        "range": [
+          1.07,
+          1.26
+        ],
+        "brightness": 1,
+        "unlit": 0
+      },
+      "heat": {
+        "group": "decor",
+        "mode": 0,
+        "a": [
+          0.6,
+          0.6,
+          0.6
+        ],
+        "b": [
+          0.6,
+          0.6,
+          0.6
+        ],
+        "axis": 1,
+        "range": [
+          0,
+          1.29
+        ],
+        "brightness": 1,
+        "unlit": 0
+      },
+      "columns": 86,
+      "app": "v58",
+      "implementation_commit": "5efedb472c6b18e9aa90f9ba0d9e3951206836c4",
+      "cosmetics": {
+        "schema": "aegis-accessory-v58",
+        "clock": "original_animation_seconds",
+        "antenna_count": 1,
+        "antenna_side": "avatar_left",
+        "antenna_elevation_deg": [
+          35,
+          55
+        ],
+        "antenna_baseline_deg": 45,
+        "antenna_angle_reference": "from horizontal in head-local sagittal plane",
+        "tachometer": "illustrative oscillating pointer; not measured engine RPM",
+        "exclude_from_motion_score": true,
+        "exclude_from_marker_selection": true,
+        "exclude_from_skeleton_csv": true,
+        "cameras_per_temple": 3,
+        "camera_zone": "front_visor_temple",
+        "note": "Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection"
+      },
+      "error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "joints": 13,
+      "antennae": [
+        {
+          "name": "temple_antenna_left",
+          "side": -1,
+          "angle": 41.50469999298711
+        }
+      ],
+      "cameraLensCounts": [
+        3,
+        3
+      ],
+      "visor": {
+        "group": "visorBars",
+        "mode": 1,
+        "a": [
+          1,
+          1,
+          1
+        ],
+        "b": [
+          1,
+          1,
+          1
+        ],
+        "axis": 1,
+        "range": [
+          1.173,
+          1.18
+        ],
+        "brightness": 1,
+        "unlit": 1
+      },
+      "chest": {
+        "group": "chestMarks",
+        "mode": 1,
+        "a": [
+          1,
+          1,
+          1
+        ],
+        "b": [
+          1,
+          1,
+          1
+        ],
+        "axis": 1,
+        "range": [
+          0.975,
+          1.055
+        ],
+        "brightness": 1,
+        "unlit": 1
+      },
+      "mask": {
+        "group": "mask",
+        "mode": 1,
+        "a": [
+          0.7215686274509804,
+          0.7215686274509804,
+          0.7215686274509804
+        ],
+        "b": [
+          0.7215686274509804,
+          0.7215686274509804,
+          0.7215686274509804
+        ],
+        "axis": 1,
+        "range": [
+          1.07,
+          1.26
+        ],
+        "brightness": 1,
+        "unlit": 0
+      },
+      "heat": {
+        "group": "heat",
+        "mode": 0,
+        "a": [
+          1,
+          0.8784313725490196,
+          0
+        ],
+        "b": [
+          1,
+          0.1450980392156863,
+          0.047058823529411764
+        ],
+        "axis": 1,
+        "range": [
+          0.17,
+          1.19
+        ],
+        "brightness": 1,
+        "unlit": 1
+      },
+      "columns": 86,
+      "app": "v58",
+      "implementation_commit": "5efedb472c6b18e9aa90f9ba0d9e3951206836c4",
+      "cosmetics": {
+        "schema": "aegis-accessory-v58",
+        "clock": "original_animation_seconds",
+        "antenna_count": 1,
+        "antenna_side": "avatar_left",
+        "antenna_elevation_deg": [
+          35,
+          55
+        ],
+        "antenna_baseline_deg": 45,
+        "antenna_angle_reference": "from horizontal in head-local sagittal plane",
+        "tachometer": "illustrative oscillating pointer; not measured engine RPM",
+        "exclude_from_motion_score": true,
+        "exclude_from_marker_selection": true,
+        "exclude_from_skeleton_csv": true,
+        "cameras_per_temple": 3,
+        "camera_zone": "front_visor_temple",
+        "note": "Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection"
+      },
+      "error": 0
+    }
+  ],
+  "editor": {
+    "open": true,
+    "style": {
+      "group": "jet",
+      "mode": 2,
+      "a": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "b": [
+        0.6,
+        0.6,
+        0.6
+      ],
+      "axis": 1,
+      "range": [
+        0.69,
+        1.14
+      ],
+      "brightness": 1.25,
+      "unlit": 0
+    },
+    "error": 0
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
