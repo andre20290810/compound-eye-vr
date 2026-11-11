@@ -1,68 +1,77 @@
 {
-  "app_version": "v58",
-  "source_commit": "5efedb472c6b18e9aa90f9ba0d9e3951206836c4",
+  "app_version": "v59",
+  "source_commit": "3d9aca354930674ce441b500739129e6f2a1d481",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
-  "viewer_last_updated_label": "最終更新：2026/11/11 23:32（日本時間）",
+  "viewer_last_updated_label": "最終更新：2026/11/12 00:24（日本時間）",
   "data_schema": "compound-eye-motion-comparison-v2",
   "unified_csv_schema": "compound-eye-single-motion-v2",
   "unified_csv_columns": 86,
   "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
-  "model_geometry_revision": "aegis-v58-forward-cameras-single-antenna-white-marks",
+  "model_geometry_revision": "aegis-v59-visor-triangle-chest-matched-strokes-shoulder-armor",
   "source_files_sha256": {
-    "index.html": "5ed9884d0128e8dab1617485fd73c0a6a80fd6443327694e03c6ed8283e39f27",
+    "index.html": "ec7972dbe3415db64136d5157a7f5968bf64fadfb12fb39ca23d0d0456b3e7e7",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "2bbb361139c1fac507f718815f007cdb4ebef738bfbf031b662c11c81c496cd0",
+    "motion-csv-v54.js": "3444c1a5d9feb15df795fd2885056562771aa1970bf7c4ce6c80db860ebad295",
     "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
-    "motion-workbench-v48.js": "d8d6bf0090017313dbefacc171cc21f16748c2373e6d3f9d9a21a24686a45a35",
+    "motion-workbench-v48.js": "07a4c2313d4561e8dc485b63e886b8642697fe48d0838cc8c538dd0e5f0bb68c",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
     "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
     "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
-    "aegis-details-v58.js": "4ad023b91e375ca2fc998c44e6706df7bf86a23af2db0d664a67902637c513ca",
+    "aegis-details-v58.js": "e748384d6c8830f843462f678153624342327e1a74de5f1955aa9a9bbe5bcee4",
     "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
-    "appearance-v58.js": "683eccfbc8faba9f0507dc12a043cc017a3d42482e9140672d47bef225ed682c",
-    "appearance-ui-v58.js": "8d447695bdf2dcc114f7f45c6305367b56a9c0cd77afae1806c387c1bc51a150"
+    "appearance-v58.js": "eac4fcc9baadc4b9dc7e683493387ba74623142666578093432d99c7362f14b4",
+    "appearance-ui-v58.js": "8d447695bdf2dcc114f7f45c6305367b56a9c0cd77afae1806c387c1bc51a150",
+    "aegis-armor-v59.js": "9a1e7579414e5c4bc79a3b726dc5e7abd9042b52946601db79475d9016b539a1"
   },
   "public_appearance_config": {
     "path": "public-appearance.json",
-    "revision_at_release": "v58-20261111T2332",
-    "sha256_at_release": "1a13f513a68bbd3f8b1af7c490f2758ee39abd6021ce83bf2e0a48c4fed7d47d",
+    "revision_at_release": "appearance-2026-11-11T14:56:59.106Z",
+    "sha256_at_release": "17a6d8784b4d1dcf5018538b8700a77fb2d83d0ad0770e31d030a88b74829117",
     "editable_without_code_change": true,
+    "preserved_from_latest_user_edit": true,
     "requires_authenticated_repository_commit": true
   },
   "test_reports": {
     "browser-regression": {
-      "sha256": "abc285f816b482bd399b8148bb45011e19e6e7f66ea385d12d2daccd4e82648e",
+      "sha256": "a09290b4d8bfb2d3e3885a3defa062908cad3842f19094fc4e01d8740117bc8c",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "ui-regression": {
-      "sha256": "800fb52bccac47eedfad6f2e1a4de95acfc7d984348bfc3c57e177b3a1f48888",
+      "sha256": "e9188c74fa5a434c9665b69029596fb29b5573b0c2a0071402d31f165c076417",
       "summary": {
         "passed": 8,
         "failed": 0
       }
     },
     "additions-regression": {
-      "sha256": "84ec84c275c1494de58fdace5386ac20f5a9433b8a52891036b542d22f0cecb4",
+      "sha256": "a3e42a2dae1d2a4fc4c55ec4e7f161993e3a1484f127fd05691fdb4516656a14",
       "summary": {
         "passed": 14,
+        "failed": 0
+      }
+    },
+    "armor-regression": {
+      "sha256": "172143e5c6929945c83a2cddf86eb09692a001c69fa5463535e4739417654a32",
+      "summary": {
+        "passed": 9,
         "failed": 0
       }
     }
   },
   "unit_tests": {
-    "passed": 23,
+    "passed": 31,
     "failed": 0
   },
   "browser_tests": {
-    "passed": 36,
+    "passed": 45,
     "failed": 0
   },
-  "backup_tag": "backup-v57-before-v58-20261111",
-  "backup_commit": "31b85a4efbb820f69af461d41fc76a0db0ecb50d",
+  "backup_tag": "backup-v58-before-v59-20261112",
+  "backup_commit": "31a6e28320c096b0f8a8c94d959a1aeb8258b29d",
   "untested": [
     "physical iPhone/Safari",
     "physical HMD",
@@ -70,6 +79,6 @@
     "physical collision/contact",
     "human motor-learning efficacy"
   ],
-  "note": "Implementation and test files are identified by source_commit; a later manifest/evidence commit may be main. Public palette JSON is intentionally editable separately. Local save/export alone does not publish.",
-  "generated_at_utc": "2026-11-11T14:32:43.079231+00:00"
+  "note": "Shoulder-specific rigid draw matrices do not alter skeleton measurements. Existing public palette retained. Implementation source precedes manifest/evidence-only commits.",
+  "generated_at_utc": "2026-11-11T15:26:17.358834+00:00"
 }
