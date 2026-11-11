@@ -26,7 +26,8 @@ replaceBetween('/* v62 YBot:','// v62 YBot uses identical','ybot-v62.js');
 replaceBetween('// v62 YBot uses identical','/* v62 AEGIS B:','ybot-runtime-v62.js');
 replaceBetween('/* v62 AEGIS B:','/* v62 research timeline:','aegis-fists-v62.js');
 replaceBetween('/* v62 research timeline:','// v62 multi-joint kinematic timeline.','motion-timeline-v62.js');
-replaceBetween('// v62 multi-joint kinematic timeline.','function parseGLB','timeline-ui-v62.js');
+replaceBetween('// v62 multi-joint kinematic timeline.','// v63: a readable sequence','timeline-ui-v62.js');
+replaceBetween('// v63: a readable sequence','function parseGLB','timeline-clear-v63.js');
 if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
 else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);

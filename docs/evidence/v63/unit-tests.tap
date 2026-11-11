@@ -1,0 +1,300 @@
+TAP version 13
+# Subtest: adjacent duplicate times invalidate every touching stencil
+ok 1 - adjacent duplicate times invalidate every touching stencil
+  ---
+  duration_ms: 2.1301
+  type: 'test'
+  ...
+# Subtest: missing central samples cannot acquire invented derivative values
+ok 2 - missing central samples cannot acquire invented derivative values
+  ---
+  duration_ms: 0.595
+  type: 'test'
+  ...
+# Subtest: plateau reaching outside selected phase is not a phase-local peak
+ok 3 - plateau reaching outside selected phase is not a phase-local peak
+  ---
+  duration_ms: 0.4846
+  type: 'test'
+  ...
+# Subtest: static and constant-velocity trajectories distinguish speed change from vector acceleration
+ok 4 - static and constant-velocity trajectories distinguish speed change from vector acceleration
+  ---
+  duration_ms: 5.9066
+  type: 'test'
+  ...
+# Subtest: CSV protects column identity, duplicate times and independent trial groups
+ok 5 - CSV protects column identity, duplicate times and independent trial groups
+  ---
+  duration_ms: 2.9453
+  type: 'test'
+  ...
+# Subtest: different exact joint IDs cannot silently compare under one canonical name
+ok 6 - different exact joint IDs cannot silently compare under one canonical name
+  ---
+  duration_ms: 1.4811
+  type: 'test'
+  ...
+# Subtest: v2 reading retains quaternion and raw coordinates without extra smoothing
+ok 7 - v2 reading retains quaternion and raw coordinates without extra smoothing
+  ---
+  duration_ms: 0.5177
+  type: 'test'
+  ...
+# PASS fixed user CSV rates, peaks/lag, quaternion sign, flat peak, circle, missing/legacy, time and no double smoothing
+# Subtest: tests\\v54-kinematics.test.cjs
+ok 2 - tests\\v54-kinematics.test.cjs
+  ---
+  duration_ms: 100.4019
+  type: 'test'
+  ...
+# PASS fixed excerpt of uploaded user CSV: 70 real rows, sign rates 19.39,-36.21,-20.93, 23.18 acceleration differs, peaks lag 66.7ms, Spine distinct, no raw fabrication
+# Subtest: tests\\v54-uploaded-csv.test.cjs
+ok 3 - tests\\v54-uploaded-csv.test.cjs
+  ---
+  duration_ms: 115.5171
+  type: 'test'
+  ...
+# Subtest: anatomical leg weights are normalized and have no opposite-leg influences
+ok 10 - anatomical leg weights are normalized and have no opposite-leg influences
+  ---
+  duration_ms: 2.2548
+  type: 'test'
+  ...
+# Subtest: rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+ok 11 - rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+  ---
+  duration_ms: 4.3161
+  type: 'test'
+  ...
+# Subtest: shoulder blade components are removed from fabric, not unrelated neck cables
+ok 12 - shoulder blade components are removed from fabric, not unrelated neck cables
+  ---
+  duration_ms: 1.1747
+  type: 'test'
+  ...
+# Subtest: X Bot geometry is not altered by AEGIS repair
+ok 13 - X Bot geometry is not altered by AEGIS repair
+  ---
+  duration_ms: 1.3695
+  type: 'test'
+  ...
+# Subtest: twin rocket geometry has chest binding, closed profile parts and finite coordinates
+ok 14 - twin rocket geometry has chest binding, closed profile parts and finite coordinates
+  ---
+  duration_ms: 4.4181
+  type: 'test'
+  ...
+# Subtest: mechanical joint covers retain side-specific single-bone attachment
+ok 15 - mechanical joint covers retain side-specific single-bone attachment
+  ---
+  duration_ms: 2.283
+  type: 'test'
+  ...
+# Subtest: one screenshot-side antenna moves at most 10 degrees around the annotated swept baseline
+ok 16 - one screenshot-side antenna moves at most 10 degrees around the annotated swept baseline
+  ---
+  duration_ms: 23.1523
+  type: 'test'
+  ...
+# Subtest: camera triples are at the front visor corners and the old ear-box location is absent
+ok 17 - camera triples are at the front visor corners and the old ear-box location is absent
+  ---
+  duration_ms: 10.7098
+  type: 'test'
+  ...
+# Subtest: chest marks and visor bars are fixed white; tachometers remain yellow moving needles
+ok 18 - chest marks and visor bars are fixed white; tachometers remain yellow moving needles
+  ---
+  duration_ms: 11.7348
+  type: 'test'
+  ...
+# Subtest: default palette brightens mask, restores white marks and preserves SOLDIER heat
+ok 19 - default palette brightens mask, restores white marks and preserves SOLDIER heat
+  ---
+  duration_ms: 1.3098
+  type: 'test'
+  ...
+# Subtest: preset validation rejects malformed, excessive and unknown fields atomically
+ok 20 - preset validation rejects malformed, excessive and unknown fields atomically
+  ---
+  duration_ms: 2.6992
+  type: 'test'
+  ...
+# Subtest: gradient colors brightness axes and both avatar settings survive JSON roundtrip
+ok 21 - gradient colors brightness axes and both avatar settings survive JSON roundtrip
+  ---
+  duration_ms: 0.2955
+  type: 'test'
+  ...
+# Subtest: cosmetics remain separate from skeleton and all generated geometry is finite
+ok 22 - cosmetics remain separate from skeleton and all generated geometry is finite
+  ---
+  duration_ms: 11.0405
+  type: 'test'
+  ...
+# Subtest: unchanged periodic running curve remains continuous at the seam
+ok 23 - unchanged periodic running curve remains continuous at the seam
+  ---
+  duration_ms: 1.9863
+  type: 'test'
+  ...
+# Subtest: new geometry has no shoulder shell or trim, exactly two bars and one triangle
+ok 24 - new geometry has no shoulder shell or trim, exactly two bars and one triangle
+  ---
+  duration_ms: 22.2922
+  type: 'test'
+  ...
+# Subtest: new defaults enlarge triangle 150 percent and slim bars to 60 percent of v59 width
+ok 25 - new defaults enlarge triangle 150 percent and slim bars to 60 percent of v59 width
+  ---
+  duration_ms: 10.8305
+  type: 'test'
+  ...
+# Subtest: left and right line angles are independent and clockwise positive from front
+ok 26 - left and right line angles are independent and clockwise positive from front
+  ---
+  duration_ms: 0.2743
+  type: 'test'
+  ...
+# Subtest: length spacing and triangle offset change around fixed pivots without changing source data
+ok 27 - length spacing and triangle offset change around fixed pivots without changing source data
+  ---
+  duration_ms: 131.5653
+  type: 'test'
+  ...
+# Subtest: all ranges validate at boundaries and reject unknown fields or nonfinite numbers
+ok 28 - all ranges validate at boundaries and reject unknown fields or nonfinite numbers
+  ---
+  duration_ms: 1.03
+  type: 'test'
+  ...
+# Subtest: old public color files acquire shape defaults without changing any user color fields
+ok 29 - old public color files acquire shape defaults without changing any user color fields
+  ---
+  duration_ms: 1.6443
+  type: 'test'
+  ...
+# Subtest: both model shapes roundtrip inside existing public preset schema independently
+ok 30 - both model shapes roundtrip inside existing public preset schema independently
+  ---
+  duration_ms: 0.4085
+  type: 'test'
+  ...
+# Subtest: draw-only matrices change markings but leave measured skeleton and mesh vertices untouched
+ok 31 - draw-only matrices change markings but leave measured skeleton and mesh vertices untouched
+  ---
+  duration_ms: 13.4466
+  type: 'test'
+  ...
+# Subtest: shape metadata keeps cosmetics outside movement scores, markers and human joint CSV
+ok 32 - shape metadata keeps cosmetics outside movement scores, markers and human joint CSV
+  ---
+  duration_ms: 0.2025
+  type: 'test'
+  ...
+# Subtest: shape extreme transforms stay finite for each adjustable marking
+ok 33 - shape extreme transforms stay finite for each adjustable marking
+  ---
+  duration_ms: 0.5358
+  type: 'test'
+  ...
+# Subtest: sequence contains full A, transition, full C, return transition in that order
+ok 34 - sequence contains full A, transition, full C, return transition in that order
+  ---
+  duration_ms: 1.7575
+  type: 'test'
+  ...
+# Subtest: alternating punch cycle preserves full 1.65-second right and left halves
+ok 35 - alternating punch cycle preserves full 1.65-second right and left halves
+  ---
+  duration_ms: 0.2356
+  type: 'test'
+  ...
+# Subtest: cycle wrapping is deterministic for negative and repeated times
+ok 36 - cycle wrapping is deterministic for negative and repeated times
+  ---
+  duration_ms: 0.3757
+  type: 'test'
+  ...
+# Subtest: transition easing is bounded and has zero first and second endpoint derivatives
+ok 37 - transition easing is bounded and has zero first and second endpoint derivatives
+  ---
+  duration_ms: 0.2833
+  type: 'test'
+  ...
+# Subtest: reflection swaps anatomical sides and is an involution without source mutation
+ok 38 - reflection swaps anatomical sides and is an involution without source mutation
+  ---
+  duration_ms: 1.9662
+  type: 'test'
+  ...
+# Subtest: track sampler clamps endpoints and interpolates translation and one-key tracks
+ok 39 - track sampler clamps endpoints and interpolates translation and one-key tracks
+  ---
+  duration_ms: 0.5106
+  type: 'test'
+  ...
+# Subtest: invalid timing and empty tracks are explicitly rejected
+ok 40 - invalid timing and empty tracks are explicitly rejected
+  ---
+  duration_ms: 1.154
+  type: 'test'
+  ...
+# Subtest: YBot must retain entire 32-joint hierarchy, names and binds to compare
+ok 41 - YBot must retain entire 32-joint hierarchy, names and binds to compare
+  ---
+  duration_ms: 2.674
+  type: 'test'
+  ...
+# Subtest: YBot JSON validates joint IDs, time shifts and amplitude modifiers, and keeps different motion configs
+ok 42 - YBot JSON validates joint IDs, time shifts and amplitude modifiers, and keeps different motion configs
+  ---
+  duration_ms: 1.2084
+  type: 'test'
+  ...
+# Subtest: time warp remains zero at boundaries and known sample temporal changes remain bounded
+ok 43 - time warp remains zero at boundaries and known sample temporal changes remain bounded
+  ---
+  duration_ms: 0.2495
+  type: 'test'
+  ...
+# Subtest: different skeleton and joint names always refuse comparison; coordinate and schema mismatch too
+ok 44 - different skeleton and joint names always refuse comparison; coordinate and schema mismatch too
+  ---
+  duration_ms: 1.34
+  type: 'test'
+  ...
+# Subtest: selected joint peak orders and exported event orders are identical; lag is measured
+ok 45 - selected joint peak orders and exported event orders are identical; lag is measured
+  ---
+  duration_ms: 4.5644
+  type: 'test'
+  ...
+# Subtest: same Kinematics54 states and peaks drive timeline and 3D; circle scale per-joint
+ok 46 - same Kinematics54 states and peaks drive timeline and 3D; circle scale per-joint
+  ---
+  duration_ms: 0.3223
+  type: 'test'
+  ...
+# Subtest: linear/angular speed are separate units and no mixed-unit ratio is produced
+ok 47 - linear/angular speed are separate units and no mixed-unit ratio is produced
+  ---
+  duration_ms: 0.427
+  type: 'test'
+  ...
+# Subtest: closed fist replaces open fingers in B only and retains hand-bone attachment
+ok 48 - closed fist replaces open fingers in B only and retains hand-bone attachment
+  ---
+  duration_ms: 2.8392
+  type: 'test'
+  ...
+1..48
+# tests 48
+# suites 0
+# pass 48
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 399.4348

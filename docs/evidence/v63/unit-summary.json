@@ -1,0 +1,7 @@
+{
+  "summary": {
+    "passed": 48,
+    "failed": 0
+  },
+  "command": "node --test tests/v54-edge-cases.test.cjs tests/v54-kinematics.test.cjs tests/v54-uploaded-csv.test.cjs tests/v55-geometry.test.cjs tests/v58-details.test.cjs tests/v60-visor.test.cjs tests/v61-punches.test.cjs tests/v62-timeline.test.cjs"
+}

@@ -1,0 +1,353 @@
+{
+  "date": "2026-11-11T20:06:01.440Z",
+  "environment": "Windows Edge WebGL2; headless, no physical HMD/GameSir/iPhone",
+  "checks": [
+    {
+      "name": "same X/Y skeleton 32 skin IDs, parents, bind rotations, scales and coordinates",
+      "status": "PASS",
+      "details": {
+        "same": true,
+        "sharedGeometry": true,
+        "identicalSkeletonIds": true,
+        "skin": 32,
+        "joints": true,
+        "hashes": [
+          "422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161",
+          "422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161"
+        ]
+      }
+    },
+    {
+      "name": "YBot is visually distinct via shader without modifying base geometry",
+      "status": "PASS",
+      "details": {
+        "different": true,
+        "gl": 0
+      }
+    },
+    {
+      "name": "known YBot peak time shift records requested and actual recalculated separately within one sample",
+      "status": "PASS",
+      "details": [
+        {
+          "avatar_id": "ybot",
+          "source_motion_id": "xbot_punch",
+          "motion_id": "xbot_punch",
+          "modified_joint_id": 7,
+          "modification_type": "rotation_peak_shift",
+          "requested_change": 0.04,
+          "actual_change_after_recalculation": 0.033333333333333326,
+          "actual_change_unit": "s",
+          "source_asset_sha256": "422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161",
+          "start_time": 0.05,
+          "end_time": 0.96,
+          "metric": "angular",
+          "baseline_peak": {
+            "peak_time": 0.2,
+            "peak_value": 6.2561582046830075
+          },
+          "modified_peak": {
+            "peak_time": 0.23333333333333334,
+            "peak_value": 5.5915952486206555
+          },
+          "motion_revision_id": "ybot-xbot_punch-eb98b8d8-ybot-known-shifts-v62-001",
+          "quality": "recalculated_from_full_kinematics",
+          "note": "Requested time warp parameter and observed peak shift need not match exactly; no force or skill inference"
+        }
+      ]
+    },
+    {
+      "name": "timeline X/Y are same-skeleton and sequence/event export stays timestamp sorted",
+      "status": "PASS",
+      "details": {
+        "ok": true,
+        "joints": 7,
+        "orders": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "times": [
+          0.13333333333333333,
+          0.16666666666666666,
+          0.2,
+          0.23333333333333334,
+          0.23333333333333334,
+          0.23333333333333334
+        ],
+        "exportOrders": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "fields": [
+          "motion_id",
+          "source_motion_id",
+          "avatar_id",
+          "skeleton_id",
+          "joint_id",
+          "joint_name",
+          "metric",
+          "metric_unit",
+          "event_type",
+          "event_time",
+          "event_order",
+          "speed",
+          "signed_speed_change",
+          "state",
+          "next_event_delta_ms",
+          "comparison_motion_id",
+          "comparison_event_time",
+          "event_time_delta_ms",
+          "comparison_onset_delta_ms",
+          "comparison_peak_value_delta",
+          "comparison_phase_peak_delta_pp",
+          "analysis_settings",
+          "source_asset_sha256",
+          "motion_revision_id",
+          "comparison_side",
+          "quality"
+        ],
+        "svg": true
+      }
+    },
+    {
+      "name": "same time 3D and timeline share exact K54 state, peak and joint IDs",
+      "status": "PASS",
+      "details": {
+        "now": 0.2,
+        "offCount": 0,
+        "markers": [
+          {
+            "jointId": 14,
+            "text": "",
+            "reason": "timeline_shared_state_decelerating",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 0,
+            "text": "",
+            "reason": "timeline_shared_state_low",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 3,
+            "text": "",
+            "reason": "timeline_shared_state_stable",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 6,
+            "text": "",
+            "reason": "timeline_shared_state_decelerating",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 7,
+            "text": "",
+            "reason": "timeline_shared_state_peak",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 8,
+            "text": "",
+            "reason": "timeline_shared_state_accelerating",
+            "clazz": "v54StateMarker v63Point"
+          },
+          {
+            "jointId": 9,
+            "text": "",
+            "reason": "timeline_shared_state_accelerating",
+            "clazz": "v54StateMarker v63Point"
+          }
+        ],
+        "states": [
+          {
+            "id": 14,
+            "state": "decelerating"
+          },
+          {
+            "id": 0,
+            "state": "low"
+          },
+          {
+            "id": 3,
+            "state": "stable"
+          },
+          {
+            "id": 6,
+            "state": "decelerating"
+          },
+          {
+            "id": 7,
+            "state": "peak"
+          },
+          {
+            "id": 8,
+            "state": "accelerating"
+          },
+          {
+            "id": 9,
+            "state": "accelerating"
+          }
+        ],
+        "gl": 0
+      }
+    },
+    {
+      "name": "timeline clicks seek original source animation time and align 3D cursor",
+      "status": "PASS",
+      "details": {
+        "cursor": "再生位置：0.133秒",
+        "rendered": 0.13333333333333333,
+        "t": 0.13333333333333333
+      }
+    },
+    {
+      "name": "different skeleton comparison is blocked by both timeline and existing v54 numerical comparison",
+      "status": "PASS",
+      "details": {
+        "ok": false,
+        "reason": "関節対応が検証されていないため比較不可"
+      }
+    },
+    {
+      "name": "timeline and existing X/Y numerical peak deltas agree for same joint and settings",
+      "status": "PASS",
+      "details": {
+        "peakDelta": 0,
+        "unit": "model_units/s",
+        "peakX": 0.2,
+        "peakY": 0.2
+      }
+    },
+    {
+      "name": "linear and angular rate magnitudes never compared across units",
+      "status": "PASS",
+      "details": {
+        "units": [
+          "model_units/s",
+          "rad/s"
+        ]
+      }
+    },
+    {
+      "name": "closed fists for both AEGIS B replace open glove primitives and remain hand-bound",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "closed": [
+            {
+              "name": "fist_closed_left",
+              "onlyMotion": "armor_punch",
+              "bone": 5
+            },
+            {
+              "name": "fist_closed_right",
+              "onlyMotion": "armor_punch",
+              "bone": 8
+            }
+          ],
+          "open": 1,
+          "gl": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "closed": [
+            {
+              "name": "fist_closed_left",
+              "onlyMotion": "armor_punch",
+              "bone": 5
+            },
+            {
+              "name": "fist_closed_right",
+              "onlyMotion": "armor_punch",
+              "bone": 8
+            }
+          ],
+          "open": 1,
+          "gl": 0
+        }
+      ]
+    },
+    {
+      "name": "independent CSV A/B importer validates schema, coordinate timebase, exact joint IDs and metric units",
+      "status": "PASS",
+      "details": {
+        "rows": 1088,
+        "joints": 32,
+        "schema": "compound-eye-single-motion-v2",
+        "same": {
+          "ok": true,
+          "quality": "same_skeleton_joint_id_name_metric_unit"
+        },
+        "unlike": {
+          "ok": false,
+          "reason": "関節対応が検証されていないため比較不可",
+          "code": "skeleton_mismatch"
+        },
+        "wrongAxis": {
+          "ok": false,
+          "reason": "coordinate_system_mismatch"
+        }
+      }
+    },
+    {
+      "name": "legacy numeric X/Y peak delta equals the timeline same-joint and same-metric delta",
+      "status": "PASS",
+      "details": {
+        "oldDelta": 0.033333333333333326,
+        "timelineDelta": 0.033333333333333326
+      }
+    },
+    {
+      "name": "sparse sequence timeline shows exactly one band per selected joint and no sampled dot cloud",
+      "status": "PASS",
+      "details": {
+        "rows": 7,
+        "peakCards": 6,
+        "bands": 77,
+        "legacyDots": 0,
+        "default3d": false
+      }
+    },
+    {
+      "name": "timeline occupies page flow below viewer; desktop viewport is unobstructed",
+      "status": "PASS",
+      "details": {
+        "screenBottom": 723.796875,
+        "timelineTop": 758.296875,
+        "viewport": 1300,
+        "overflow": 1300
+      }
+    },
+    {
+      "name": "mobile layout folds/scrolls instead of overlapping the model",
+      "status": "PASS",
+      "details": {
+        "overflow": 390,
+        "width": 390,
+        "top": 796.53125,
+        "bottom": 762.03125,
+        "gl": 0
+      }
+    },
+    {
+      "name": "no page JavaScript failures",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 16,
+    "failed": 0
+  }
+}

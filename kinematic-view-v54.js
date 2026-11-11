@@ -518,10 +518,10 @@ function v54OverlayDraw(projections){
 function v54AppendMarker(item,x,y,eye,count){
  const key=item.index+':'+eye;v54.markersUsed.add(key);
  let div=v54.markerNodes.get(key);
- if(!div){div=document.createElement('div');div.className='v54StateMarker';v54.markerNodes.set(key,div);v54.visualOverlay.append(div);}
+ if(!div){div=document.createElement('div');div.className='v54StateMarker v63Point';v54.markerNodes.set(key,div);v54.visualOverlay.append(div);}
  div.style.left=((eye+x)*100/count)+'%';div.style.top=((1-y)*100)+'%';
- div.style.color=item.color;div.textContent=item.text;
- div.title=item.reason+'：計測上の特徴であって力の流れ・技能点ではありません';
+ div.style.color=item.color;div.style.backgroundColor=item.color;div.textContent='';div.dataset.state=item.reason;
+ div.title=item.text+'：運動学的特徴。力・因果・技能点ではありません';
  div.dataset.jointId=String(item.index);
  div.dataset.eye=String(eye);
 }

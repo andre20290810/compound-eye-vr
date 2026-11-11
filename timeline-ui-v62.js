@@ -134,7 +134,7 @@ function tl62Init(){
  `;document.head.append(style);
  const panel=document.createElement('details');panel.id='tl62Panel';panel.innerHTML=`
  <summary>運動連鎖タイムライン — 複数部位の増速・減速・ピークを時刻比較</summary>
- <div class="tl62Tools"><label>X：<select id="tl62X"></select></label><label>動作：<select id="tl62MotionX"></select></label><label><input id="tl62Compare" type="checkbox" checked> X／Y比較</label><label><input id="tl62Sync3D" type="checkbox" checked> 3Dマーカー同期</label>
+ <div class="tl62Tools"><label>X：<select id="tl62X"></select></label><label>動作：<select id="tl62MotionX"></select></label><label><input id="tl62Compare" type="checkbox" checked> X／Y比較</label><label><input id="tl62Sync3D" type="checkbox"> 3D位置に小さな点を表示（任意）</label>
  <label>Y：<select id="tl62Y"></select></label><label>動作：<select id="tl62MotionY"></select></label><button id="tl62Run">解析・再計算</button></div>
  <details><summary>対象部位（追加・削除・単位）</summary><div id="tl62Joints"></div></details>
  <div class="tl62Tools"><label>開始<input type="number" id="tl62From" value="0" step=".01" min="0"></label><label>終了<input type="number" id="tl62To" value=".7" step=".01" min=".01"></label>
@@ -148,8 +148,9 @@ function tl62Init(){
  <details><summary>YBot動作差分JSON（パンチA〜D）</summary><p>変更する関節ID・時間差・回転量・速度波形等をJSONで指定します。変更後の値は運動学を再計算して確認してください。</p>
  <textarea id="tl62YBotJSON" rows="9" style="width:100%;box-sizing:border-box;background:#0a1e2d;color:#effafa"></textarea><button id="tl62YBotApply">JSONを検証して適用</button><button id="tl62YBotExport">変更JSON出力</button><pre id="tl62YBotReport" style="white-space:pre-wrap;font-size:11px"></pre></details>
  <details><summary>実測CSV X／Y（実験前の互換性検査）</summary><label>X CSV<input id="tl62CSVX" type="file" accept=".csv,text/csv"></label><label>Y CSV<input id="tl62CSVY" type="file" accept=".csv,text/csv"></label><p>同一骨格・関節ID・座標系・時刻軸・単位を検証します。対応が未検証なら比較不可。</p></details>
- <p class="tl62Notice">表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。円の大きさは各部位・各指標の区間内 |速度変化率| 最大値を100％とした相対値です。異なる部位や異なる単位間の力の大小は比較できません。● X・○ Y／緑 増速・橙 減速・黄 ピーク・灰 低活動・薄灰 欠損。</p>`;
- const anchor=tl62$('viewerUpdatedAt')||tl62$('screen');anchor.insertAdjacentElement('afterend',panel);timeline62.panel=panel;timeline62.show3d=true;
+ <p class="tl62Notice">表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。区間バーは増速・減速状態、黄色の菱形は代表ピークです。元の相対変化率は解析データに保存されます。異なる部位や異なる単位間の力の大小は比較できません。X＝塗りつぶしバー、Y＝輪郭バー。緑 増速／橙 減速／黄 ピーク／灰 低活動。MU/s＝モデル単位/秒、rad/s＝角速度。</p>`;
+ const anchor=tl62$('viewerUpdatedAt')||tl62$('screen');anchor.insertAdjacentElement('afterend',panel);timeline62.panel=panel;timeline62.show3d=false;
+ panel.querySelector('strong')?.remove();tl62$('tl62Graphic').before(tl62$('tl62Order'));
  tl62Models();tl62Motions('tl62MotionX','xbot');tl62Motions('tl62MotionY','ybot');
  for(const side of ['X','Y'])tl62$('tl62'+side).onchange=()=>{tl62Motions('tl62Motion'+side,tl62$('tl62'+side).value);timeline62.lastKey='';tl62Analyze();};
  tl62$('tl62Sync3D').onchange=()=>{timeline62.show3d=tl62$('tl62Sync3D').checked;v54.visualOverlay?.replaceChildren();v54.markerNodes.clear();};

@@ -24,16 +24,16 @@ function geometry(){
   const slot=sign<0?5:8,name=sign<0?'left':'right',x=sign*.31589,y=.704;
   const m=mesh('fist_closed_'+name,slot);
   // Joint-root -> knuckle shell: a single wrist cuff prevents visible separation.
-  cuff(m,[x,.712],.112,.225,.034);
-  ellipsoid(m,[x,y,.225],[.046,.042,.052]);
+  cuff(m,[x,.712],.080,.188,.032);
+  ellipsoid(m,[x,y,.202],[.041,.037,.043],9,14);
   // Four rounded, tucked knuckles and a folded thumb; no splayed digits.
-  for(let j=0;j<4;j++){const dx=(j-1.5)*.018;ellipsoid(m,[x+dx,y-.006,.267],[.012,.019,.017],7,11);}
-  ellipsoid(m,[x+sign*.038,y-.023,.225],[.019,.025,.027],8,13);
+  for(let j=0;j<4;j++){const dx=(j-1.5)*.018;ellipsoid(m,[x+dx,y-.004,.235],[.011,.016,.016],7,11);}
+  ellipsoid(m,[x+sign*.037,y-.027,.197],[.018,.021,.022],8,13);
   // Low-profile wrist guard seam.
-  cuff(m,[x,.712],.143,.154,.038);
+  cuff(m,[x,.712],.114,.127,.037);
   out.push({...m,p:Float32Array.from(m.p),n:Float32Array.from(m.n),col:Float32Array.from(m.col),tri:Uint32Array.from(m.tri),joints:Float32Array.from(m.joints),weights:Float32Array.from(m.weights)});
  }
  return out;
 }
-return{geometry,revision:'aegis-closed-fist-wrist-attach-v62-001'};
+return{geometry,revision:'aegis-closed-fist-wrist-attach-v63-002'};
 });

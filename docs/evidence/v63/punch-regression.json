@@ -1,0 +1,620 @@
+{
+  "tested_at": "2026-11-11T20:05:44.144Z",
+  "environment": "Desktop Edge WebGL2; mobile emulation, not physical iPhone/HMD/GameSir",
+  "checks": [
+    {
+      "name": "v61 boots as one eye with latest user public palette",
+      "status": "PASS",
+      "details": {
+        "version": "63",
+        "eyes": 1,
+        "revision": "appearance-2026-11-11T17:02:32.300Z",
+        "gl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "error": 0
+      }
+    },
+    {
+      "name": "AEGIS menus contain only idle/walk/run/punch A B C; removed IDs fall back safely",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "options": [
+            "armor_breathe",
+            "armor_walk",
+            "armor_run",
+            "armor_power_punch",
+            "armor_punch",
+            "armor_alternate_punch"
+          ],
+          "labels": [
+            "静止・呼吸",
+            "歩行",
+            "走行",
+            "パンチA",
+            "パンチB",
+            "パンチC"
+          ],
+          "fallback": [
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe"
+          ],
+          "viewer": [
+            "armor_breathe",
+            "armor_walk",
+            "armor_run",
+            "armor_power_punch",
+            "armor_punch",
+            "armor_alternate_punch"
+          ]
+        },
+        {
+          "model": "aegisSoldier",
+          "options": [
+            "armor_breathe",
+            "armor_walk",
+            "armor_run",
+            "armor_power_punch",
+            "armor_punch",
+            "armor_alternate_punch"
+          ],
+          "labels": [
+            "静止・呼吸",
+            "歩行",
+            "走行",
+            "パンチA",
+            "パンチB",
+            "パンチC"
+          ],
+          "fallback": [
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe",
+            "armor_breathe"
+          ],
+          "viewer": [
+            "armor_breathe",
+            "armor_walk",
+            "armor_run",
+            "armor_power_punch",
+            "armor_punch",
+            "armor_alternate_punch"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "X Bot D contains the complete A then complete C with unchanged interior poses",
+      "status": "PASS",
+      "details": {
+        "duration": 2.323333349227905,
+        "cDuration": 0.9833333492279053,
+        "samples": [
+          {
+            "motion": "xbot_punch",
+            "time": 0,
+            "delta": 0
+          },
+          {
+            "motion": "xbot_punch",
+            "time": 0.2,
+            "delta": 4.163336342344337e-16
+          },
+          {
+            "motion": "xbot_punch",
+            "time": 0.6,
+            "delta": 2.498001805406602e-16
+          },
+          {
+            "motion": "xbot_punch",
+            "time": 0.9,
+            "delta": 0
+          },
+          {
+            "motion": "xbot_punch",
+            "time": 1.08,
+            "delta": 0
+          },
+          {
+            "motion": "xbot_punch2",
+            "time": 0,
+            "delta": 4.718447854656915e-16
+          },
+          {
+            "motion": "xbot_punch2",
+            "time": 0.14,
+            "delta": 3.3306690738754696e-16
+          },
+          {
+            "motion": "xbot_punch2",
+            "time": 0.4,
+            "delta": 0
+          },
+          {
+            "motion": "xbot_punch2",
+            "time": 0.7,
+            "delta": 2.7755575615628914e-16
+          },
+          {
+            "motion": "xbot_punch2",
+            "time": 0.9823333492279053,
+            "delta": 7.771561172376096e-16
+          }
+        ]
+      }
+    },
+    {
+      "name": "new combination transitions and loop seams are continuous",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "boundary": 1.1,
+          "maxPosition": 0,
+          "maxAngle": 4.2146848510894035e-8
+        },
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "boundary": 1.22,
+          "maxPosition": 9.5367431640625e-7,
+          "maxAngle": 0.000002158972057852234
+        },
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "boundary": 2.203333349227905,
+          "maxPosition": 9.98377799987793e-7,
+          "maxAngle": 0.000002295552779633137
+        },
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "boundary": 2.323333349227905,
+          "maxPosition": 3.8743019104003906e-7,
+          "maxAngle": 0.0000016035200419801433
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "boundary": 1.65,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "boundary": 1.77,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "boundary": 3.42,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "boundary": 3.54,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "boundary": 1.65,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "boundary": 1.77,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "boundary": 3.42,
+          "maxPosition": 0,
+          "maxAngle": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "boundary": 3.54,
+          "maxPosition": 0,
+          "maxAngle": 0
+        }
+      ]
+    },
+    {
+      "name": "AEGIS B follows actual X Bot C upper/forearm and thigh world directions at original times",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "samples": 40,
+          "segmentPairs": 6,
+          "maxUnitDirectionError": 0.678862537774572,
+          "armDirectionError": 3.343843836399965e-7,
+          "stabilizedLegDirectionError": 0.678862537774572,
+          "duration": 0.9833333492279053,
+          "joints": 13
+        },
+        {
+          "model": "aegisSoldier",
+          "samples": 40,
+          "segmentPairs": 6,
+          "maxUnitDirectionError": 0.678862537774572,
+          "armDirectionError": 3.343843836399965e-7,
+          "stabilizedLegDirectionError": 0.678862537774572,
+          "duration": 0.9833333492279053,
+          "joints": 13
+        }
+      ]
+    },
+    {
+      "name": "AEGIS C is A on right followed by reflected A on left, including trunk and legs",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "originalError": 0,
+          "mirrorError": 0,
+          "extension": [
+            {
+              "time": 0.65,
+              "leftZ": 0.08700492233037949,
+              "rightZ": 0.5688616633415222
+            },
+            {
+              "time": 2.42,
+              "leftZ": 0.5688616633415222,
+              "rightZ": 0.08700492233037949
+            }
+          ],
+          "duration": 3.54
+        },
+        {
+          "model": "aegisSoldier",
+          "originalError": 0,
+          "mirrorError": 0,
+          "extension": [
+            {
+              "time": 0.65,
+              "leftZ": 0.08700492233037949,
+              "rightZ": 0.5688616633415222
+            },
+            {
+              "time": 2.42,
+              "leftZ": 0.5688616633415222,
+              "rightZ": 0.08700492233037949
+            }
+          ],
+          "duration": 3.54
+        }
+      ]
+    },
+    {
+      "name": "duration, source-time seeking, speed controls and 86-column CSV agree for every new motion",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "duration": 2.323333349227905,
+          "scrub": 2.323,
+          "sampledDuration": 2.323333349227905,
+          "lastTime": 2.323323349227905,
+          "columns": 86,
+          "composition": {
+            "source": [
+              "xbot_punch",
+              "xbot_punch2"
+            ],
+            "order": "A then C",
+            "transition_seconds": 0.12,
+            "duration_seconds": 2.323333349227905
+          },
+          "revision": "xbot-punchA-then-C-v61-001",
+          "times": [
+            {
+              "rate": 0.5,
+              "time": 1.5101666769981383
+            },
+            {
+              "rate": 1,
+              "time": 1.5101666769981383
+            },
+            {
+              "rate": 2,
+              "time": 1.5101666769981383
+            }
+          ]
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_punch",
+          "duration": 0.9833333492279053,
+          "scrub": 0.983,
+          "sampledDuration": 0.9833333492279053,
+          "lastTime": 0.9833233492279053,
+          "columns": 86,
+          "composition": {
+            "source": "xbot_punch2",
+            "source_clip": "Boxer_Punching2",
+            "method": "world segment directions and torso rotations; X reflection for named sides; target bone lengths retained",
+            "source_duration_seconds": 0.9833333492279053,
+            "limitations": [
+              "AEGIS has no separate shoulder, ankle, toe or finger bones",
+              "not identical surface geometry or physical contact"
+            ]
+          },
+          "revision": "aegis-retarget-xbot-punchC-fist-v63-001",
+          "times": [
+            {
+              "rate": 0.5,
+              "time": 0.6391666769981384
+            },
+            {
+              "rate": 1,
+              "time": 0.6391666769981384
+            },
+            {
+              "rate": 2,
+              "time": 0.6391666769981384
+            }
+          ]
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_punch",
+          "duration": 0.9833333492279053,
+          "scrub": 0.983,
+          "sampledDuration": 0.9833333492279053,
+          "lastTime": 0.9833233492279053,
+          "columns": 86,
+          "composition": {
+            "source": "xbot_punch2",
+            "source_clip": "Boxer_Punching2",
+            "method": "world segment directions and torso rotations; X reflection for named sides; target bone lengths retained",
+            "source_duration_seconds": 0.9833333492279053,
+            "limitations": [
+              "AEGIS has no separate shoulder, ankle, toe or finger bones",
+              "not identical surface geometry or physical contact"
+            ]
+          },
+          "revision": "aegis-retarget-xbot-punchC-fist-v63-001",
+          "times": [
+            {
+              "rate": 0.5,
+              "time": 0.6391666769981384
+            },
+            {
+              "rate": 1,
+              "time": 0.6391666769981384
+            },
+            {
+              "rate": 2,
+              "time": 0.6391666769981384
+            }
+          ]
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "duration": 3.54,
+          "scrub": 3.54,
+          "sampledDuration": 3.54,
+          "lastTime": 3.53999,
+          "columns": 86,
+          "composition": {
+            "source": "armor_power_punch",
+            "order": "right then left mirrored full-body A",
+            "transition_seconds": 0.12,
+            "duration_seconds": 3.54
+          },
+          "revision": "aegis-punchA-alternating-v61-001",
+          "times": [
+            {
+              "rate": 0.5,
+              "time": 2.301
+            },
+            {
+              "rate": 1,
+              "time": 2.301
+            },
+            {
+              "rate": 2,
+              "time": 2.301
+            }
+          ]
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "duration": 3.54,
+          "scrub": 3.54,
+          "sampledDuration": 3.54,
+          "lastTime": 3.53999,
+          "columns": 86,
+          "composition": {
+            "source": "armor_power_punch",
+            "order": "right then left mirrored full-body A",
+            "transition_seconds": 0.12,
+            "duration_seconds": 3.54
+          },
+          "revision": "aegis-punchA-alternating-v61-001",
+          "times": [
+            {
+              "rate": 0.5,
+              "time": 2.301
+            },
+            {
+              "rate": 1,
+              "time": 2.301
+            },
+            {
+              "rate": 2,
+              "time": 2.301
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "all 13 unchanged body motions preserve previous numeric CSV columns",
+      "status": "PASS",
+      "details": {
+        "motions": 13,
+        "rows": 10222
+      }
+    },
+    {
+      "name": "user-published colors and visor settings are byte-preserved",
+      "status": "PASS",
+      "details": {
+        "preserved": true
+      }
+    },
+    {
+      "name": "new punches keep finite poses and bone segment lengths at 80 phases per model",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "motion": "armor_punch",
+          "finite": true,
+          "maxBoneRelativeError": 5.074421683959329e-7
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "finite": true,
+          "maxBoneRelativeError": 4.956384931364965e-7
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_punch",
+          "finite": true,
+          "maxBoneRelativeError": 5.074421683959329e-7
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "finite": true,
+          "maxBoneRelativeError": 4.956384931364965e-7
+        }
+      ]
+    },
+    {
+      "name": "manual source-time slider accounts for punch playback rate",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "xbot",
+          "motion": "xbot_hook",
+          "rendered": 0.4,
+          "label": "0.40s"
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_punch",
+          "rendered": 0.4,
+          "label": "0.40s"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "rendered": 0.4,
+          "label": "0.40s"
+        }
+      ]
+    },
+    {
+      "name": "new motions render in every 1–6 facet and mono/stereo combination",
+      "status": "PASS",
+      "details": {
+        "combinations": 36
+      }
+    },
+    {
+      "name": "mobile portrait motion menus expose A B C and duration without overflow",
+      "status": "PASS",
+      "details": {
+        "motion": "armor_alternate_punch",
+        "width": 390,
+        "scroll": 390,
+        "error": 0
+      }
+    },
+    {
+      "name": "no runtime page errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "screens": [
+    "xbot-D-0.png",
+    "xbot-D-1.png",
+    "xbot-D-2.png",
+    "xbot-D-3.png",
+    "xbot-D-4.png",
+    "xbot-D-5.png",
+    "xbot-D-6.png",
+    "xbot-D-7.png",
+    "navy-B-0.png",
+    "navy-B-1.png",
+    "navy-B-2.png",
+    "navy-B-3.png",
+    "navy-B-4.png",
+    "navy-B-5.png",
+    "navy-B-6.png",
+    "navy-B-7.png",
+    "soldier-B-0.png",
+    "soldier-B-1.png",
+    "soldier-B-2.png",
+    "soldier-B-3.png",
+    "soldier-B-4.png",
+    "soldier-B-5.png",
+    "soldier-B-6.png",
+    "soldier-B-7.png",
+    "navy-C-0.png",
+    "navy-C-1.png",
+    "navy-C-2.png",
+    "navy-C-3.png",
+    "navy-C-4.png",
+    "navy-C-5.png",
+    "navy-C-6.png",
+    "navy-C-7.png",
+    "navy-C-right-extension.png",
+    "navy-C-left-extension.png",
+    "soldier-C-0.png",
+    "soldier-C-1.png",
+    "soldier-C-2.png",
+    "soldier-C-3.png",
+    "soldier-C-4.png",
+    "soldier-C-5.png",
+    "soldier-C-6.png",
+    "soldier-C-7.png",
+    "soldier-C-right-extension.png",
+    "soldier-C-left-extension.png",
+    "mobile-alternating-punch.png"
+  ],
+  "browser": "Edg/157.0.4341.46",
+  "summary": {
+    "passed": 14,
+    "failed": 0
+  }
+}

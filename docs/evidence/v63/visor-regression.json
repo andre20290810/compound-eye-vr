@@ -1,0 +1,372 @@
+{
+  "tested_at": "2026-11-11T20:04:08.437Z",
+  "environment": "desktop Edge/WebGL2; mobile viewport emulation only",
+  "checks": [
+    {
+      "name": "v61 loads with one eye, live visor controls and real WebGL2",
+      "status": "PASS",
+      "details": {
+        "version": "63",
+        "eyes": 1,
+        "title": "人工複眼シミュレーションシステム",
+        "gl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "button": true,
+        "error": 0
+      }
+    },
+    {
+      "name": "added shoulder armor is entirely absent on both avatars and every motion",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "motion": "armor_breathe",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_power_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_walk",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_run",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_breathe",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_power_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_walk",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_run",
+          "shoulders": 0,
+          "triangle": 1,
+          "joints": 13,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "latest public colors and user visor dimensions are preserved",
+      "status": "PASS",
+      "details": {
+        "revision": "appearance-2026-11-11T17:02:32.300Z",
+        "settings": {
+          "triangleScale": 1.11,
+          "barThickness": 0.72,
+          "leftAngle": 3,
+          "rightAngle": -3,
+          "barLength": 1,
+          "barSpacing": 1,
+          "triangleOffset": 0
+        }
+      }
+    },
+    {
+      "name": "real sliders and numeric angle inputs preview immediately without touching skeleton",
+      "status": "PASS",
+      "details": {
+        "settings": {
+          "triangleScale": 2.1,
+          "barThickness": 0.35,
+          "leftAngle": 18,
+          "rightAngle": -22,
+          "barLength": 1,
+          "barSpacing": 1,
+          "triangleOffset": 0
+        },
+        "other": {
+          "triangleScale": 1.11,
+          "barThickness": 0.72,
+          "leftAngle": 3,
+          "rightAngle": -3,
+          "barLength": 1,
+          "barSpacing": 1,
+          "triangleOffset": 0
+        },
+        "skeletonUnchanged": true,
+        "pixelsChanged": true
+      }
+    },
+    {
+      "name": "line length spacing and triangle vertical location adjust independently",
+      "status": "PASS",
+      "details": {
+        "triangleScale": 2.1,
+        "barThickness": 0.35,
+        "leftAngle": 18,
+        "rightAngle": -22,
+        "barLength": 1.25,
+        "barSpacing": 1.35,
+        "triangleOffset": 0.0069
+      }
+    },
+    {
+      "name": "per-model shape settings survive local save and page reload",
+      "status": "PASS",
+      "details": {
+        "navy": {
+          "triangleScale": 2.1,
+          "barThickness": 0.35,
+          "leftAngle": 18,
+          "rightAngle": -22,
+          "barLength": 1.25,
+          "barSpacing": 1.35,
+          "triangleOffset": 0.0069
+        },
+        "soldier": {
+          "triangleScale": 1.11,
+          "barThickness": 0.72,
+          "leftAngle": 3,
+          "rightAngle": -3,
+          "barLength": 1,
+          "barSpacing": 1,
+          "triangleOffset": 0
+        }
+      }
+    },
+    {
+      "name": "JSON export and file import roundtrip shape and color; invalid values fail atomically",
+      "status": "PASS",
+      "details": {
+        "exportIncludesShapes": true,
+        "fileImportWorks": true,
+        "invalidRejectedWithoutMutation": true
+      }
+    },
+    {
+      "name": "shape-only reset keeps user colors and other model; cancel and public reset work",
+      "status": "PASS",
+      "details": {
+        "cancel": true,
+        "shapeOnlyReset": true,
+        "publicReset": true
+      }
+    },
+    {
+      "name": "shape adjustments are recorded separately and do not change CSV numeric columns",
+      "status": "PASS",
+      "details": {
+        "dataUnchanged": true,
+        "columns": 86,
+        "joints": 13,
+        "metadata": {
+          "schema": "aegis-accessory-v60",
+          "visor_triangle": "adjustable head-bound marker",
+          "visor_settings": {
+            "triangleScale": 2.3,
+            "barThickness": 0.4,
+            "leftAngle": 30,
+            "rightAngle": -10,
+            "barLength": 1,
+            "barSpacing": 1,
+            "triangleOffset": 0
+          },
+          "shoulder_armor": false,
+          "clock": "original_animation_seconds",
+          "antenna_count": 1,
+          "antenna_side": "avatar_left",
+          "antenna_elevation_deg": [
+            35,
+            55
+          ],
+          "antenna_baseline_deg": 45,
+          "antenna_angle_reference": "from horizontal in head-local sagittal plane",
+          "tachometer": "illustrative oscillating pointer; not measured engine RPM",
+          "exclude_from_motion_score": true,
+          "exclude_from_marker_selection": true,
+          "exclude_from_skeleton_csv": true,
+          "cameras_per_temple": 3,
+          "camera_zone": "front_visor_temple",
+          "note": "Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection"
+        }
+      }
+    },
+    {
+      "name": "all 10 body motions and score columns match published v60",
+      "status": "PASS",
+      "details": {
+        "motions": 10,
+        "rows": 7214
+      }
+    },
+    {
+      "name": "all facets and mono/stereo settings render adjustable shapes without WebGL errors",
+      "status": "PASS",
+      "details": [
+        {
+          "n": 1,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 1,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": true,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "mobile visor window shows size thickness angles and remains within viewport",
+      "status": "PASS",
+      "details": {
+        "left": 6,
+        "right": 384,
+        "height": 379.796875,
+        "width": 390,
+        "viewportHeight": 844,
+        "scroll": 390,
+        "shapeVisible": true,
+        "settings": {
+          "triangleScale": 1.8,
+          "barThickness": 0.45,
+          "leftAngle": 3,
+          "rightAngle": -3,
+          "barLength": 1,
+          "barSpacing": 1,
+          "triangleOffset": 0
+        },
+        "error": 0
+      }
+    },
+    {
+      "name": "no runtime JavaScript errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "navy-default-visor.png",
+    "navy-adjusted-visor.png",
+    "navy-no-shoulders.png",
+    "navy-default-visor-final.png",
+    "soldier-no-shoulders.png",
+    "soldier-default-visor-final.png"
+  ],
+  "browser": "Edg/157.0.4341.46",
+  "summary": {
+    "passed": 13,
+    "failed": 0
+  }
+}

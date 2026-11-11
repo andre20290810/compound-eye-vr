@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/12 04:29（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/12 05:01（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -1048,7 +1048,7 @@ void main(){
   metal=chosen*shading;
  }
  metal*=uAppearanceBrightness;
- if(uYBotTint>.5){metal=mix(metal,vec3(.70,.31,.79)*(.65+.35*lit),.78);}
+ if(uYBotTint>.5){metal=mix(metal,vec3(.70,.79,.80)*(.73+.27*lit),.58);}
  if(uGhostAlpha>.001){metal=mix(metal,vec3(.22,.91,1.),.92);a*=uGhostAlpha;}
  frag=vec4(min(metal,vec3(1.)),a);
 }`;
@@ -1621,7 +1621,7 @@ function v61RetargetCPose(md,time){
   // The AEGIS glove bind is offset from the wrist. Preserve its neutral attachment;
   // transfer only the source forearm-axis pronation instead of rotating the offset into a gap.
   const sourceLocalHand=sample.R[ids[prefix+'Hand']],twist=-2*Math.atan2(sourceLocalHand[1],sourceLocalHand[3]);
-  p.R[h]=window.__AegisMotion56.axisQuaternion(norm(md.nodes[h].translation),twist);
+  p.R[h]=qmul(quatBetween([0,0,1],md.nodes[h].translation),window.__AegisMotion56.axisQuaternion([0,0,1],twist));
   const thigh=target[side+'_UpperLeg'],shin=target[side+'_LowerLeg'],dt=direction(prefix+'UpLeg',prefix+'Leg'),ds=direction(prefix+'Leg',prefix+'Foot'),lowerBind=[0,-.317,.004];
   const qt=v61FrameQuat(md.nodes[shin].translation,lowerBind,dt,ds),qs=qmul(quatBetween(rotateQ(qt,lowerBind),ds),qt);p.R[thigh]=qmul(qInv(targetQ.Pelvis),qt);p.R[shin]=qmul(qInv(qt),qs);
  }
@@ -1630,9 +1630,19 @@ function v61RetargetCPose(md,time){
  for(const [name,weight] of [['Head',.35],['Pelvis',.75],['L_UpperLeg',.65],['R_UpperLeg',.65],['L_LowerLeg',.45],['R_LowerLeg',.45]]){
   const i=target[name];if(i!==undefined)p.R[i]=qSlerp(md.nodes[i].rotation,p.R[i],weight);
  }
- // Preserve source-facing chest/world arm directions after damping pelvis yaw.
- // Re-express the original chest orientation in the stabilized pelvis frame.
- p.R[target.Chest]=qmul(qInv(p.R[target.Pelvis]),targetQ.Chest);
+ // Re-use the proven native AEGIS punch-A lower body rather than bending
+ // the 13-bone armored helmet/legs around the X Bot's 32-bone hierarchy.
+ // Keep the RIGHT/LEFT source-C arm directions in world space exactly.
+ const oldTorso=targetQ.Chest,armWorld={};
+ for(const side of ['L','R'])armWorld[side]=qmul(oldTorso,p.R[target[side+'_UpperArm']]);
+ const safeT=md.nodes.map(n=>n.translation.slice()),safeR=md.nodes.map(n=>n.rotation.slice());
+ aegisFullBodyPunch(md.nodes,safeT,safeR,time/Math.max(.1,v61Source().c.duration)*1.65);
+ for(const name of ['Pelvis','Chest','Head','L_UpperLeg','L_LowerLeg','R_UpperLeg','R_LowerLeg']){
+  const i=target[name];if(i!==undefined)p.R[i]=safeR[i];
+ }
+ p.T[target.Pelvis]=safeT[target.Pelvis].slice();
+ const safeTorso=qmul(p.R[target.Pelvis],p.R[target.Chest]);
+ for(const side of ['L','R'])p.R[target[side+'_UpperArm']]=qmul(qInv(safeTorso),armWorld[side]);
  return p;
 }
 function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
@@ -1782,18 +1792,18 @@ function geometry(){
   const slot=sign<0?5:8,name=sign<0?'left':'right',x=sign*.31589,y=.704;
   const m=mesh('fist_closed_'+name,slot);
   // Joint-root -> knuckle shell: a single wrist cuff prevents visible separation.
-  cuff(m,[x,.712],.112,.225,.034);
-  ellipsoid(m,[x,y,.225],[.046,.042,.052]);
+  cuff(m,[x,.712],.080,.188,.032);
+  ellipsoid(m,[x,y,.202],[.041,.037,.043],9,14);
   // Four rounded, tucked knuckles and a folded thumb; no splayed digits.
-  for(let j=0;j<4;j++){const dx=(j-1.5)*.018;ellipsoid(m,[x+dx,y-.006,.267],[.012,.019,.017],7,11);}
-  ellipsoid(m,[x+sign*.038,y-.023,.225],[.019,.025,.027],8,13);
+  for(let j=0;j<4;j++){const dx=(j-1.5)*.018;ellipsoid(m,[x+dx,y-.004,.235],[.011,.016,.016],7,11);}
+  ellipsoid(m,[x+sign*.037,y-.027,.197],[.018,.021,.022],8,13);
   // Low-profile wrist guard seam.
-  cuff(m,[x,.712],.143,.154,.038);
+  cuff(m,[x,.712],.114,.127,.037);
   out.push({...m,p:Float32Array.from(m.p),n:Float32Array.from(m.n),col:Float32Array.from(m.col),tri:Uint32Array.from(m.tri),joints:Float32Array.from(m.joints),weights:Float32Array.from(m.weights)});
  }
  return out;
 }
-return{geometry,revision:'aegis-closed-fist-wrist-attach-v62-001'};
+return{geometry,revision:'aegis-closed-fist-wrist-attach-v63-002'};
 });
 /* v62 research timeline: observables only; no causal or skill inference. */
 (function(root,factory){const api=factory(typeof module==='object'&&module.exports?require('./kinematics-v54.js'):root.__Kinematics54);if(typeof module==='object'&&module.exports)module.exports=api;root.__Timeline62=api;})(typeof globalThis==='object'?globalThis:this,function(K){
@@ -2018,7 +2028,7 @@ function tl62Init(){
  `;document.head.append(style);
  const panel=document.createElement('details');panel.id='tl62Panel';panel.innerHTML=`
  <summary>運動連鎖タイムライン — 複数部位の増速・減速・ピークを時刻比較</summary>
- <div class="tl62Tools"><label>X：<select id="tl62X"></select></label><label>動作：<select id="tl62MotionX"></select></label><label><input id="tl62Compare" type="checkbox" checked> X／Y比較</label><label><input id="tl62Sync3D" type="checkbox" checked> 3Dマーカー同期</label>
+ <div class="tl62Tools"><label>X：<select id="tl62X"></select></label><label>動作：<select id="tl62MotionX"></select></label><label><input id="tl62Compare" type="checkbox" checked> X／Y比較</label><label><input id="tl62Sync3D" type="checkbox"> 3D位置に小さな点を表示（任意）</label>
  <label>Y：<select id="tl62Y"></select></label><label>動作：<select id="tl62MotionY"></select></label><button id="tl62Run">解析・再計算</button></div>
  <details><summary>対象部位（追加・削除・単位）</summary><div id="tl62Joints"></div></details>
  <div class="tl62Tools"><label>開始<input type="number" id="tl62From" value="0" step=".01" min="0"></label><label>終了<input type="number" id="tl62To" value=".7" step=".01" min=".01"></label>
@@ -2032,8 +2042,9 @@ function tl62Init(){
  <details><summary>YBot動作差分JSON（パンチA〜D）</summary><p>変更する関節ID・時間差・回転量・速度波形等をJSONで指定します。変更後の値は運動学を再計算して確認してください。</p>
  <textarea id="tl62YBotJSON" rows="9" style="width:100%;box-sizing:border-box;background:#0a1e2d;color:#effafa"></textarea><button id="tl62YBotApply">JSONを検証して適用</button><button id="tl62YBotExport">変更JSON出力</button><pre id="tl62YBotReport" style="white-space:pre-wrap;font-size:11px"></pre></details>
  <details><summary>実測CSV X／Y（実験前の互換性検査）</summary><label>X CSV<input id="tl62CSVX" type="file" accept=".csv,text/csv"></label><label>Y CSV<input id="tl62CSVY" type="file" accept=".csv,text/csv"></label><p>同一骨格・関節ID・座標系・時刻軸・単位を検証します。対応が未検証なら比較不可。</p></details>
- <p class="tl62Notice">表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。円の大きさは各部位・各指標の区間内 |速度変化率| 最大値を100％とした相対値です。異なる部位や異なる単位間の力の大小は比較できません。● X・○ Y／緑 増速・橙 減速・黄 ピーク・灰 低活動・薄灰 欠損。</p>`;
- const anchor=tl62$('viewerUpdatedAt')||tl62$('screen');anchor.insertAdjacentElement('afterend',panel);timeline62.panel=panel;timeline62.show3d=true;
+ <p class="tl62Notice">表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。区間バーは増速・減速状態、黄色の菱形は代表ピークです。元の相対変化率は解析データに保存されます。異なる部位や異なる単位間の力の大小は比較できません。X＝塗りつぶしバー、Y＝輪郭バー。緑 増速／橙 減速／黄 ピーク／灰 低活動。MU/s＝モデル単位/秒、rad/s＝角速度。</p>`;
+ const anchor=tl62$('viewerUpdatedAt')||tl62$('screen');anchor.insertAdjacentElement('afterend',panel);timeline62.panel=panel;timeline62.show3d=false;
+ panel.querySelector('strong')?.remove();tl62$('tl62Graphic').before(tl62$('tl62Order'));
  tl62Models();tl62Motions('tl62MotionX','xbot');tl62Motions('tl62MotionY','ybot');
  for(const side of ['X','Y'])tl62$('tl62'+side).onchange=()=>{tl62Motions('tl62Motion'+side,tl62$('tl62'+side).value);timeline62.lastKey='';tl62Analyze();};
  tl62$('tl62Sync3D').onchange=()=>{timeline62.show3d=tl62$('tl62Sync3D').checked;v54.visualOverlay?.replaceChildren();v54.markerNodes.clear();};
@@ -2048,6 +2059,73 @@ function tl62Init(){
  panel.addEventListener('toggle',()=>{if(panel.open){timeline62.enabled=true;tl62Analyze();}else timeline62.enabled=false;});
  window.__TimelineUI62={active:()=>timeline62.enabled&&timeline62.show3d&&!!timeline62.analysis,current:()=>timeline62.analysis,at:TL62.at,seek:tl62Seek,refresh:tl62Analyze,loadCSV:tl62SourceFromCSV,source:timeline62};
 }
+// v63: a readable sequence + sparse state bands, not dozens of circles.
+function tl63Name(j){const labels={RightUpLeg:'右脚',Hips:'骨盤',Spine2:'胸部',Spine1:'体幹',RightShoulder:'右肩',RightArm:'右上腕',RightForeArm:'右前腕',RightHand:'右手',R_UpperLeg:'右脚',Pelvis:'骨盤',Chest:'胸部',R_UpperArm:'右上腕',R_Forearm:'右前腕',R_Hand:'右手'};return labels[j?.name]||j?.name||'部位未選択';}
+function tl63StateName(v){return {accelerating:'増速',decelerating:'減速',low:'低活動',stable:'一定',unavailable:'欠損',peak:'ピーク'}[v]||'—';}
+function tl63Label(t){return Number.isFinite(t)?t.toFixed(3)+'秒':'検出なし';}
+function tl63Ms(t){return Number.isFinite(t)?(t>=0?'+':'')+(t*1000).toFixed(0)+'ms':'—';}
+function tl62Draw(){
+ const a=timeline62.analysis;if(!a)return;const fmt=x=>Number.isFinite(x)?Number(x).toFixed(3):'—';
+ tl62$('tl62Quality').textContent=a.compatibility.ok?'同一骨格・同一関節IDを検証済み／運動特徴のピーク時刻順':a.compatibility.reason;
+ const sequence=tl62$('tl62Order');sequence.replaceChildren();
+ const intro=document.createElement('div');intro.className='tl63SectionLabel';intro.textContent='① ピークの発生順と隣接時間差（Xの代表ピーク）';sequence.append(intro);
+ const chain=document.createElement('div');chain.className='tl63Chain';sequence.append(chain);
+ if(!a.events.length){const empty=document.createElement('p');empty.textContent='この区間では代表的なピークが検出されませんでした。区間・閾値を変更してください。';chain.append(empty);}
+ for(const e of a.events){const card=document.createElement('button');card.type='button';card.className='tl63Event';card.textContent=e.order+' '+tl63Name({name:e.joint_name})+'  '+tl63Label(e.peak_time);card.title=e.joint_name+' の速度ピークへ移動';card.onclick=()=>tl62Seek(e.peak_time);chain.append(card);
+  if(e.next_event_delta_ms!=null){const edge=document.createElement('span');edge.className='tl63Gap';edge.textContent=e.next_event_delta_ms<.5?'＝同時刻':'→ +'+e.next_event_delta_ms.toFixed(0)+'ms';chain.append(edge);}}
+ const graphic=tl62$('tl62Graphic');graphic.replaceChildren();const table=document.createElement('div');table.className='tl63Table';graphic.append(table);
+ const heading=document.createElement('div');heading.className='tl63Grid tl63Heading';table.append(heading);
+ const hName=document.createElement('span');hName.textContent='② 部位';heading.append(hName);
+ const ticks=document.createElement('div');ticks.className='tl63Ticks';for(let i=0;i<=5;i++){const el=document.createElement('span');el.textContent=(a.config.from+(a.config.to-a.config.from)*i/5).toFixed(2);ticks.append(el);}heading.append(ticks);
+ const hn=document.createElement('span');hn.textContent='ピーク時刻・速度／Yとの差';heading.append(hn);
+ const ns='http://www.w3.org/2000/svg';
+ const scale=time=>Math.max(0,Math.min(500,(time-a.config.from)/Math.max(.001,a.config.to-a.config.from)*500));
+ const makeTrack=(part,side,y,svg)=>{
+  if(!part)return;
+  const first=part.times.findIndex(t=>t>=a.config.from),last=part.times.findLastIndex(t=>t<=a.config.to);if(first<0||last<first)return;
+  const boundaries=[];for(let i=first;i<=last;i++){
+   const state=part.states[i]?.state||'unavailable',start=Math.max(a.config.from,i===first?a.config.from:(part.times[i-1]+part.times[i])/2),end=Math.min(a.config.to,i===last?a.config.to:(part.times[i]+part.times[i+1])/2);
+   if(boundaries.length&&boundaries.at(-1).state===state){boundaries.at(-1).end=end;}else boundaries.push({state,start,end});
+  }
+  for(const run of boundaries){const rect=document.createElementNS(ns,'rect');rect.setAttribute('x',scale(run.start));rect.setAttribute('y',y);rect.setAttribute('width',Math.max(.7,scale(run.end)-scale(run.start)));rect.setAttribute('height',8);rect.setAttribute('rx',2);
+   rect.setAttribute('fill',side==='X'?(TL62.color[run.state]||'#8e98a2'):'none');rect.setAttribute('stroke',TL62.color[run.state]||'#8e98a2');rect.setAttribute('stroke-width',side==='X'?.3:1.6);rect.setAttribute('opacity',run.state==='low'||run.state==='stable'?.35:.87);
+   rect.style.cursor='pointer';rect.title=part.joint.name+' '+side+' '+run.state;rect.onclick=()=>tl62Seek((run.start+run.end)/2,side);svg.append(rect);
+  }
+  if(part.peak){const x=scale(part.peak.time),cy=y+4,mark=document.createElementNS(ns,'path');mark.setAttribute('d',`M ${x} ${cy-8} l 7 8 -7 8 -7 -8 Z`);mark.setAttribute('fill',side==='X'?TL62.color.peak:'none');mark.setAttribute('stroke',TL62.color.peak);mark.setAttribute('stroke-width','2');mark.style.cursor='pointer';mark.onclick=()=>tl62Seek(part.peak.time,side);const title=document.createElementNS(ns,'title');title.textContent=tl63Name(part.joint)+' '+side+' ピーク '+tl63Label(part.peak.time);mark.append(title);svg.append(mark);}
+ };
+ for(const row of a.rows){if(!row.X)continue;const line=document.createElement('div');line.className='tl63Grid tl63DataRow';table.append(line);
+  const name=document.createElement('div');name.className='tl63Part';name.textContent=(row.order?row.order+'  ':'')+tl63Name(row.X.joint);line.append(name);
+  const graph=document.createElementNS(ns,'svg');graph.setAttribute('viewBox','0 0 500 '+(a.source_y&&a.compatibility.ok?38:23));graph.setAttribute('preserveAspectRatio','none');graph.setAttribute('class','tl63Track');graph.setAttribute('role','img');graph.setAttribute('aria-label',tl63Name(row.X.joint)+'の増速・減速とピーク');line.append(graph);
+  for(let j=0;j<=5;j++){const x=j*100,r=document.createElementNS(ns,'line');r.setAttribute('x1',x);r.setAttribute('x2',x);r.setAttribute('y1',0);r.setAttribute('y2',a.source_y&&a.compatibility.ok?38:23);r.setAttribute('stroke','#41586a');r.setAttribute('opacity','.45');graph.append(r);}
+  makeTrack(row.X,'X',5,graph);if(a.source_y&&a.compatibility.ok)makeTrack(row.Y,'Y',23,graph);
+  const readout=document.createElement('div');readout.className='tl63Values';line.append(readout);
+  const unit=row.X.unit==='model_units/s'?'MU/s':row.X.unit;const main=document.createElement('div');main.textContent='X '+tl63Label(row.X.peak?.time)+' · '+fmt(row.X.peak?.value)+' '+unit;readout.append(main);
+  const sub=document.createElement('div');sub.className='tl63Sub';sub.textContent='次 '+(row.next_event_delta_ms!=null?'+'+row.next_event_delta_ms.toFixed(0)+'ms':'—')+' / 前後 '+(row.X.peak?tl63StateName(row.X.states[Math.max(0,row.X.times.findIndex(t=>t>=row.X.peak.time)-1)]?.state):'—')+' → '+(row.X.peak?tl63StateName(row.X.states[Math.min(row.X.states.length-1,row.X.times.findIndex(t=>t>=row.X.peak.time)+1)]?.state):'—');readout.append(sub);
+  if(a.source_y&&a.compatibility.ok){const y=document.createElement('div');y.className='tl63Compare';y.textContent='Y '+tl63Label(row.Y?.peak?.time)+' · Δ '+tl63Ms(row.delta?.peak_time_seconds);readout.append(y);}
+ }
+ tl62Wave();
+}
+
+// Compact, readable layout. No numeric labels overlay the avatar.
+(function(){const style=document.createElement('style');style.textContent=`
+#tl62Order{display:block;margin:12px 0 15px}#tl62Order .tl63SectionLabel{font-size:13px;font-weight:700;margin-bottom:7px}
+#tl62Order .tl63Chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#071f30;border-radius:9px;padding:11px}
+#tl62Order .tl63Event{padding:9px 11px;background:#1e455b;color:#f5fbff;border:1px solid #6993a4;border-radius:8px;font-weight:650;font-size:12px;white-space:nowrap}
+#tl62Order .tl63Gap{color:#ffe4a1;font-weight:700;font-size:12px;white-space:nowrap}
+#tl62Graphic{overflow-x:auto;background:#0b2130;border-radius:9px;padding:9px 11px}
+#tl62Graphic .tl63Table{min-width:630px;width:100%;font-size:12px}
+#tl62Graphic .tl63Grid{display:grid;grid-template-columns:85px minmax(190px,1fr) 172px;align-items:center;gap:7px}
+#tl62Graphic .tl63Heading{margin:0 0 5px;color:#adc9d8;font-size:11px;font-weight:bold}
+#tl62Graphic .tl63Ticks{display:flex;justify-content:space-between;padding:0 4px}
+#tl62Graphic .tl63DataRow{min-height:57px;border-bottom:1px solid #244657;padding:6px 0}
+#tl62Graphic .tl63Part{font-size:11px;color:#edf9fa;font-weight:650;white-space:nowrap}
+#tl62Graphic .tl63Track{width:100%;height:42px;overflow:visible}
+#tl62Graphic .tl63Values{line-height:1.45;color:#eef6f9;white-space:nowrap;font-size:10px;min-width:0}
+#tl62Graphic .tl63Sub{color:#9ebccf;font-size:9px}#tl62Graphic .tl63Compare{font-weight:700;color:#f0e7bf}
+#tl62Panel .tl62Notice{font-size:11px;opacity:.85}#tl62Graphic .tl63Heading{font-size:10px}
+.v54StateMarker.v63Point{width:11px!important;height:11px!important;min-width:11px!important;min-height:11px!important;padding:0!important;margin:0!important;border-radius:50%!important;font-size:0!important;box-shadow:0 0 0 2px #001b2b,0 0 7px currentColor!important;transform:translate(-50%,-50%)!important;white-space:nowrap!important;overflow:visible!important}
+@media(max-width:700px){#tl62Graphic .tl63Table{min-width:630px}#tl62Order .tl63Chain{gap:4px}#tl62Order .tl63Event{font-size:11px;padding:7px}}
+`;document.head.append(style);})();
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -5867,7 +5945,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();await v62LoadYBotConfig();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   v62RegisterYBot();renderUI();v47Init();tl62Init();showStatus('人工複眼シミュレーションシステム：運動連鎖タイムライン／YBot比較');
-  window.__compoundTest={version:"62",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"63",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -5916,7 +5994,7 @@ let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){if(avatar==='ybot')return window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-fist-v63-001';
  if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
@@ -5935,7 +6013,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v62'?experimentBuildManifest.source_commit:'unverified_build_v62';
+ const runtime=experimentBuildManifest?.app_version==='v63'?experimentBuildManifest.source_commit:'unverified_build_v63';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -6013,7 +6091,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v62',runtime,JSON.stringify(config),
+    'v63',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -6053,7 +6131,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v62',
+   motion_revision_id:asset.motion_revision_id,app_version:'v63',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
    motion_composition:avatar==='ybot'?{
@@ -7622,10 +7700,10 @@ function v54OverlayDraw(projections){
 function v54AppendMarker(item,x,y,eye,count){
  const key=item.index+':'+eye;v54.markersUsed.add(key);
  let div=v54.markerNodes.get(key);
- if(!div){div=document.createElement('div');div.className='v54StateMarker';v54.markerNodes.set(key,div);v54.visualOverlay.append(div);}
+ if(!div){div=document.createElement('div');div.className='v54StateMarker v63Point';v54.markerNodes.set(key,div);v54.visualOverlay.append(div);}
  div.style.left=((eye+x)*100/count)+'%';div.style.top=((1-y)*100)+'%';
- div.style.color=item.color;div.textContent=item.text;
- div.title=item.reason+'：計測上の特徴であって力の流れ・技能点ではありません';
+ div.style.color=item.color;div.style.backgroundColor=item.color;div.textContent='';div.dataset.state=item.reason;
+ div.title=item.text+'：運動学的特徴。力・因果・技能点ではありません';
  div.dataset.jointId=String(item.index);
  div.dataset.eye=String(eye);
 }
