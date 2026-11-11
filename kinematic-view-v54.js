@@ -429,20 +429,32 @@ function v54Render(){
 
 function v54OverlayDraw(projections){
  if(!v54.visualOverlay)return;
+ const timelineX=timeline62.analysis?.source_x?.avatar===state.model&&timeline62.analysis?.source_x?.motion===state.motion;
+ const timelineY=timeline62.analysis?.compatibility?.ok&&timeline62.analysis?.source_y?.avatar===state.model&&timeline62.analysis?.source_y?.motion===state.motion;
+ const timelineLive=!!window.__TimelineUI62?.active()&&(timelineX||timelineY);
  if(v54Active()&&performance.now()-v54.lastCursor>80){v54.lastCursor=performance.now();v54UpdateCursor();v54RefreshRatio();}
- if(!v54Active()||!$('v54OverlayEnable').checked||v54.mode==='normal'||!v54.current||v54.dataSource==='imported'){
+ if(!timelineLive&&(!v54Active()||!$('v54OverlayEnable').checked||v54.mode==='normal'||!v54.current||v54.dataSource==='imported')){
   if(v54.visualOverlay.childElementCount)v54.visualOverlay.replaceChildren();v54.markerNodes.clear();return;
  }
  v54.markersUsed=new Set();
  const processingStart=performance.now();
- if(v54.current.source.avatar!==state.model||v54.current.source.motion!==state.motion){
+ if(!timelineLive&&(v54.current.source.avatar!==state.model||v54.current.source.motion!==state.motion)){
   v54.visualOverlay.replaceChildren();v54.markerNodes.clear();
   if(!v54.pendingRefresh){v54.pendingRefresh=true;queueMicrotask(()=>{v54.pendingRefresh=false;v54JointList();v54DoAnalysis();});}
   return;
  }
- const result=v54.current.source,now=v54CurrentOriginalTime(),choice=v54.mode;
+ const result=timelineLive?(timelineY?timeline62.sourceY:timeline62.sourceX):v54.current.source,now=timelineLive?((Number(state._renderedAnimationTime||0)%result.data.duration+result.data.duration)%result.data.duration):v54CurrentOriginalTime(),choice=v54.mode;
  const indices=[];
- if(choice==='fast'){
+ if(timelineLive&&tl62$('tl62Cursor'))tl62$('tl62Cursor').textContent='再生位置：'+now.toFixed(3)+'秒';
+ if(timelineLive){
+  const analysis=timeline62.analysis;
+  for(const row of analysis.rows){
+   const part=timelineY?row.Y:row.X;if(!part)continue;
+   const sampled=window.__Timeline62.at(part,now,analysis.config);
+   indices.push({index:row.jointId,text:(timelineY?'Y ':'X ')+part.joint.name+' '+sampled.state,color:sampled.color,
+    reason:'timeline_shared_state_'+sampled.state});
+  }
+ }else if(choice==='fast'){
   for(const x of v54.current.fastJoints)if(x.peak>1e-5)indices.push({index:x.joint.index,
    text:'速 '+v48JointLabel(x.joint),color:'#f3df81',reason:'interval_max_speed_top3'});
  }else if(choice==='relation'){
@@ -463,7 +475,7 @@ function v54OverlayDraw(projections){
    color:'#d9c1ff',reason:'two_motion_peak_time_difference'});
  }
  const visible=new Set();
- for(const item of indices.slice(0,3)){
+ for(const item of indices.slice(0,timelineLive?20:3)){
   if(visible.has(item.index))continue;visible.add(item.index);
   const world=modelData?.world?.[item.index];if(!world)continue;
   const point=mulPoint(state._modelFit,[world[12],world[13],world[14]]);
@@ -493,7 +505,7 @@ function v54OverlayDraw(projections){
   v54.lastDisplayLog=performance.now();
   v54.log.display_events.push({trial_id:result.trial_id,eye_count:state.eyeCount,
    lens_selection:v52SelectedIndices(),lens_layout:activeCameras().map((_,i)=>({...cameraSpec(i)})),
-   stereo:isStereoVR(),mode:v54.mode,skeleton_id:result.data.skeletonId,motion_id:result.motion,
+   stereo:isStereoVR(),mode:timelineLive?'timeline':v54.mode,skeleton_id:result.data.skeletonId,motion_id:result.motion,
    motion_revision_id:result.asset.motion_revision_id,source_asset_sha256:result.asset.source_asset_sha256,
    selected_joint_ids:indices.map(j=>j.index),reason_codes:indices.map(j=>j.reason),
    original_animation_time_s:now,requested_display_perf_ms:performance.now(),

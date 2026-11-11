@@ -2,7 +2,7 @@
 // All numbers describe embedded animation/model calculations, not human sensing.
 const V47_SCHEMA='compound-eye-motion-comparison-v2';
 const v47={A:null,B:null,extras:[],pairs:[],extraControls:[],anyCrossSkeleton:false,comparison:null,currentTime:0,lastCursorAt:0,fitB:null,sourceA:null,sourceB:null,quality:[],on:false};
-const v47Models=['xbot','aegisEmber','aegisSoldier'];
+const v47Models=['xbot','ybot','aegisEmber','aegisSoldier'];
 const v47Options=m=>{
  const old=state.model;state.model=m;
  let items=[];try{items=motionOptions()}finally{state.model=old}

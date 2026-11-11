@@ -1,0 +1,18 @@
+{
+  "schema": "compound-eye-ybot-modifications-v1",
+  "revision": "ybot-known-shifts-v62-001",
+  "motions": {
+    "xbot_punch": [
+      {
+        "joint_id": 7,
+        "modification_type": "rotation_peak_shift",
+        "requested_change": 0.04,
+        "start_time": 0.05,
+        "end_time": 0.96
+      }
+    ],
+    "xbot_punch1": [],
+    "xbot_punch2": [],
+    "xbot_hook": []
+  }
+}

@@ -45,6 +45,14 @@ function v61RetargetCPose(md,time){
   const thigh=target[side+'_UpperLeg'],shin=target[side+'_LowerLeg'],dt=direction(prefix+'UpLeg',prefix+'Leg'),ds=direction(prefix+'Leg',prefix+'Foot'),lowerBind=[0,-.317,.004];
   const qt=v61FrameQuat(md.nodes[shin].translation,lowerBind,dt,ds),qs=qmul(quatBetween(rotateQ(qt,lowerBind),ds),qt);p.R[thigh]=qmul(qInv(targetQ.Pelvis),qt);p.R[shin]=qmul(qInv(qt),qs);
  }
+ // Stabilize the helmet/hips/shanks within the existing 13-bone rig.
+ // This deliberately preserves the source-driven arms, timing and torso direction.
+ for(const [name,weight] of [['Head',.35],['Pelvis',.75],['L_UpperLeg',.65],['R_UpperLeg',.65],['L_LowerLeg',.45],['R_LowerLeg',.45]]){
+  const i=target[name];if(i!==undefined)p.R[i]=qSlerp(md.nodes[i].rotation,p.R[i],weight);
+ }
+ // Preserve source-facing chest/world arm directions after damping pelvis yaw.
+ // Re-express the original chest orientation in the stabilized pelvis frame.
+ p.R[target.Chest]=qmul(qInv(p.R[target.Pelvis]),targetQ.Chest);
  return p;
 }
 function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}

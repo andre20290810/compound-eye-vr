@@ -21,7 +21,12 @@ replaceBetween('/* AEGIS v60 visor:','/* AEGIS v58 appearance:','aegis-visor-v60
 replaceBetween('/* AEGIS v58 appearance:','/* AEGIS v58 details:','appearance-v58.js');
 replaceBetween('/* AEGIS v58 details:','// AEGIS v58 runtime:','aegis-details-v58.js');
 replaceBetween('// AEGIS v58 runtime:','/* v61 punch sequences:','aegis-runtime-v58.js');
-replaceBetween('/* v61 punch sequences:','function parseGLB','punch-sequences-v61.js');
+replaceBetween('/* v61 punch sequences:','/* v62 YBot:','punch-sequences-v61.js');
+replaceBetween('/* v62 YBot:','// v62 YBot uses identical','ybot-v62.js');
+replaceBetween('// v62 YBot uses identical','/* v62 AEGIS B:','ybot-runtime-v62.js');
+replaceBetween('/* v62 AEGIS B:','/* v62 research timeline:','aegis-fists-v62.js');
+replaceBetween('/* v62 research timeline:','// v62 multi-joint kinematic timeline.','motion-timeline-v62.js');
+replaceBetween('// v62 multi-joint kinematic timeline.','function parseGLB','timeline-ui-v62.js');
 if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
 else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);

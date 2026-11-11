@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/12 02:26（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/12 04:29（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -980,7 +980,7 @@ function currentScreenAngle(){
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
 const state={fourEyeGap:.100,anchorAlphaCustom:false,radialMode:true,radialDistance:.080,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:1,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:0,lensScale:2.20,lensPull:1.10,showLabels:true,showMotionMarkers:true};
-const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
+const MODEL_NAMES={ybot:'Y Bot / X Bot同一32関節・色違い',xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
 const MOTION_NAMES={
  xbot_idle:'静止',xbot_fight_idle:'構え',xbot_walk:'歩行A',xbot_walk2:'歩行B',xbot_run:'走行',
  xbot_punch:'パンチA',xbot_punch1:'パンチB',xbot_punch2:'パンチC',xbot_hook:'パンチD',
@@ -1016,7 +1016,7 @@ void main(){
 }`;
 const FS=`#version 300 es
 precision highp float;
-in vec3 vColor;in vec3 vNormal;in vec3 vSourcePos;in float vPart;out vec4 frag;uniform int uPartActive;uniform float uOutsideAlpha;uniform float uNavy;uniform float uExclusive;uniform float uSoldierTube;uniform float uTime;uniform float uGhostAlpha;uniform float uFinishMode;
+in vec3 vColor;in vec3 vNormal;in vec3 vSourcePos;in float vPart;out vec4 frag;uniform int uPartActive;uniform float uOutsideAlpha;uniform float uYBotTint;uniform float uNavy;uniform float uExclusive;uniform float uSoldierTube;uniform float uTime;uniform float uGhostAlpha;uniform float uFinishMode;
 uniform float uAppearanceMode,uAppearanceBrightness,uAppearanceUnlit,uAppearanceAxis;
 uniform vec3 uAppearanceA,uAppearanceB;uniform vec2 uAppearanceRange;
 void main(){
@@ -1048,6 +1048,7 @@ void main(){
   metal=chosen*shading;
  }
  metal*=uAppearanceBrightness;
+ if(uYBotTint>.5){metal=mix(metal,vec3(.70,.31,.79)*(.65+.35*lit),.78);}
  if(uGhostAlpha>.001){metal=mix(metal,vec3(.22,.91,1.),.92);a*=uGhostAlpha;}
  frag=vec4(min(metal,vec3(1.)),a);
 }`;
@@ -1132,7 +1133,7 @@ for(const key of ['aP','aN','aColor','aJoints','aWeights'])shaderProg[key]=gl.ge
 for(const key of ['uPV','uWorld','uBones','uSkin','uPartMask','uPartActive','uOutsideAlpha','uNavy','uExclusive','uFinishMode'])shaderProg[key]=gl.getUniformLocation(shaderProg,key==='uBones'?'uBones[0]':key==='uPartMask'?'uPartMask[0]':key);
 for(const key of ['uAppearanceMode','uAppearanceBrightness','uAppearanceUnlit','uAppearanceAxis','uAppearanceA','uAppearanceB','uAppearanceRange'])shaderProg[key]=gl.getUniformLocation(shaderProg,key);
 const CVS=`#version 300 es\nprecision highp float;in vec2 aP;out vec2 vUV;void main(){vUV=(aP+1.)*.5;gl_Position=vec4(aP,0.,1.);}`.replace('\\n','\n');
-compProg=program(CVS,CS);compProg.aP=gl.getAttribLocation(compProg,'aP');compProg.uN=gl.getUniformLocation(compProg,'uN');compProg.uMode=gl.getUniformLocation(compProg,'uMode');compProg.uAnchorAlpha=gl.getUniformLocation(compProg,'uAnchorAlpha');compProg.uLensScale=gl.getUniformLocation(compProg,'uLensScale');compProg.uLensPull=gl.getUniformLocation(compProg,'uLensPull');compProg.uVRFit=gl.getUniformLocation(compProg,'uVRFit');compProg.uLensRect=gl.getUniformLocation(compProg,'uLensRect[0]');compProg.uLensUV=gl.getUniformLocation(compProg,'uLensUV[0]');compProg.uLensOffset=gl.getUniformLocation(compProg,'uLensOffset[0]');shaderProg.uGhostAlpha=gl.getUniformLocation(shaderProg,'uGhostAlpha');shaderProg.uSoldierTube=gl.getUniformLocation(shaderProg,'uSoldierTube');shaderProg.uTime=gl.getUniformLocation(shaderProg,'uTime');compProg.uFish=gl.getUniformLocation(compProg,'uFish');compProg.uFeather=gl.getUniformLocation(compProg,'uFeather');compProg.uBlend=gl.getUniformLocation(compProg,'uBlend');compProg.tex=[0,1,2,3,4,5,6,7].map(i=>gl.getUniformLocation(compProg,'uTex'+i));quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);}
+compProg=program(CVS,CS);compProg.aP=gl.getAttribLocation(compProg,'aP');compProg.uN=gl.getUniformLocation(compProg,'uN');compProg.uMode=gl.getUniformLocation(compProg,'uMode');compProg.uAnchorAlpha=gl.getUniformLocation(compProg,'uAnchorAlpha');compProg.uLensScale=gl.getUniformLocation(compProg,'uLensScale');compProg.uLensPull=gl.getUniformLocation(compProg,'uLensPull');compProg.uVRFit=gl.getUniformLocation(compProg,'uVRFit');compProg.uLensRect=gl.getUniformLocation(compProg,'uLensRect[0]');compProg.uLensUV=gl.getUniformLocation(compProg,'uLensUV[0]');compProg.uLensOffset=gl.getUniformLocation(compProg,'uLensOffset[0]');shaderProg.uYBotTint=gl.getUniformLocation(shaderProg,'uYBotTint');shaderProg.uGhostAlpha=gl.getUniformLocation(shaderProg,'uGhostAlpha');shaderProg.uSoldierTube=gl.getUniformLocation(shaderProg,'uSoldierTube');shaderProg.uTime=gl.getUniformLocation(shaderProg,'uTime');compProg.uFish=gl.getUniformLocation(compProg,'uFish');compProg.uFeather=gl.getUniformLocation(compProg,'uFeather');compProg.uBlend=gl.getUniformLocation(compProg,'uBlend');compProg.tex=[0,1,2,3,4,5,6,7].map(i=>gl.getUniformLocation(compProg,'uTex'+i));quad=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,quad);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);}
 function decode64(b64){let raw=atob(b64),a=new Uint8Array(raw.length);for(let i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i);return a.buffer;}
 function accessor(j,bin,id){let a=j.accessors[id],v=j.bufferViews[a.bufferView],offset=(v.byteOffset||0)+(a.byteOffset||0),n=a.count*({SCALAR:1,VEC2:2,VEC3:3,VEC4:4,MAT4:16}[a.type]||1);let stride=v.byteStride||0;if(stride)throw Error('interleaved accessors not supported');let type=a.componentType;
 let A=type===5126?Float32Array:type===5125?Uint32Array:type===5123?Uint16Array:type===5121?Uint8Array:type===5122?Int16Array:null;if(!A)throw Error('unsupported accessor '+type);let arr=new A(bin,offset,n).slice();if(a.normalized){let max=type===5121?255:type===5123?65535:type===5122?32767:1;return Float32Array.from(arr,x=>x/max);}return arr;}
@@ -1624,12 +1625,429 @@ function v61RetargetCPose(md,time){
   const thigh=target[side+'_UpperLeg'],shin=target[side+'_LowerLeg'],dt=direction(prefix+'UpLeg',prefix+'Leg'),ds=direction(prefix+'Leg',prefix+'Foot'),lowerBind=[0,-.317,.004];
   const qt=v61FrameQuat(md.nodes[shin].translation,lowerBind,dt,ds),qs=qmul(quatBetween(rotateQ(qt,lowerBind),ds),qt);p.R[thigh]=qmul(qInv(targetQ.Pelvis),qt);p.R[shin]=qmul(qInv(qt),qs);
  }
+ // Stabilize the helmet/hips/shanks within the existing 13-bone rig.
+ // This deliberately preserves the source-driven arms, timing and torso direction.
+ for(const [name,weight] of [['Head',.35],['Pelvis',.75],['L_UpperLeg',.65],['R_UpperLeg',.65],['L_LowerLeg',.45],['R_LowerLeg',.45]]){
+  const i=target[name];if(i!==undefined)p.R[i]=qSlerp(md.nodes[i].rotation,p.R[i],weight);
+ }
+ // Preserve source-facing chest/world arm directions after damping pelvis yaw.
+ // Re-express the original chest orientation in the stabilized pelvis frame.
+ p.R[target.Chest]=qmul(qInv(p.R[target.Pelvis]),targetQ.Chest);
  return p;
 }
 function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
 function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return v61Source().c.duration;if(motion==='armor_alternate_punch')return 3.54;return null;}
 function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
 function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'world segment directions and torso rotations; X reflection for named sides; target bone lengths retained',source_duration_seconds:v61Source().c.duration,limitations:['AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}
+/* v62 YBot: one X Bot skeleton, known programmable motion perturbations. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__YBot62=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const schema='compound-eye-ybot-modifications-v1',clone=x=>JSON.parse(JSON.stringify(x));
+const defaults={schema,revision:'ybot-known-shifts-v62-001',motions:{
+ xbot_punch:[{joint_id:7,modification_type:'rotation_peak_shift',requested_change:.04,start_time:.05,end_time:.96}],
+ xbot_punch1:[],xbot_punch2:[],xbot_hook:[]}};
+function validate(raw,validIds,motions=['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook']){
+ if(!raw||raw.schema!==schema||!raw.motions||typeof raw.motions!=='object')throw Error('invalid_ybot_schema');
+ if(Object.keys(raw).some(k=>!['schema','revision','motions'].includes(k)))throw Error('unknown_ybot_key');
+ const valid=new Set(validIds),out={schema,revision:String(raw.revision||'configured').slice(0,100),motions:{}};
+ for(const motion of Object.keys(raw.motions))if(!motions.includes(motion))throw Error('unknown_motion_id');
+ for(const motion of motions){
+  const arr=raw.motions[motion]||[];if(!Array.isArray(arr)||arr.length>32)throw Error('bad_modifier_count');
+  out.motions[motion]=arr.map((x,i)=>{
+   if(!x||Object.keys(x).some(k=>!['joint_id','modification_type','requested_change','start_time','end_time','axis'].includes(k)))throw Error('invalid_modifier_fields');
+   const {joint_id,modification_type,requested_change,start_time,end_time}=x;
+   if(!Number.isInteger(joint_id)||!valid.has(joint_id))throw Error('invalid_joint_id');
+   if(!['time_shift','onset_shift','speed_peak_shift','rotation_peak_shift','local_time_shift','rotation_delta_deg','speed_waveform_deg'].includes(modification_type))throw Error('unknown_modification_type');
+   if(![requested_change,start_time,end_time].every(Number.isFinite)||start_time<0||end_time<=start_time||end_time>8||Math.abs(requested_change)>(modification_type==='rotation_delta_deg'?30:modification_type==='speed_waveform_deg'?15:.25))throw Error('invalid_change');
+   const axis=x.axis||'x';if(!['x','y','z'].includes(axis))throw Error('invalid_axis');
+   return{joint_id,modification_type,requested_change,start_time,end_time,axis};
+  });
+ }
+ return out;
+}
+function envelope(t,start,end){if(t<=start||t>=end)return 0;const u=(t-start)/(end-start);return Math.pow(Math.sin(Math.PI*u),2);}
+function sampleShift(time,mod){
+ if(!mod.modification_type.includes('shift'))return time;
+ return time-mod.requested_change*envelope(time,mod.start_time,mod.end_time);
+}
+function twist(time,mod){
+ if(mod.modification_type==='rotation_delta_deg')return mod.requested_change*Math.PI/180*envelope(time,mod.start_time,mod.end_time);
+ if(mod.modification_type==='speed_waveform_deg')return mod.requested_change*Math.PI/180*Math.sin(8*Math.PI*(time-mod.start_time)/(mod.end_time-mod.start_time))*envelope(time,mod.start_time,mod.end_time);
+ return 0;
+}
+function revise(config,motion){let s=JSON.stringify(config.motions[motion]||[]),h=2166136261;for(let i=0;i<s.length;i++)h=Math.imul(h^s.charCodeAt(i),16777619);return 'ybot-'+motion+'-'+(h>>>0).toString(16)+'-'+config.revision;}
+function compareSkeleton(x,y){if(!x||!y||x.nodes.length!==y.nodes.length||x.skin?.joints?.length!==32||y.skin?.joints?.length!==32)return false;
+ return x.nodes.every((n,i)=>{const v=y.nodes[i];return n.name===v.name&&n.parent===v.parent&&JSON.stringify(n.translation)===JSON.stringify(v.translation)&&JSON.stringify(n.rotation)===JSON.stringify(v.rotation)&&JSON.stringify(n.scale)===JSON.stringify(v.scale);})&&x.skin.joints.every((i,k)=>i===y.skin.joints[k]);}
+return{schema,defaults,validate,clone,envelope,sampleShift,twist,revise,compareSkeleton};
+});
+// v62 YBot uses identical X Bot bind hierarchy, bone lengths and coordinates; ONLY pose tracks/colors differ.
+let v62YConfig=window.__YBot62.clone(window.__YBot62.defaults),v62YLastValidation=null;
+async function v62LoadYBotConfig(){
+ try{const r=await fetch('ybot-modifications.json',{cache:'no-store'});if(!r.ok)return;const x=getModel('xbot');v62YConfig=window.__YBot62.validate(await r.json(),x.skin.joints);}catch(e){console.warn('YBot settings fallback:',e.message);}
+}
+function v62RegisterYBot(){
+ for(const id of ['avatarHeaderSelect','model','clAvatar','experimentAvatar']){
+  const select=document.getElementById(id);if(!select||[...select.options].some(x=>x.value==='ybot'))continue;
+  const option=document.createElement('option');option.value='ybot';option.textContent='Y Bot（X Botと同一骨格）';
+  const x=[...select.options].find(o=>o.value==='xbot');if(x)x.insertAdjacentElement('afterend',option);else select.append(option);
+ }
+}
+function v62YModel(){const source=getModel('xbot');
+ if(!modelCache.ybot){
+  modelCache.ybot={...source,nodes:source.nodes.map(n=>({...n,translation:n.translation.slice(),rotation:n.rotation.slice(),scale:n.scale.slice(),children:n.children.slice()})),
+   skin:{...source.skin,joints:source.skin.joints.slice()},geo:source.geo,world:new Array(source.nodes.length).fill(null),
+   bones:new Float32Array(source.bones.length),poseRot:source.nodes.map(n=>n.rotation.slice()),poseTrans:source.nodes.map(n=>n.translation.slice()),poseScale:source.nodes.map(n=>n.scale.slice())};
+ }
+ return modelCache.ybot;
+}
+function v62SourcePose(motion,time){
+ const src=getModel('xbot');
+ if(motion==='xbot_hook')return v61ComboPose(time);
+ const name=motion==='xbot_punch'?'XBot_Punching_Original52':XBOT_CLIPS[motion],clip=src.animations.find(c=>c.name===name);
+ if(!clip)throw Error('missing_XBot_clip_'+motion);
+ const dur=motion==='xbot_punch'?1.10:clip.duration;
+ const t=motion==='xbot_punch'?Math.min(window.__Punch61.cycle(time,dur),Math.max(clip.duration-.001,0)):window.__Punch61.cycle(time,dur);
+ return v61ClipPose(src,clip,t);
+}
+function v62ApplyYMotion(md,motion,time,T,R,S){
+ const config=v62YConfig.motions[motion]||[];if(!config.length)return;
+ for(const mod of config){
+  const i=mod.joint_id,t=window.__YBot62.sampleShift(time,mod);
+  if(t!==time){const source=v62SourcePose(motion,Math.max(0,t));T[i]=source.T[i].slice();R[i]=source.R[i].slice();S[i]=source.S[i].slice();}
+  const a=window.__YBot62.twist(time,mod);
+  if(a){const axis=mod.axis==='x'?[1,0,0]:mod.axis==='y'?[0,1,0]:[0,0,1];R[i]=qmul(R[i],window.__AegisMotion56.axisQuaternion(axis,a));}
+ }
+}
+function v62SetYConfig(input){const valid=window.__YBot62.validate(input,getModel('xbot').skin.joints);v62YConfig=valid;v62YLastValidation=null;v54.result=null;v47.A=null;return valid;}
+function v62PeaksFor(data,joint,metric,range){
+ const rows=data.byJoint[String(joint)]||[],times=rows.map(x=>x.time),field=metric==='angular'?'angular_speed':'linear_speed',values=rows.map(x=>x[field]);
+ const from=range?.[0]??times[0]??0,to=range?.[1]??times.at(-1)??0;
+ const candidates=K54.peakCandidates(values,times,from,to,{prominence:.12}).candidates;
+ const peak=candidates.reduce((a,b)=>!a||b.value>a.value?b:a,null);
+ return {peak_time:peak?.time??null,peak_value:peak?.value??null};
+}
+function v62RecalculateModifications(){
+ const out=[],modes=['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];
+ for(const motion of modes){
+  const mods=v62YConfig.motions[motion]||[];if(!mods.length)continue;
+  const source=v54ExportData('xbot',motion),modified=v54ExportData('ybot',motion);
+  for(const mod of mods){
+   const metric=['rotation_delta_deg','rotation_peak_shift','speed_waveform_deg'].includes(mod.modification_type)?'angular':'linear',range=[mod.start_time,mod.end_time];
+   const a=v62PeaksFor(source,mod.joint_id,metric,range),b=v62PeaksFor(modified,mod.joint_id,metric,range),delta=a.peak_time===null||b.peak_time===null?null:b.peak_time-a.peak_time;
+   let actual=delta,actualUnit='s';
+   if(mod.modification_type==='onset_shift'){
+    const onset=src=>{const rr=src.byJoint[String(mod.joint_id)],times=rr.map(x=>x.time),speed=rr.map(x=>x[metric==='angular'?'angular_speed':'linear_speed']);return K54.detectOnset(speed,times,mod.start_time,mod.end_time,.15,3).time;};
+    const ax=onset(source),by=onset(modified);actual=ax!==null&&by!==null?by-ax:null;
+   }else if(mod.modification_type==='rotation_delta_deg'){
+    let best=0;const aa=source.byJoint[String(mod.joint_id)],bb=modified.byJoint[String(mod.joint_id)];
+    for(let i=0;i<aa.length;i++){const t=aa[i].time;if(t<mod.start_time||t>mod.end_time)continue;
+     const q=source.data.frames[i]?.joints?.[mod.joint_id]?.q,r=modified.data.frames[i]?.joints?.[mod.joint_id]?.q;
+     if(q&&r){const dot=Math.min(1,Math.abs(q.reduce((a,v,j)=>a+v*r[j],0)));best=Math.max(best,2*Math.acos(dot)*180/Math.PI);}
+    }
+    actual=best;actualUnit='deg';
+   }else if(mod.modification_type==='speed_waveform_deg'){
+    actual=a.peak_value!==null&&b.peak_value!==null?b.peak_value-a.peak_value:null;actualUnit='rad/s';
+   }
+   out.push({avatar_id:'ybot',source_motion_id:motion,motion_id:motion,modified_joint_id:mod.joint_id,modification_type:mod.modification_type,
+    requested_change:mod.requested_change,actual_change_after_recalculation:actual,actual_change_unit:actualUnit,source_asset_sha256:modified.asset.source_asset_sha256,start_time:mod.start_time,end_time:mod.end_time,
+    metric,baseline_peak:a,modified_peak:b,motion_revision_id:v54Revision('ybot',motion),quality:actual===null?'event_unavailable':'recalculated_from_full_kinematics',
+    note:'Requested time warp parameter and observed peak shift need not match exactly; no force or skill inference'});
+  }
+ }
+ v62YLastValidation=out;return out;
+}
+/* v62 AEGIS B: closed gloves, attached rigid wrist cuffs and no dangling fingers.
+   Meshes are anchored to the pre-existing hand skin slots; no new skeleton joints. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisFists62=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const color=[.20,.36,.67,1],P=Math.PI;
+function mesh(name,bone){return{name,bone,onlyMotion:'armor_punch',p:[],n:[],col:[],tri:[],joints:[],weights:[]};}
+function v(m,p,n){const id=m.p.length/3;m.p.push(...p);m.n.push(...n);m.col.push(...color);m.joints.push(m.bone,0,0,0);m.weights.push(1,0,0,0);return id;}
+function quad(m,a,b,c,d,n){const ids=[a,b,c,d].map(p=>v(m,p,n));m.tri.push(ids[0],ids[1],ids[2],ids[0],ids[2],ids[3]);}
+function ellipsoid(m,c,r,lat=10,lon=16){
+ const start=m.p.length/3;
+ for(let i=0;i<=lat;i++){const th=P*i/lat;for(let j=0;j<=lon;j++){const ph=2*P*j/lon,s=Math.sin(th),n=[s*Math.cos(ph),Math.cos(th),s*Math.sin(ph)],pos=c.map((x,k)=>x+n[k]*r[k]);v(m,pos,n);}}
+ for(let i=0;i<lat;i++)for(let j=0;j<lon;j++){const a=start+i*(lon+1)+j,b=a+lon+1;m.tri.push(a,b,a+1,a+1,b,b+1);}
+}
+function cuff(m,c,a,b,radius){
+ const rings=[],n=18;
+ for(const [z,rad] of [[a,radius*.9],[a+.008,radius],[b-.006,radius*.85],[b,radius*.74]]){
+  const ring=[];for(let j=0;j<n;j++){const theta=2*P*j/n,x=Math.cos(theta),y=Math.sin(theta);ring.push(v(m,[c[0]+rad*x,c[1]+rad*y,z],[x,y,0]));}rings.push(ring);
+ }
+ for(let k=0;k<rings.length-1;k++)for(let j=0;j<n;j++){const next=(j+1)%n;const x=rings[k][j],y=rings[k][next],z=rings[k+1][j],w=rings[k+1][next];m.tri.push(x,y,z,y,w,z);}
+}
+function geometry(){
+ const out=[];
+ for(const sign of [-1,1]){
+  const slot=sign<0?5:8,name=sign<0?'left':'right',x=sign*.31589,y=.704;
+  const m=mesh('fist_closed_'+name,slot);
+  // Joint-root -> knuckle shell: a single wrist cuff prevents visible separation.
+  cuff(m,[x,.712],.112,.225,.034);
+  ellipsoid(m,[x,y,.225],[.046,.042,.052]);
+  // Four rounded, tucked knuckles and a folded thumb; no splayed digits.
+  for(let j=0;j<4;j++){const dx=(j-1.5)*.018;ellipsoid(m,[x+dx,y-.006,.267],[.012,.019,.017],7,11);}
+  ellipsoid(m,[x+sign*.038,y-.023,.225],[.019,.025,.027],8,13);
+  // Low-profile wrist guard seam.
+  cuff(m,[x,.712],.143,.154,.038);
+  out.push({...m,p:Float32Array.from(m.p),n:Float32Array.from(m.n),col:Float32Array.from(m.col),tri:Uint32Array.from(m.tri),joints:Float32Array.from(m.joints),weights:Float32Array.from(m.weights)});
+ }
+ return out;
+}
+return{geometry,revision:'aegis-closed-fist-wrist-attach-v62-001'};
+});
+/* v62 research timeline: observables only; no causal or skill inference. */
+(function(root,factory){const api=factory(typeof module==='object'&&module.exports?require('./kinematics-v54.js'):root.__Kinematics54);if(typeof module==='object'&&module.exports)module.exports=api;root.__Timeline62=api;})(typeof globalThis==='object'?globalThis:this,function(K){
+'use strict';
+const color={accelerating:'#58c99a',decelerating:'#f0a553',peak:'#ffdf64',low:'#929aa5',stable:'#929aa5',unavailable:'#d8dce2'};
+const types=['linear','angular'],units={linear:'model_units/s',angular:'rad/s'};
+const finite=x=>typeof x==='number'&&Number.isFinite(x);
+const defaultConfig={from:0,to:.7,change:.12,onset:.15,hold:3,prominence:.15,alignment:'raw'};
+function strictCompatibility(a,b,selected,metrics){
+ if(!a||!b)return{ok:false,reason:'missing_comparison_source'};
+ if(a.data.skeletonId!==b.data.skeletonId)return{ok:false,reason:'関節対応が検証されていないため比較不可',code:'skeleton_mismatch'};
+ if(a.metadata?.coordinateSystem&&b.metadata?.coordinateSystem&&a.metadata.coordinateSystem!==b.metadata.coordinateSystem)return{ok:false,reason:'coordinate_system_mismatch'};
+ if(a.metadata?.time_axis&&b.metadata?.time_axis&&a.metadata.time_axis!==b.metadata.time_axis)return{ok:false,reason:'time_axis_mismatch'};
+ if(a.metadata?.data_schema&&b.metadata?.data_schema&&a.metadata.data_schema!==b.metadata.data_schema)return{ok:false,reason:'data_schema_mismatch'};
+ for(const jointId of selected){
+  const aj=a.data.joints.find(j=>j.index===jointId),bj=b.data.joints.find(j=>j.index===jointId);
+  if(!aj||!bj||aj.index!==bj.index||aj.name!==bj.name)return{ok:false,reason:'関節対応が検証されていないため比較不可',code:'joint_identity_mismatch'};
+  if(!types.includes(metrics[jointId]||'linear'))return{ok:false,reason:'unsupported_metric'};
+ }
+ return{ok:true,quality:'same_skeleton_joint_id_name_metric_unit'};
+}
+function series(result,jointId,metric,config){
+ if(!types.includes(metric))throw Error('unsupported_metric');
+ const rows=result.byJoint[String(jointId)]||[],joint=result.data.joints.find(j=>j.index===jointId);
+ if(!rows.length||!joint)return null;
+ const speedName=metric==='angular'?'angular_speed':'linear_speed',changeName=metric==='angular'?'angular_speed_change':'linear_speed_change';
+ const times=rows.map(r=>r.time),speed=rows.map(r=>finite(r[speedName])?r[speedName]:null),changes=rows.map(r=>finite(r[changeName])?r[changeName]:null);
+ const states=K.states(speed,changes,config.change,metric==='angular'?.02:.01);
+ const peaks=K.peakCandidates(speed,times,config.from,config.to,{prominence:config.prominence}).candidates;
+ const onset=K.detectOnset(speed,times,config.from,config.to,config.onset,config.hold);
+ const top=peaks.reduce((a,b)=>!a||b.value>a.value?b:a,null);
+ const maxRate=Math.max(0,...changes.filter((v,i)=>times[i]>=config.from&&times[i]<=config.to&&finite(v)).map(Math.abs));
+ return {joint,jointId,metric,unit:units[metric],times,speed,changes,states,peaks,onset,peak:top,maxRate,source:result};
+}
+function at(row,time,config){
+ if(!row)return{state:'unavailable',time,reason:'missing_joint'};
+ const i=row.times.reduce((best,t,k)=>Math.abs(t-time)<Math.abs(row.times[best]-time)?k:best,0),dt=row.times.length>1?Math.abs(row.times[1]-row.times[0]):.02;
+ const peak=row.peaks.some(p=>Math.abs(p.time-time)<=dt*.51);
+ const state=time<config.from||time>config.to?'unavailable':peak?'peak':row.states[i].state;
+ const v=row.changes[i],radius=finite(v)&&row.maxRate>0?3+7*Math.min(1,Math.abs(v)/row.maxRate):3;
+ return{state,color:color[state],radius,time:row.times[i],speed:row.speed[i],signed_speed_change:v,unit:row.unit,normalized_within_joint:true,peak};
+}
+function analyze(a,b,selected,metrics,options={}){
+ const config={...defaultConfig,...options},compat=b?strictCompatibility(a,b,selected,metrics):{ok:true};
+ const rows=selected.map(jointId=>{const metric=metrics[jointId]||'linear';return{jointId,metric,X:series(a,jointId,metric,config),Y:compat.ok&&b?series(b,jointId,metric,config):null};});
+ const events=rows.filter(r=>r.X?.peak).map(r=>({joint_id:r.jointId,joint_name:r.X.joint.name,metric:r.metric,unit:r.X.unit,peak_time:r.X.peak.time,peak_value:r.X.peak.value,kind:'peak'}))
+   .sort((a,b)=>a.peak_time-b.peak_time||a.joint_id-b.joint_id).map((e,i,all)=>({...e,order:i+1,next_event_delta_ms:i+1<all.length?+(1000*(all[i+1].peak_time-e.peak_time)).toFixed(2):null}));
+ const yEvents=rows.filter(r=>r.Y?.peak).map(r=>({joint_id:r.jointId,time:r.Y.peak.time})).sort((x,y)=>x.time-y.time||x.joint_id-y.joint_id);
+ for(let i=0;i<yEvents.length;i++)yEvents[i].next_event_delta_ms=i+1<yEvents.length?(yEvents[i+1].time-yEvents[i].time)*1000:null;
+ for(const row of rows){
+  row.order=events.find(e=>e.joint_id===row.jointId)?.order??null;row.next_y_delta_ms=yEvents.find(e=>e.joint_id===row.jointId)?.next_event_delta_ms??null;
+  row.next_event_delta_ms=events.find(e=>e.joint_id===row.jointId)?.next_event_delta_ms??null;
+  row.delta=row.X&&row.Y?{peak_time_seconds:row.X.peak&&row.Y.peak?row.Y.peak.time-row.X.peak.time:null,
+    onset_time_seconds:row.X.onset.time!==null&&row.Y.onset.time!==null?row.Y.onset.time-row.X.onset.time:null,
+    peak_value_same_unit:row.X.peak&&row.Y.peak?row.Y.peak.value-row.X.peak.value:null,
+    phase_peak_position_pp:row.X.peak&&row.Y.peak?100*(row.Y.peak.time/b.data.duration-row.X.peak.time/a.data.duration):null,
+    unit:row.X.unit}:null;
+ }
+ return{config,compatibility:compat,rows,events,selected,metrics,source_x:{avatar:a.avatar,motion:a.motion,revision:a.asset.motion_revision_id},source_y:b?{avatar:b.avatar,motion:b.motion,revision:b.asset.motion_revision_id}:null,
+  restrictions:'Kinematic temporal relationships only: no force, torque, energy transfer, causation or skill ranking'};
+}
+function records(analysis){
+ const rows=[];for(const line of analysis.rows){for(const [side,row] of [['X',line.X],['Y',line.Y]]){if(!row)continue;
+  const p=row.peak,order=side==='X'?line.order:null;
+  const events=[{type:'peak',time:p?.time??null,value:p?.value??null},{type:'onset',time:row.onset.time,value:null}];
+  for(const e of events.filter(e=>e.time!==null)){const sample=at(row,e.time,analysis.config);
+   rows.push({motion_id:row.source.motion,source_motion_id:row.source.metadata?.motion_composition?.source||row.source.motion,avatar_id:row.source.avatar,
+    skeleton_id:row.source.data.skeletonId,joint_id:row.jointId,joint_name:row.joint.name,metric:row.metric,metric_unit:row.unit,
+    event_type:e.type,event_time:e.time,event_order:order,speed:e.value,signed_speed_change:sample?.signed_speed_change??null,state:sample?.state??'unavailable',
+    next_event_delta_ms:side==='X'?line.next_event_delta_ms:line.next_y_delta_ms,
+    comparison_motion_id:analysis.source_y?.motion??null,comparison_event_time:side==='X'&&e.type==='peak'?line.Y?.peak?.time??null:null,
+    event_time_delta_ms:side==='X'&&e.type==='peak'&&line.delta?.peak_time_seconds!==null?1000*line.delta.peak_time_seconds:null,
+    comparison_onset_delta_ms:line.delta?.onset_time_seconds==null?null:1000*line.delta.onset_time_seconds,
+    comparison_peak_value_delta:line.delta?.peak_value_same_unit??null,comparison_phase_peak_delta_pp:line.delta?.phase_peak_position_pp??null,
+    analysis_settings:analysis.config,source_asset_sha256:row.source.asset.source_asset_sha256,motion_revision_id:row.source.asset.motion_revision_id,comparison_side:side,
+    quality:'representative_local_peak_or_onset;not_force_or_causation'});
+  }
+ }}
+ rows.sort((a,b)=>a.event_time-b.event_time||((a.comparison_side==='X'?0:1)-(b.comparison_side==='X'?0:1)));
+ return rows;
+}
+function wave(row,width=500,config=defaultConfig,alignment='raw',sharedMax=null){
+ if(!row)return'';
+ const start=alignment==='phase'?0:config.from,end=alignment==='phase'?1:config.to,valid=row.times.map((t,i)=>({x:alignment==='phase'?t/row.source.data.duration:t,y:row.speed[i]})).filter(p=>p.x>=start&&p.x<=end&&finite(p.y)),max=sharedMax||Math.max(1e-9,...valid.map(p=>p.y));
+ return valid.map((p,i)=>(i?'L':'M')+(45+(p.x-start)/Math.max(1e-8,end-start)*width).toFixed(2)+','+(75-60*p.y/max).toFixed(2)).join(' ');
+}
+return{color,types,units,defaultConfig,strictCompatibility,series,at,analyze,records,wave};
+});
+// v62 multi-joint kinematic timeline. Visible in page flow below viewer (never covers model).
+const TL62=window.__Timeline62;
+const timeline62={panel:null,analysis:null,selected:[],metrics:{},sourceX:null,sourceY:null,importX:null,importY:null,config:null,lastKey:'',enabled:false,show3d:false,latestModificationReport:[]};
+const tl62$=id=>document.getElementById(id);
+function tl62SourceFromCSV(csv){
+ const parsed=K54.legacyCSV(csv),rows=parsed.records;
+ if(!rows.length)throw Error('CSVにデータがありません');
+ const required=['data_schema','skeleton_id','joint_id','joint_name_source','coordinate_system','time_axis','linear_speed_unit','angular_speed_unit','original_animation_time_s'];
+ for(const key of required)if(!parsed.headers.includes(key))throw Error('required_csv_column_missing:'+key);
+ if(!['compound-eye-single-motion-v2','legacy-v1'].includes(rows[0].data_schema))throw Error('unsupported_data_schema');
+ const origin=rows[0],id=['skeleton_id','coordinate_system','time_axis','avatar_id','motion_id'];
+ if(rows.some(r=>id.some(k=>r[k]!==origin[k])))throw Error('mixed_skeleton_or_coordinate_system');
+ if(!['original_animation_seconds','original_animation_time_s'].includes(origin.time_axis))throw Error('timebase_not_supported');
+ const grouped=new Map();for(const r of rows){const k=Number(r.joint_id);if(!Number.isInteger(k))throw Error('invalid_joint_id');if(!grouped.has(k))grouped.set(k,[]);grouped.get(k).push(r);}
+ const joints=[],byJoint={},num=x=>x===''||x==null?null:Number.isFinite(Number(x))?Number(x):null;
+ let times=null;
+ for(const [jointId,group] of grouped){
+  const names=new Set(group.map(r=>r.joint_name_source));if(names.size!==1)throw Error('inconsistent_joint_name');
+  const t=group.map(r=>num(r.original_animation_time_s));
+  if(t.some((x,i)=>!Number.isFinite(x)||(i>0&&x<=t[i-1])))throw Error('nonmonotonic_time');
+  if(times&&(t.length!==times.length||t.some((x,i)=>x!==times[i])))throw Error('joint_timebase_mismatch');
+  times=t;
+  if(group.some(r=>r.linear_speed_unit!=='model_units/s'||r.angular_speed_unit!=='rad/s'))throw Error('unit_mismatch');
+  const joint={index:jointId,name:group[0].joint_name_source};joints.push(joint);
+  byJoint[String(jointId)]=group.map(r=>({time:num(r.original_animation_time_s),linear_speed:num(r.linear_speed_model_units_per_s),angular_speed:num(r.angular_speed_rad_per_s),
+   linear_speed_change:num(r.linear_speed_change_rate_model_units_per_s2),angular_speed_change:num(r.angular_speed_change_rate_rad_per_s2)}));
+ }
+ return {avatar:origin.avatar_id,motion:origin.motion_id,data:{skeletonId:origin.skeleton_id,duration:times.at(-1),joints},byJoint,times,
+  asset:{source_asset_sha256:origin.source_asset_sha256||'unrecorded',motion_revision_id:origin.motion_revision_id||'unrecorded'},
+  metadata:{coordinateSystem:origin.coordinate_system,data_schema:origin.data_schema,time_axis:origin.time_axis,source_type:'imported_csv'}};
+}
+function tl62Models(){for(const id of ['tl62X','tl62Y']){const el=tl62$(id),current=el.value;el.replaceChildren();for(const [value,label] of [['xbot','X Bot'],['ybot','Y Bot'],['aegisEmber','AEGIS NAVY'],['aegisSoldier','AEGIS SOLDIER'],['csv','読込CSV']]){const op=document.createElement('option');op.value=value;op.textContent=label;el.append(op);}el.value=current||((id==='tl62X')?'xbot':'ybot');}}
+function tl62Motions(id,avatar){const el=tl62$(id),old=el.value;el.replaceChildren();for(const m of avatar==='csv'?['uploaded_csv']:avatar==='xbot'||avatar==='ybot'?['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook']:['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch']){const o=document.createElement('option');o.value=m;o.textContent=MOTION_NAMES[m]||m;el.append(o);}el.value=[...el.options].some(x=>x.value===old)?old:el.options[0]?.value;}
+function tl62Source(side){const avatar=tl62$('tl62'+side).value,motion=tl62$('tl62Motion'+side).value;if(avatar==='csv')return timeline62['import'+side];return v54ExportData(avatar,motion);}
+function tl62Preferred(joints){
+ const order=['RightUpLeg','R_UpperLeg','Hips','Pelvis','Spine2','Chest','RightShoulder','R_UpperArm','RightArm','RightForeArm','R_Forearm','RightHand','R_Hand'];
+ const selected=[];for(const name of order){const j=joints.find(x=>x.name===name);if(j&&!selected.includes(j.index))selected.push(j.index);}
+ return selected.length?selected: joints.slice(0,7).map(j=>j.index);
+}
+function tl62JointUI(){
+ const source=timeline62.sourceX;if(!source)return;const parent=tl62$('tl62Joints');parent.replaceChildren();
+ for(const j of source.data.joints){
+  const label=document.createElement('label');label.className='tl62Joint';const check=document.createElement('input');check.type='checkbox';check.checked=timeline62.selected.includes(j.index);check.onchange=()=>{timeline62.selected=check.checked?[...timeline62.selected,j.index]:timeline62.selected.filter(x=>x!==j.index);tl62Analyze(false);};
+  const name=document.createElement('span');name.textContent=(typeof v48JointLabel==='function'?v48JointLabel(j):j.name)+' ('+j.name+' #'+j.index+')';const m=document.createElement('select');
+  for(const [value,text] of [['linear','移動速度'],['angular','角速度']]){const op=document.createElement('option');op.value=value;op.textContent=text;m.append(op);}
+  m.value=timeline62.metrics[j.index]||'linear';m.onchange=()=>{timeline62.metrics[j.index]=m.value;tl62Analyze(false);};label.append(check,name,m);parent.append(label);
+ }
+}
+function tl62Compute(){
+ const x=tl62Source('X'),y=tl62$('tl62Compare').checked?tl62Source('Y'):null;
+ if(!x)throw Error('XのCSVを読み込んでください');
+ timeline62.sourceX=x;timeline62.sourceY=y;
+ const key=x.data.skeletonId+'|'+x.data.joints.map(j=>j.index).join(',');
+ if(timeline62.lastKey!==key){timeline62.selected=tl62Preferred(x.data.joints);timeline62.metrics={};timeline62.lastKey=key;tl62JointUI();}
+ const config={from:Math.max(0,Number(tl62$('tl62From').value)||0),to:Number(tl62$('tl62To').value)||Math.min(.7,x.data.duration),
+  change:Math.max(0,Number(tl62$('tl62Change').value)||.12),onset:Math.max(0,Number(tl62$('tl62Onset').value)||.15),
+  hold:Math.max(2,Math.round(Number(tl62$('tl62Hold').value)||3)),prominence:Math.max(.05,Math.min(.9,Number(tl62$('tl62Prom').value)||.15)),
+  alignment:tl62$('tl62Alignment').value};
+ config.to=Math.min(x.data.duration,Math.max(config.from+.002,config.to));timeline62.config=config;
+ timeline62.analysis=TL62.analyze(x,y,timeline62.selected,timeline62.metrics,config);
+ return timeline62.analysis;
+}
+function tl62Draw(){
+ const a=timeline62.analysis;if(!a)return;
+ const msg=tl62$('tl62Quality');msg.textContent=a.compatibility.ok?'比較品質：'+a.compatibility.quality+' ／ ピーク順序は時刻順（因果・力の順序ではありません）':a.compatibility.reason;
+ const width=540,from=a.config.from,to=a.config.to;
+ const fmt=x=>x==null?'—':Number(x).toFixed(3),svgNS='http://www.w3.org/2000/svg',svg=document.createElementNS(svgNS,'svg');
+ const rowH= a.source_y?62:36,svgHeight=28+Math.max(1,a.rows.length)*rowH;
+ svg.setAttribute('viewBox','0 0 890 '+svgHeight);svg.setAttribute('role','img');svg.setAttribute('aria-label','身体部位ごとの運動学的速度変化と局所ピーク');svg.style.width='100%';svg.style.minWidth='700px';
+ const node=(tag,attrs,text)=>{const el=document.createElementNS(svgNS,tag);for(const [k,v] of Object.entries(attrs||{}))el.setAttribute(k,String(v));if(text!==undefined)el.textContent=text;svg.append(el);return el;};
+ const x=t=>190+Math.max(0,Math.min(1,(t-from)/Math.max(.001,to-from)))*390;
+ node('text',{x:196,y:13,fill:'#bfe2f1','font-size':12},'元アニメーション時刻（秒）');
+ for(let k=0;k<=5;k++){const t=from+(to-from)*k/5;node('line',{x1:x(t),x2:x(t),y1:22,y2:svgHeight,stroke:'#31516b','stroke-width':.7});node('text',{x:x(t)-10,y:27,fill:'#b2d7e5','font-size':10},t.toFixed(2));}
+ a.rows.forEach((r,i)=>{
+  const y=45+i*rowH;
+  node('text',{x:5,y:y+6,fill:'#e0edf4','font-size':12},(r.order?r.order+' ':'')+(r.X?.joint.name||'#'+r.jointId));
+  const render=(part,side,offset)=>{
+   if(!part)return;
+   const cy=y+offset;node('text',{x:150,y:cy+4,fill:'#d2e9f1','font-size':11},side);
+   const count=Math.max(1,Math.ceil(part.times.length/55));
+   for(let j=0;j<part.times.length;j+=count){const t=part.times[j];if(t<from||t>to)continue;const status=TL62.at(part,t,a.config);
+    const circle=node('circle',{cx:x(t),cy,r:status.radius,fill:side==='X'?status.color:'none',stroke:status.color,'stroke-width':side==='X'?.9:2.1,'data-joint-id':r.jointId,'data-time':t});
+    circle.style.cursor='pointer';circle.addEventListener('click',()=>tl62Seek(t,side));
+    const title=document.createElementNS(svgNS,'title');title.textContent=part.joint.name+' '+side+' '+t.toFixed(3)+'秒 '+status.state+' '+part.unit;circle.append(title);
+   }
+   if(part.peak){const t=part.peak.time;if(t>=from&&t<=to){const k=node('circle',{cx:x(t),cy,r:6,fill:side==='X'?TL62.color.peak:'none',stroke:TL62.color.peak,'stroke-width':2.5});k.style.cursor='pointer';k.onclick=()=>tl62Seek(t,side);}}
+  };
+  render(r.X,'X',0);if(a.source_y&&a.compatibility.ok)render(r.Y,'Y',20);
+  const p=r.X?.peak,delta=r.delta?.peak_time_seconds,num=p?fmt(p.time)+'s / '+fmt(p.value)+' '+r.X.unit:'ピークなし';
+  node('text',{x:596,y:y+5,fill:'#edf6fa','font-size':11},num);
+  node('text',{x:596,y:y+19,fill:'#bedbe8','font-size':10},'前後: '+(r.X?.states?.[Math.max(0,r.X.times.findIndex(t=>t>=p?.time)-1)]?.state||'—')+' → '+(r.X?.states?.[Math.min(r.X.states.length-1,r.X.times.findIndex(t=>t>=p?.time)+1)]?.state||'—')+' / 次 '+(r.next_event_delta_ms==null?'—':r.next_event_delta_ms+'ms'));
+  if(a.source_y&&a.compatibility.ok){
+   node('text',{x:596,y:y+36,fill:'#d3d8ef','font-size':10},'Y peak '+fmt(r.Y?.peak?.time)+'s  Δ '+(delta===null||delta===undefined?'—':(1000*delta).toFixed(1)+'ms')+' / 開始Δ '+(r.delta?.onset_time_seconds==null?'—':(1000*r.delta.onset_time_seconds).toFixed(1)+'ms'));
+   node('text',{x:596,y:y+51,fill:'#d3d8ef','font-size':10},'ピーク値Δ '+fmt(r.delta?.peak_value_same_unit)+' '+(r.X?.unit||'')+' / 局面Δ '+fmt(r.delta?.phase_peak_position_pp)+'% / Y次 '+(r.next_y_delta_ms==null?'—':r.next_y_delta_ms.toFixed(1)+'ms'));
+  }
+ });
+ const target=tl62$('tl62Graphic');target.replaceChildren(svg);
+ tl62$('tl62Order').replaceChildren(...a.events.map(e=>{const b=document.createElement('button');b.type='button';b.textContent=e.order+' '+e.joint_name+' '+fmt(e.peak_time)+'秒'+(e.next_event_delta_ms==null?'':' → +'+e.next_event_delta_ms+'ms');b.onclick=()=>tl62Seek(e.peak_time);return b;}));
+ tl62Wave();
+}
+function tl62Wave(){
+ const a=timeline62.analysis;if(!a)return;const selected=Number(tl62$('tl62WaveJoint').value)||timeline62.selected[0],r=a.rows.find(r=>r.jointId===selected)||a.rows[0];if(!r)return;
+ const mode=tl62$('tl62Alignment').value,container=tl62$('tl62Wave');container.replaceChildren();
+ const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 640 105');svg.style.width='100%';
+ const sharedMax=Math.max(.00001,...[r.X,r.Y].filter(Boolean).flatMap(row=>row.speed.filter(x=>Number.isFinite(x))));
+ for(const [side,row] of [['X',r.X],['Y',r.Y]]){if(!row)continue;
+  const poly=document.createElementNS(ns,'path');poly.setAttribute('d',TL62.wave(row,520,a.config,mode,sharedMax));poly.setAttribute('fill','none');poly.setAttribute('stroke','#d3edf8');poly.setAttribute('stroke-width',2.3);if(side==='Y')poly.setAttribute('stroke-dasharray','7 5');svg.append(poly);
+  if(row.peak){const event=row.peak,ratio=mode==='phase'?event.time/row.source.data.duration:(event.time-a.config.from)/Math.max(.001,a.config.to-a.config.from);
+   const cx=45+ratio*520,cy=75-60*event.value/sharedMax;const marker=document.createElementNS(ns,'circle');
+   marker.setAttribute('cx',cx);marker.setAttribute('cy',cy);marker.setAttribute('r',5);marker.setAttribute('stroke',TL62.color.peak);marker.setAttribute('stroke-width',2);
+   marker.setAttribute('fill',side==='X'?TL62.color.peak:'none');marker.style.cursor='pointer';marker.onclick=()=>tl62Seek(event.time,side);svg.append(marker);
+  }
+ }
+ container.append(svg);tl62$('tl62WaveLegend').textContent='X：実線　Y：破線（色は状態を表すため、系列の区別は線種で表示） / '+(mode==='raw'?'元時刻':'局面0〜100％');
+}
+function tl62Seek(time,side='X'){if(!Number.isFinite(time))return;const a=timeline62.analysis;if(!a)return;const target=side==='Y'&&a.compatibility.ok&&a.source_y?a.source_y:a.source_x,model=target.avatar,motion=target.motion;if(model!=='csv'){if(state.model!==model)changeModel(model);if(state.motion!==motion)setMotion(motion);v54Seek(time);}else{timeline62.importCursor=time;}tl62$('tl62Cursor').textContent='再生位置：'+time.toFixed(3)+'秒';}
+function tl62Analyze(reload=true){try{
+ const a=tl62Compute();if(!timeline62.latestModificationReport.length){try{timeline62.latestModificationReport=v62RecalculateModifications();}catch(e){console.warn('YBot peak report not yet available',e.message);}}tl62$('tl62WaveJoint').replaceChildren(...a.rows.map(r=>{const o=document.createElement('option');o.value=r.jointId;o.textContent=r.X?.joint.name||r.jointId;return o;}));tl62Draw();timeline62.enabled=true;
+ }catch(e){tl62$('tl62Quality').textContent='解析不可：'+e.message;timeline62.analysis=null;}}
+function tl62Export(type){const a=timeline62.analysis;if(!a)return;const rows=TL62.records(a),analysis={schema:'compound-eye-kinematic-chain-v62',source_x:a.source_x,source_y:a.source_y,analysis_settings:a.config,events:rows,peak_order:a.events,ybot_modifications:timeline62.latestModificationReport,limitations:a.restrictions};
+ if(type==='json')return downloadExperimentFile('kinematic-chain-v62.json',JSON.stringify(analysis,null,2),'application/json;charset=utf-8');
+ const keys=Object.keys(rows[0]||{}),enc=v=>'"'+String(typeof v==='object'?JSON.stringify(v):v??'').replace(/"/g,'""')+'"';
+ downloadExperimentFile('kinematic-chain-v62.csv',[keys.map(enc).join(','),...rows.map(r=>keys.map(k=>enc(r[k])).join(','))].join('\r\n'),'text/csv;charset=utf-8');
+}
+function tl62Init(){
+ const style=document.createElement('style');style.textContent=`
+ #tl62Panel{margin:12px 0;background:#10293e;border:1px solid #45718b;border-radius:13px;color:#edf9ff;padding:12px;max-width:100%;box-sizing:border-box}#tl62Panel summary{cursor:pointer;font-weight:700;font-size:15px}
+ #tl62Panel .tl62Tools{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin:9px 0}#tl62Panel label{font-size:12px}#tl62Panel select,#tl62Panel input{background:#19364b;color:#f0f8fa;border:1px solid #527990;border-radius:5px;padding:5px;max-width:100%}
+ #tl62Panel input[type=number]{width:75px}#tl62Joints{display:grid;grid-template-columns:repeat(auto-fit,minmax(195px,1fr));gap:5px;max-height:155px;overflow:auto}
+ .tl62Joint{display:flex;align-items:center;gap:5px;padding:3px;border-bottom:1px solid #31546c}.tl62Joint select{max-width:85px}.tl62Joint span{flex:1}
+ #tl62Graphic{overflow-x:auto;background:#071d2d;border-radius:9px}#tl62Order{display:flex;gap:5px;flex-wrap:wrap}#tl62Panel button{padding:6px;font-size:12px}
+ #tl62Panel .tl62Notice{font-size:12px;line-height:1.6;border-top:1px solid #42657c;margin-top:8px;padding-top:9px;color:#cce6f1}
+ @media(max-width:650px){#tl62Panel{padding:9px}#tl62Joints{grid-template-columns:1fr}#tl62Panel .tl62Tools{gap:5px}}
+ `;document.head.append(style);
+ const panel=document.createElement('details');panel.id='tl62Panel';panel.innerHTML=`
+ <summary>運動連鎖タイムライン — 複数部位の増速・減速・ピークを時刻比較</summary>
+ <div class="tl62Tools"><label>X：<select id="tl62X"></select></label><label>動作：<select id="tl62MotionX"></select></label><label><input id="tl62Compare" type="checkbox" checked> X／Y比較</label><label><input id="tl62Sync3D" type="checkbox" checked> 3Dマーカー同期</label>
+ <label>Y：<select id="tl62Y"></select></label><label>動作：<select id="tl62MotionY"></select></label><button id="tl62Run">解析・再計算</button></div>
+ <details><summary>対象部位（追加・削除・単位）</summary><div id="tl62Joints"></div></details>
+ <div class="tl62Tools"><label>開始<input type="number" id="tl62From" value="0" step=".01" min="0"></label><label>終了<input type="number" id="tl62To" value=".7" step=".01" min=".01"></label>
+ <label>速度変化閾値<input type="number" id="tl62Change" value=".12" min="0" step=".01"></label><label>開始閾値<input type="number" id="tl62Onset" value=".15" min="0" step=".01"></label>
+ <label>持続<input type="number" id="tl62Hold" value="3" min="2" max="10"></label><label>ピーク割合<input type="number" id="tl62Prom" value=".15" step=".01" min=".05" max=".9"></label>
+ <label>波形位置<select id="tl62Alignment"><option value="raw">元時刻</option><option value="phase">局面0〜100％</option></select></label></div>
+ <div id="tl62Quality" role="status"></div><div id="tl62Graphic"></div><div id="tl62Cursor">再生位置：0.000秒</div>
+ <strong>代表ピーク時刻順・隣接差</strong><div id="tl62Order"></div>
+ <details><summary>選択部位のX／Y速度波形</summary><select id="tl62WaveJoint"></select><div id="tl62Wave"></div><div id="tl62WaveLegend"></div></details>
+ <div class="tl62Tools"><button id="tl62JSON">イベントJSON出力</button><button id="tl62CSV">イベントCSV出力</button><button id="tl62ModRecalc">YBot指定量と再計算結果</button></div>
+ <details><summary>YBot動作差分JSON（パンチA〜D）</summary><p>変更する関節ID・時間差・回転量・速度波形等をJSONで指定します。変更後の値は運動学を再計算して確認してください。</p>
+ <textarea id="tl62YBotJSON" rows="9" style="width:100%;box-sizing:border-box;background:#0a1e2d;color:#effafa"></textarea><button id="tl62YBotApply">JSONを検証して適用</button><button id="tl62YBotExport">変更JSON出力</button><pre id="tl62YBotReport" style="white-space:pre-wrap;font-size:11px"></pre></details>
+ <details><summary>実測CSV X／Y（実験前の互換性検査）</summary><label>X CSV<input id="tl62CSVX" type="file" accept=".csv,text/csv"></label><label>Y CSV<input id="tl62CSVY" type="file" accept=".csv,text/csv"></label><p>同一骨格・関節ID・座標系・時刻軸・単位を検証します。対応が未検証なら比較不可。</p></details>
+ <p class="tl62Notice">表示される順序・増速・減速・ピークは、位置・姿勢から計算した運動学的特徴です。力・関節トルク・エネルギー伝達・技能の優劣を示すものではありません。円の大きさは各部位・各指標の区間内 |速度変化率| 最大値を100％とした相対値です。異なる部位や異なる単位間の力の大小は比較できません。● X・○ Y／緑 増速・橙 減速・黄 ピーク・灰 低活動・薄灰 欠損。</p>`;
+ const anchor=tl62$('viewerUpdatedAt')||tl62$('screen');anchor.insertAdjacentElement('afterend',panel);timeline62.panel=panel;timeline62.show3d=true;
+ tl62Models();tl62Motions('tl62MotionX','xbot');tl62Motions('tl62MotionY','ybot');
+ for(const side of ['X','Y'])tl62$('tl62'+side).onchange=()=>{tl62Motions('tl62Motion'+side,tl62$('tl62'+side).value);timeline62.lastKey='';tl62Analyze();};
+ tl62$('tl62Sync3D').onchange=()=>{timeline62.show3d=tl62$('tl62Sync3D').checked;v54.visualOverlay?.replaceChildren();v54.markerNodes.clear();};
+ tl62$('tl62Run').onclick=()=>{timeline62.lastKey='';tl62Analyze();};
+ tl62$('tl62Alignment').onchange=tl62Wave;tl62$('tl62WaveJoint').onchange=tl62Wave;
+ tl62$('tl62JSON').onclick=()=>tl62Export('json');tl62$('tl62CSV').onclick=()=>tl62Export('csv');
+ tl62$('tl62YBotJSON').value=JSON.stringify(v62YConfig,null,2);
+ tl62$('tl62YBotApply').onclick=()=>{try{const config=v62SetYConfig(JSON.parse(tl62$('tl62YBotJSON').value));timeline62.latestModificationReport=v62RecalculateModifications();tl62$('tl62YBotReport').textContent=JSON.stringify(timeline62.latestModificationReport,null,2);tl62Analyze();}catch(e){tl62$('tl62YBotReport').textContent='適用不可：'+e.message;}};
+ tl62$('tl62YBotExport').onclick=()=>downloadExperimentFile('ybot-modifications.json',JSON.stringify(v62YConfig,null,2),'application/json;charset=utf-8');
+ tl62$('tl62ModRecalc').onclick=()=>{try{timeline62.latestModificationReport=v62RecalculateModifications();tl62$('tl62YBotReport').textContent=JSON.stringify(timeline62.latestModificationReport,null,2);tl62$('tl62YBotReport').scrollIntoView({block:'nearest'});}catch(e){tl62$('tl62Quality').textContent='再計算失敗：'+e.message;}};
+ for(const side of ['X','Y'])tl62$('tl62CSV'+side).onchange=async e=>{try{const file=e.target.files[0];if(!file)return;if(file.size>4e6)throw Error('CSV exceeds 4MB');timeline62['import'+side]=tl62SourceFromCSV(await file.text());tl62$('tl62'+side).value='csv';tl62Motions('tl62Motion'+side,'csv');timeline62.lastKey='';tl62Analyze();}catch(err){tl62$('tl62Quality').textContent='CSV読込不可：'+err.message;}};
+ panel.addEventListener('toggle',()=>{if(panel.open){timeline62.enabled=true;tl62Analyze();}else timeline62.enabled=false;});
+ window.__TimelineUI62={active:()=>timeline62.enabled&&timeline62.show3d&&!!timeline62.analysis,current:()=>timeline62.analysis,at:TL62.at,seek:tl62Seek,refresh:tl62Analyze,loadCSV:tl62SourceFromCSV,source:timeline62};
+}
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -1647,13 +2065,13 @@ if(skinned){const fixed=window.__AegisGeometry55.prepare({modelId,materialName:m
 if(modelId==='aegisEmber')window.__AegisDetails58.recolor(mat?.name||'',col);
 let gpu=makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned);
 gpu.materialName=mat?.name||'';
-if(modelId==='aegisEmber'){gpu.v57Equipment=true;gpu.v57OriginalVisor=window.__AegisDetails58.isOriginalVisorBar(gpu.materialName,p,joints);}
+if(modelId==='aegisEmber'){gpu.v62LegacyGloves=(gpu.materialName==='gloves');gpu.v57Equipment=true;gpu.v57OriginalVisor=window.__AegisDetails58.isOriginalVisorBar(gpu.materialName,p,joints);}
 geo.push(gpu);
 for(let i=0;i<p.length;i+=3){for(let k=0;k<3;k++){min[k]=Math.min(min[k],p[i+k]);max[k]=Math.max(max[k],p[i+k]);}}}}
-if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers(),...window.__AegisVisor60.enhance(window.__AegisDetails58.geometry(),chestBarQuads)]){
+if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers(),...window.__AegisVisor60.enhance(window.__AegisDetails58.geometry(),chestBarQuads),...window.__AegisFists62.geometry()]){
  if(jet.name.startsWith('jet_')&&!jet.animation&&!jet.name.includes('tachometer'))window.__AegisDetails58.recolor(jet.name,jet.col);
  const gpu=makeGpuMesh(jet.p,null,jet.col,jet.tri,jet.joints,jet.weights,meshNodeIndices[0],true);
- gpu.materialName=jet.name;gpu.v57Equipment=true;gpu.v57Animation=jet.animation||null;gpu.v57Bone=jet.bone??1;gpu.v57CameraCount=jet.camera_count||0;gpu.v59StrokeWidth=jet.stroke_width_model_units||null;gpu.v59ChestReference=jet.chest_reference_widths||null;geo.push(gpu);
+ gpu.materialName=jet.name;gpu.v62OnlyMotion=jet.onlyMotion||null;gpu.v57Equipment=true;gpu.v57Animation=jet.animation||null;gpu.v57Bone=jet.bone??1;gpu.v57CameraCount=jet.camera_count||0;gpu.v59StrokeWidth=jet.stroke_width_model_units||null;gpu.v59ChestReference=jet.chest_reference_widths||null;geo.push(gpu);
 }
 if(!geo.length)throw Error('no mesh primitives');
 let skin=j.skins?.[0],invBind=skin?accessor(j,bin,skin.inverseBindMatrices):null;
@@ -2054,6 +2472,7 @@ if(md.gaitBlendPose&&state.gameMode&&['armor_walk','armor_run','armor_breathe'].
  }
  if(elapsed>=1)md.gaitBlendPose=null;
 }
+if(state.model==='ybot')v62ApplyYMotion(md,motion,t,T,R,S);
 md.poseRot=R;md.poseTrans=T;md.poseScale=S;
 const local=nodes.map((n,i)=>n.matrix?new Float32Array(n.matrix):matTRS(T[i],R[i],S[i]));const world=md.world;
 function calc(i){if(world[i])return world[i];world[i]=nodes[i].parent>=0?mul(calc(nodes[i].parent),local[i]):local[i];return world[i];}
@@ -2073,7 +2492,7 @@ function partMask(idx){
   6:['core','leftUpper','leftLower','rightUpper','rightLower','pelvis']
  };
  let name=(mapping[state.eyeCount]||[])[idx-1];
- if(state.model==='xbot'&&name){
+ if(['xbot','ybot'].includes(state.model)&&name){
    name=name.startsWith('left')?'right'+name.slice(4):
         name.startsWith('right')?'left'+name.slice(5):name;
  }
@@ -2115,6 +2534,9 @@ function renderMesh(pv,fit,region,modelOverride=null,ghostAlpha=0){gl.useProgram
  let md=modelOverride||modelData;
  if(!modelOverride&&A58.models.includes(state.model))window.__AegisVisor60.updateDrawMatrices(md,v58Appearance.visor[state.model]);
 for(const mesh of md.geo){
+ if(mesh.v62OnlyMotion&&md.currentMotion!==mesh.v62OnlyMotion)continue;
+ if(mesh.v62LegacyGloves&&md.currentMotion==='armor_punch')continue;
+ gl.uniform1f(shaderProg.uYBotTint,ghostAlpha>0?0:(state.model==='ybot'&&md===modelData)?1:0);
  if(mesh.v57OriginalVisor)continue;
  const finish=mesh.v57Equipment?window.__AegisDetails58.finish(mesh.materialName,state.model):'body_navy';
  gl.uniform1f(shaderProg.uFinishMode,ghostAlpha>0?0:finish==='grey'?1:finish==='yellow'?2:finish==='white'?3:0);
@@ -2126,12 +2548,12 @@ for(const mesh of md.geo){
 let nodeWorld=md.world[mesh.modelNode]||ID();gl.uniformMatrix4fv(shaderProg.uWorld,false,mesh.skinned?fit:mul(fit,nodeWorld));
 for(const [attr,buffer,components] of [['aP',mesh.p,3],['aN',mesh.n,3],['aColor',mesh.col,4],['aJoints',mesh.joint,4],['aWeights',mesh.weight,4]]){let loc=shaderProg[attr];if(loc<0)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,components,gl.FLOAT,false,0,0);}
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_INT,0);}}
-function getModel(id){if(id==='aegisSoldier')return getModel('aegisEmber');if(id==='crystal')return modelCache.crystal||(modelCache.crystal=makeCrystal());if(!modelCache[id])modelCache[id]=parseGLB(window.ASSETS[id],id);return modelCache[id];}
+function getModel(id){if(id==='ybot')return v62YModel();if(id==='aegisSoldier')return getModel('aegisEmber');if(id==='crystal')return modelCache.crystal||(modelCache.crystal=makeCrystal());if(!modelCache[id])modelCache[id]=parseGLB(window.ASSETS[id],id);return modelCache[id];}
 function makeCrystal(){// A simple faceted volume for viewing-angle comparison
 const p=[0,1.6,0,0,.0,0],tri=[],N=9,rings=[[],[],[]];for(let layer=0;layer<3;layer++){const radx=[.38,.62,.30][layer],yy=[1.22,.75,.24][layer];for(let j=0;j<N;j++){let a=j*2*Math.PI/N;rings[layer].push(p.length/3);p.push(Math.cos(a)*radx,yy,Math.sin(a)*radx);}}
 for(let j=0;j<N;j++){let n=(j+1)%N;tri.push(0,rings[0][j],rings[0][n]);for(let layer=0;layer<2;layer++){let a=rings[layer][j],b=rings[layer][n],c=rings[layer+1][j],d=rings[layer+1][n];tri.push(a,c,b,b,c,d);}tri.push(rings[2][n],rings[2][j],1);}
 let pos=Float32Array.from(p),ind=Uint32Array.from(tri),col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set([.47,.82,.99,1],i*4);return{geo:[makeGpuMesh(pos,normals(pos,ind),col,ind,null,null,0,false)],nodes:[{translation:[0,0,0],rotation:[0,0,0,1],scale:[1,1,1],children:[],parent:-1}],skin:null,animations:[],min:[-.62,0,-.62],max:[.62,1.6,.62],bones:new Float32Array(512),world:[ID()]};}
-function changeModel(id){try{if(id==='aegisCeramic')id='aegisEmber';if(id==='aegisSoldier'&&typeof window.ASSETS.aegisEmber==='string'){toast('AEGIS SOLDIER 準備中');return;}if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);const previousAvatar=state.model;state.model=id;state.selectedLensOnly=-1;state.selectedLensIndices=[];restoreVRAlignment();if(previousAvatar!==id)recordExperimentEvent('avatar_change',{from:previousAvatar,to:id});partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=id==='xbot'?'xbot_punch':(['aegisEmber','aegisSoldier'].includes(id))?'armor_power_punch':id==='man'?'walk':(['armor','aegisCeramic'].includes(id)?'armor_breathe':'idle');if(!state.viewerZoomUserSet){if(id==='heart')state.zoom=.83;else state.zoom=1;}renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
+function changeModel(id){try{if(id==='aegisCeramic')id='aegisEmber';if(id==='aegisSoldier'&&typeof window.ASSETS.aegisEmber==='string'){toast('AEGIS SOLDIER 準備中');return;}if(id!=='crystal'&&typeof window.ASSETS[id]==='string'){toast('モデル準備中です。少し経ってから選択してください');return;}modelData=getModel(id);const previousAvatar=state.model;state.model=id;state.selectedLensOnly=-1;state.selectedLensIndices=[];restoreVRAlignment();if(previousAvatar!==id)recordExperimentEvent('avatar_change',{from:previousAvatar,to:id});partMaskCache={};let mn=modelData.min,mx=modelData.max,sz=Math.max(mx[1]-mn[1],mx[0]-mn[0],mx[2]-mn[2],.1);state.fitScale=1.75/sz;state.modelCenter=[(mn[0]+mx[0])/2,(mn[1]+mx[1])/2,(mn[2]+mx[2])/2];state.center=[0,.88,0];state.motion=['xbot','ybot'].includes(id)?'xbot_punch':(['aegisEmber','aegisSoldier'].includes(id))?'armor_power_punch':id==='man'?'walk':(['armor','aegisCeramic'].includes(id)?'armor_breathe':'idle');if(!state.viewerZoomUserSet){if(id==='heart')state.zoom=.83;else state.zoom=1;}renderUI();showStatus('モデル: '+MODEL_NAMES[id]+' · '+modelData.geo.length+'メッシュ（v11の元モデルを使用）');}catch(e){console.error(e);showStatus('モデル読込エラー: '+e.message);}}
 function createTargets(w,h,count){offscreen.forEach(t=>{gl.deleteFramebuffer(t.fbo);gl.deleteTexture(t.tex);gl.deleteRenderbuffer(t.depth)});offscreen=[];fboWidth=w;fboHeight=h;for(let i=0;i<count;i++){let tex=gl.createTexture();gl.bindTexture(gl.TEXTURE_2D,tex);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,w,h,0,gl.RGBA,gl.UNSIGNED_BYTE,null);let depth=gl.createRenderbuffer();gl.bindRenderbuffer(gl.RENDERBUFFER,depth);gl.renderbufferStorage(gl.RENDERBUFFER,gl.DEPTH_COMPONENT16,w,h);let fbo=gl.createFramebuffer();gl.bindFramebuffer(gl.FRAMEBUFFER,fbo);gl.framebufferTexture2D(gl.FRAMEBUFFER,gl.COLOR_ATTACHMENT0,gl.TEXTURE_2D,tex,0);gl.framebufferRenderbuffer(gl.FRAMEBUFFER,gl.DEPTH_ATTACHMENT,gl.RENDERBUFFER,depth);if(gl.checkFramebufferStatus(gl.FRAMEBUFFER)!==gl.FRAMEBUFFER_COMPLETE)throw Error('個眼用映像の生成に失敗しました');offscreen.push({fbo,tex,depth});}gl.bindFramebuffer(gl.FRAMEBUFFER,null);}
 function resize(){let box=scope.getBoundingClientRect(),ratio=Math.min(devicePixelRatio||1,state.vr?1.1:1.4);let w=Math.max(2,Math.floor(box.width*ratio)),h=Math.max(2,Math.floor(box.height*ratio));if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h;}return{w,h};}
 
@@ -2476,7 +2898,7 @@ function renderArena(pv){
  gl.useProgram(shaderProg);gl.uniformMatrix4fv(shaderProg.uPV,false,pv);
  gl.uniformMatrix4fv(shaderProg.uWorld,false,ID());
  gl.uniform1i(shaderProg.uSkin,0);gl.uniform1i(shaderProg.uPartActive,0);
- gl.uniform1f(shaderProg.uFinishMode,0);gl.uniform1f(shaderProg.uAppearanceMode,0);gl.uniform1f(shaderProg.uAppearanceBrightness,1);gl.uniform1f(shaderProg.uOutsideAlpha,1);gl.uniform1f(shaderProg.uNavy,0);gl.uniform1f(shaderProg.uGhostAlpha,0);gl.uniform1f(shaderProg.uExclusive,-1);gl.uniform1f(shaderProg.uSoldierTube,0);
+ gl.uniform1f(shaderProg.uFinishMode,0);gl.uniform1f(shaderProg.uYBotTint,0);gl.uniform1f(shaderProg.uAppearanceMode,0);gl.uniform1f(shaderProg.uAppearanceBrightness,1);gl.uniform1f(shaderProg.uOutsideAlpha,1);gl.uniform1f(shaderProg.uNavy,0);gl.uniform1f(shaderProg.uGhostAlpha,0);gl.uniform1f(shaderProg.uExclusive,-1);gl.uniform1f(shaderProg.uSoldierTube,0);
  const m=arenaGpu;
  for(const [attr,buff,n] of [['aP',m.p,3],['aN',m.n,3],['aColor',m.col,4],['aJoints',m.joint,4],['aWeights',m.weight,4]]){
   const loc=shaderProg[attr];if(loc<0)continue;
@@ -3040,7 +3462,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch'];
+function motionOptions(){if(['xbot','ybot'].includes(state.model))return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -4798,6 +5220,7 @@ const EXPERIMENT_SAMPLE_INTERVAL_MS=1000/30;
 const EXPERIMENT_MAX_JOINT_ROWS=500000;
 let experimentBuildManifest={source_commit:'unverified',app_version:'v58'};
 const MATERIAL_REFERENCES={
+ ybot:{asset_id:'embedded-glb-xbot-ybot-motion-variant',origin:'same X Bot GLB and skeleton; configurable motion only',license:'same as X Bot',skeleton_id:'xbot-32-node-bones'},
  xbot:{asset_id:'embedded-glb-xbot',origin:'bundled GLB (index.html)',license:'not specified / verify before redistribution',skeleton_id:'xbot-32-node-bones'},
  aegisEmber:{asset_id:'embedded-glb-aegis-ceramic-plus-navy-material',origin:'bundled AEGIS GLB+material variant (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'},
  aegisSoldier:{asset_id:'embedded-glb-aegis-navy-plus-soldier-tube-effect',origin:'bundled AEGIS GLB + procedural color effect (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'}
@@ -5441,10 +5864,10 @@ async function startApplication(){
  try{
   showStatus('3Dモデルを読み込み中…');
   try{state.vrCentralVisible=localStorage.getItem('compoundeye.v45.vrCentralVisible')==='true';}catch(e){}
- await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();
+ await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();await v62LoadYBotConfig();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
-  renderUI();v47Init();showStatus('人工複眼シミュレーションシステム v54：AEGIS動作修正・再解析CSV・部位間の時間関係');
-  window.__compoundTest={version:"61",v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  v62RegisterYBot();renderUI();v47Init();tl62Init();showStatus('人工複眼シミュレーションシステム：運動連鎖タイムライン／YBot比較');
+  window.__compoundTest={version:"62",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -5455,6 +5878,7 @@ async function startApplication(){
 // untouched in name/order/meaning. All extra fields are appended.
 const K54=window.__Kinematics54;
 const V54_ASSET_META={
+ ybot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'same-XBot-GLB-v62-modified-motion'},
  xbot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'xbot-original-glb'},
  aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-adjustable-visor-no-shoulders-v60-001'},
  aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-adjustable-visor-no-shoulders-v60-001'}
@@ -5490,7 +5914,7 @@ const V54_MORE_HEADERS=[
 const V54_SCHEMA='compound-eye-single-motion-v2';
 let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
-function v54Revision(avatar,motion){
+function v54Revision(avatar,motion){if(avatar==='ybot')return window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
  if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-v61-001';
  if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
@@ -5511,7 +5935,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v61'?experimentBuildManifest.source_commit:'unverified_build_v61';
+ const runtime=experimentBuildManifest?.app_version==='v62'?experimentBuildManifest.source_commit:'unverified_build_v62';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -5589,7 +6013,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v61',runtime,JSON.stringify(config),
+    'v62',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -5629,10 +6053,14 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v61',
+   motion_revision_id:asset.motion_revision_id,app_version:'v62',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
-   motion_composition:v61MotionMetadata(motion),
+   motion_composition:avatar==='ybot'?{
+    source_motion_id:motion,source_avatar_id:'xbot',modifications:v62YConfig.motions[motion]||[],
+    actual_changes_after_recalculation:v62YLastValidation?.filter(m=>m.motion_id===motion)||[],
+    motion_revision_id:v54Revision(avatar,motion),quality:'synthetic_known_perturbation'
+   }:v61MotionMetadata(motion),
    cosmetic_animation:{schema:'aegis-accessory-v60',visor_triangle:'adjustable head-bound marker',visor_settings:A58.models.includes(avatar)?{...v58Appearance.visor[avatar]}:null,shoulder_armor:false,...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
@@ -5689,7 +6117,7 @@ $('v54LegacyImport').onchange=v54ImportLegacyCsvFile;
 // All numbers describe embedded animation/model calculations, not human sensing.
 const V47_SCHEMA='compound-eye-motion-comparison-v2';
 const v47={A:null,B:null,extras:[],pairs:[],extraControls:[],anyCrossSkeleton:false,comparison:null,currentTime:0,lastCursorAt:0,fitB:null,sourceA:null,sourceB:null,quality:[],on:false};
-const v47Models=['xbot','aegisEmber','aegisSoldier'];
+const v47Models=['xbot','ybot','aegisEmber','aegisSoldier'];
 const v47Options=m=>{
  const old=state.model;state.model=m;
  let items=[];try{items=motionOptions()}finally{state.model=old}
@@ -7105,20 +7533,32 @@ function v54Render(){
 
 function v54OverlayDraw(projections){
  if(!v54.visualOverlay)return;
+ const timelineX=timeline62.analysis?.source_x?.avatar===state.model&&timeline62.analysis?.source_x?.motion===state.motion;
+ const timelineY=timeline62.analysis?.compatibility?.ok&&timeline62.analysis?.source_y?.avatar===state.model&&timeline62.analysis?.source_y?.motion===state.motion;
+ const timelineLive=!!window.__TimelineUI62?.active()&&(timelineX||timelineY);
  if(v54Active()&&performance.now()-v54.lastCursor>80){v54.lastCursor=performance.now();v54UpdateCursor();v54RefreshRatio();}
- if(!v54Active()||!$('v54OverlayEnable').checked||v54.mode==='normal'||!v54.current||v54.dataSource==='imported'){
+ if(!timelineLive&&(!v54Active()||!$('v54OverlayEnable').checked||v54.mode==='normal'||!v54.current||v54.dataSource==='imported')){
   if(v54.visualOverlay.childElementCount)v54.visualOverlay.replaceChildren();v54.markerNodes.clear();return;
  }
  v54.markersUsed=new Set();
  const processingStart=performance.now();
- if(v54.current.source.avatar!==state.model||v54.current.source.motion!==state.motion){
+ if(!timelineLive&&(v54.current.source.avatar!==state.model||v54.current.source.motion!==state.motion)){
   v54.visualOverlay.replaceChildren();v54.markerNodes.clear();
   if(!v54.pendingRefresh){v54.pendingRefresh=true;queueMicrotask(()=>{v54.pendingRefresh=false;v54JointList();v54DoAnalysis();});}
   return;
  }
- const result=v54.current.source,now=v54CurrentOriginalTime(),choice=v54.mode;
+ const result=timelineLive?(timelineY?timeline62.sourceY:timeline62.sourceX):v54.current.source,now=timelineLive?((Number(state._renderedAnimationTime||0)%result.data.duration+result.data.duration)%result.data.duration):v54CurrentOriginalTime(),choice=v54.mode;
  const indices=[];
- if(choice==='fast'){
+ if(timelineLive&&tl62$('tl62Cursor'))tl62$('tl62Cursor').textContent='再生位置：'+now.toFixed(3)+'秒';
+ if(timelineLive){
+  const analysis=timeline62.analysis;
+  for(const row of analysis.rows){
+   const part=timelineY?row.Y:row.X;if(!part)continue;
+   const sampled=window.__Timeline62.at(part,now,analysis.config);
+   indices.push({index:row.jointId,text:(timelineY?'Y ':'X ')+part.joint.name+' '+sampled.state,color:sampled.color,
+    reason:'timeline_shared_state_'+sampled.state});
+  }
+ }else if(choice==='fast'){
   for(const x of v54.current.fastJoints)if(x.peak>1e-5)indices.push({index:x.joint.index,
    text:'速 '+v48JointLabel(x.joint),color:'#f3df81',reason:'interval_max_speed_top3'});
  }else if(choice==='relation'){
@@ -7139,7 +7579,7 @@ function v54OverlayDraw(projections){
    color:'#d9c1ff',reason:'two_motion_peak_time_difference'});
  }
  const visible=new Set();
- for(const item of indices.slice(0,3)){
+ for(const item of indices.slice(0,timelineLive?20:3)){
   if(visible.has(item.index))continue;visible.add(item.index);
   const world=modelData?.world?.[item.index];if(!world)continue;
   const point=mulPoint(state._modelFit,[world[12],world[13],world[14]]);
@@ -7169,7 +7609,7 @@ function v54OverlayDraw(projections){
   v54.lastDisplayLog=performance.now();
   v54.log.display_events.push({trial_id:result.trial_id,eye_count:state.eyeCount,
    lens_selection:v52SelectedIndices(),lens_layout:activeCameras().map((_,i)=>({...cameraSpec(i)})),
-   stereo:isStereoVR(),mode:v54.mode,skeleton_id:result.data.skeletonId,motion_id:result.motion,
+   stereo:isStereoVR(),mode:timelineLive?'timeline':v54.mode,skeleton_id:result.data.skeletonId,motion_id:result.motion,
    motion_revision_id:result.asset.motion_revision_id,source_asset_sha256:result.asset.source_asset_sha256,
    selected_joint_ids:indices.map(j=>j.index),reason_codes:indices.map(j=>j.reason),
    original_animation_time_s:now,requested_display_perf_ms:performance.now(),
