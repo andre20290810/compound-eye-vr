@@ -1,53 +1,60 @@
 {
-  "app_version": "v55",
-  "source_commit": "d89046862557442ab6ce55dae1d607f3d4595461",
+  "app_version": "v56",
+  "source_commit": "d894a5b1ca989eb94bcab174e83214d4cda2071b",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
-  "viewer_last_updated_label": "最終更新：2026/11/11 11:37（日本時間）",
+  "viewer_last_updated_label": "最終更新：2026/11/11 13:57（日本時間）",
   "data_schema": "compound-eye-motion-comparison-v2",
   "unified_csv_schema": "compound-eye-single-motion-v2",
-  "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
   "unified_csv_columns": 86,
-  "model_geometry_revision": "aegis-anatomical-skin-jet-v55-001",
+  "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+  "model_geometry_revision": "aegis-v56-temple-antenna-working-turbines",
+  "motion_revision": "AEGIS-smooth-run-turbine-antenna-v56-001",
   "source_files_sha256": {
-    "index.html": "18491772f80137e6d59c4114e38d4ea8456beac267e1afc6aa8c7b1bcc7df85d",
+    "index.html": "3c1b8ea44dbdaff964e7146fbfabcbd80594e7601577fe4e5aac0e722664e761",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "d67fef93f6341992f6877c5f2e9f8515e0c8575c7a5a31edb7acff8f56affe50",
+    "motion-csv-v54.js": "4bb47ac188ad2c7ae0a47ebac458f96994194a9b1e6ad3f8e0f1bc58e2d8ea92",
     "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
-    "motion-workbench-v48.js": "b3822fdba53a8b46b96c0a22b3e6a3a75fa69b3d5650111ec68f4cdf35d11ed2",
-    "aegis-geometry-v55.js": "c508b420256c02008575d80224dda0dbebca229bcb499b4d6ad25c3d32dba9fb",
-    "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09"
+    "motion-workbench-v48.js": "5ac1cf186b1e111c7a64582eec9e6884c1ee53cfe8e12e46cff79c62d9a15751",
+    "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+    "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+    "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+    "aegis-details-v56.js": "4411b5a555ef7b9a7f4948196dad600c1a3ce64315ab21f34b63b86d07671cee",
+    "aegis-runtime-v56.js": "3785c4cf8515f0e05546a9413385aebb47a6fb1b1e832e52458eaa6ca5373443"
   },
   "test_reports": {
     "browser-regression": {
-      "sha256": "99ace581b69f9403878acea059603842029e91aa8a2298622e79d99a348da582",
+      "sha256": "777049ac176d05a9e3c76d8a20f309112c3260e5ca6eca7d972119974949dede",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "ui-regression": {
-      "sha256": "c08f3eb814071e6f066cfc87c5190826e79e8fab563caa67e650ee65082ccab4",
+      "sha256": "e112a06bf761052bca9393dfe760e67c30bf1b8ca9ed7cdce4535f3016a96cb5",
       "summary": {
         "passed": 8,
         "failed": 0
       }
     },
-    "geometry-inspection": {
-      "sha256": "0864508f768931f7d2bffd60b937f5e81b6cb05d80cc33b4e38f49402222638b",
-      "summary": null
+    "additions-regression": {
+      "sha256": "15ef584f88f294ed9b5279355c94f65710ee19fb375dbc5ffa35ed321dfa1f66",
+      "summary": {
+        "passed": 9,
+        "failed": 0
+      }
     }
   },
   "unit_tests": {
-    "passed": 15,
-    "failed": 0
-  },
-  "browser_tests": {
     "passed": 22,
     "failed": 0
   },
-  "backup_tag": "backup-v54-before-v55-20261111",
-  "backup_commit": "c41344d6666129bfcd8efe99fe296bab79f0f9fc",
+  "browser_tests": {
+    "passed": 31,
+    "failed": 0
+  },
+  "backup_tag": "backup-v55-before-v56-20261111",
+  "backup_commit": "4147eb0c3b538e5ff2ca62f48b0e3e5369084461",
   "untested": [
     "physical HMD",
     "physical GameSir",
@@ -55,6 +62,6 @@
     "physical foot contact/collision correctness",
     "human motor-learning efficacy"
   ],
-  "note": "Source commit identifies implementation and assets. A later manifest/evidence-only commit may be the head of main. Original GLB bytes are unchanged; runtime skin/geometry modifications are tracked by model_geometry_revision and source_commit.",
-  "generated_at_utc": "2026-11-11T02:39:04.792702+00:00"
+  "note": "Source commit identifies implementation; a later manifest/evidence-only commit may be main. Cosmetic rotor and visor matrices are separate from human skeleton joints. Real desktop WebGL2 tested; mobile viewport emulation is not an iPhone test.",
+  "generated_at_utc": "2026-11-11T04:58:43.354723+00:00"
 }
