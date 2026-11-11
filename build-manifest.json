@@ -1,16 +1,16 @@
 {
-  "app_version": "v64",
-  "source_commit": "95856933286d5e6e2244ed818b0610dc56935728",
+  "app_version": "v65",
+  "source_commit": "694e1856e55be9323a3f01c6f387c5535737b04d",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
-  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62-with-v64-live-dynamics",
-  "motion_revision": "aegis-retarget-xbot-punchC-fist-v63-001",
+  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62-with-v65-wide-live-dynamics-and-ybot-variants",
+  "motion_revision": "xbot-derived-ybot-punch-trajectory-and-timing-v65-001",
   "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
-    "index.html": "03d5942f5d8fa667f0f4c428446c20215057a5de948009c81af756d58316b5bb",
+    "index.html": "c32e8657144c9fa3676e20912dca9afe88cfa2a970cdaedfb98aa0213758938d",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "a1723fa7fef82ce3b2ecb3cd1af3038a50b9ca0104df7741ccf1ad3f7a8cee8d",
+    "motion-csv-v54.js": "1fad8ff2e8a67d619c7faad8a0f994ad83f397d7be8d4b5f9b546349ff0ec7f0",
     "kinematic-view-v54.js": "4fa28f9937b2e0d156b00fe3edf49e3b06e2dd398e8f0e28a11f45bb66796358",
     "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
@@ -22,12 +22,13 @@
     "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
     "punch-sequences-v61.js": "706e74ced9780c8aa5ca77fc49594370e1febca450cf8048197fbeff3bb4dc05",
     "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
-    "ybot-runtime-v62.js": "029f01926c23027e2b2488959fe79c96dd316a20b050690964d02d2e41c21639",
+    "ybot-runtime-v62.js": "623e55121f357e2559fe1c2d1b17de55d402bbc1bf7bf2269da3b50facf30177",
     "motion-timeline-v62.js": "e7bd92170011add5e03a3f2ae0bd4bdf676716dc1401225cdcec07d61bec6903",
     "timeline-ui-v62.js": "fc4aedce27055193a1781587a68493197801d3935fffe35b2d435d40e5bf05cc",
     "timeline-clear-v63.js": "16f9756ba7816ea0733f56ae196607959beeefb96f80e2bd5a5081468fdcfd1d",
     "aegis-fists-v62.js": "b69b168179f24e1fafdc98c100976038157ff8e3668b48d19c9e54b8363675f8",
-    "timeline-live-v64.js": "7b8eee425f11fc5c8735ab2f612cf3522ad1a2d993c8542607fc0ec431353c83"
+    "timeline-live-v64.js": "f938ef3a6cb42ff04ba33fe671f0389231c2d9aad59530ee977b4bee07c71023",
+    "timeline-live-v65.js": "5c5261f89eb83006549c9deba76c58459e096057ea538cd953de3486612e49a8"
   },
   "public_appearance": {
     "path": "public-appearance.json",
@@ -100,14 +101,20 @@
     "passed": 81,
     "failed": 0
   },
-  "backup_tag": "backup-v63-before-v64-dynamic-timeline-20261112",
-  "backup_commit": "f4b1dfb5245cbdfd1b352532084d1312752cb167",
+  "backup_tag": "backup-v64-before-v65-wide-timeline-20261112",
+  "backup_commit": "09ef7b83a8442361486c997888826ed57baedd90",
   "untested": [
     "physical iPhone/Safari",
     "physical HMD and GameSir",
     "physical joint contact/collision",
     "human motor-learning efficacy"
   ],
-  "note": "This release adds a synchronized live kinematic-dynamics timeline and X/Y comparison overlays. Existing model motions and public appearance/YBot configuration are preserved; no AEGIS motion or geometry revision is included in this release.",
-  "generated_at_utc": "2026-11-11T22:18:01.134Z"
+  "note": "v65 makes the live dynamics timeline full-width above the viewer, folds viewer settings, and moves numeric waveforms below the viewer. Existing joint markers alone are resized by timeline dynamics. XBot/YBot comparison starts at a common zero time without phase warping; one common slow-motion multiplier preserves each motion’s relative timing. YBot punch includes trajectory-only and timing-plus-trajectory profiles. AEGIS comparison remains deferred until joint correspondence is verified. No AEGIS motion or geometry revision is included.",
+  "generated_at_utc": "2026-11-11T23:52:21.837Z",
+  "release_validation": {
+    "source_bundle": "passed",
+    "inline_javascript_syntax": "passed (3 scripts)",
+    "automated_tests": "not_run"
+  },
+  "test_reports_scope": "The test_reports and counts below are historical v64 results; no v65 test suite was run."
 }
