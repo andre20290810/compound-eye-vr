@@ -1,36 +1,60 @@
 {
-  "app_version": "v54",
-  "source_commit": "4e22c5721afc8ff4b8fbec4b4f695a299291753a",
+  "app_version": "v55",
+  "source_commit": "d89046862557442ab6ce55dae1d607f3d4595461",
   "source_branch": "main",
+  "public_title": "人工複眼シミュレーションシステム",
+  "viewer_last_updated_label": "最終更新：2026/11/11 11:37（日本時間）",
   "data_schema": "compound-eye-motion-comparison-v2",
   "unified_csv_schema": "compound-eye-single-motion-v2",
   "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
   "unified_csv_columns": 86,
-  "note": "Implementation source commit. This manifest is committed separately; GitHub main may therefore have a later metadata-only commit.",
+  "model_geometry_revision": "aegis-anatomical-skin-jet-v55-001",
   "source_files_sha256": {
-    "index.html": "3ff1404eac988b6d3560ff4d06931a00ca0abc6cbdfe719fd18e52d15a6a71fe",
+    "index.html": "18491772f80137e6d59c4114e38d4ea8456beac267e1afc6aa8c7b1bcc7df85d",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "ab2619356a8f9f2a0a9ee33d57ccd53a9ce9f48822c3be879dc62c98506a5ef6",
+    "motion-csv-v54.js": "d67fef93f6341992f6877c5f2e9f8515e0c8575c7a5a31edb7acff8f56affe50",
     "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
-    "motion-workbench-v48.js": "0a5ea48ca1e5b27e8779437718f9720bd701b465411314ea92fd7c0c6481e058"
+    "motion-workbench-v48.js": "b3822fdba53a8b46b96c0a22b3e6a3a75fa69b3d5650111ec68f4cdf35d11ed2",
+    "aegis-geometry-v55.js": "c508b420256c02008575d80224dda0dbebca229bcb499b4d6ad25c3d32dba9fb",
+    "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09"
   },
-  "test_report_sha256": "78310df5635f6365f0b2889b1e48518c0b51911786aae5c53336f8f3694caf12",
-  "browser_regression": {
-    "passed": 14,
-    "failed": 0
+  "test_reports": {
+    "browser-regression": {
+      "sha256": "99ace581b69f9403878acea059603842029e91aa8a2298622e79d99a348da582",
+      "summary": {
+        "passed": 14,
+        "failed": 0
+      }
+    },
+    "ui-regression": {
+      "sha256": "c08f3eb814071e6f066cfc87c5190826e79e8fab563caa67e650ee65082ccab4",
+      "summary": {
+        "passed": 8,
+        "failed": 0
+      }
+    },
+    "geometry-inspection": {
+      "sha256": "0864508f768931f7d2bffd60b937f5e81b6cb05d80cc33b4e38f49402222638b",
+      "summary": null
+    }
   },
   "unit_tests": {
-    "passed": 9,
+    "passed": 15,
     "failed": 0
   },
+  "browser_tests": {
+    "passed": 22,
+    "failed": 0
+  },
+  "backup_tag": "backup-v54-before-v55-20261111",
+  "backup_commit": "c41344d6666129bfcd8efe99fe296bab79f0f9fc",
   "untested": [
     "physical HMD",
     "physical GameSir",
     "iPhone Safari",
-    "human motor-learning efficacy",
-    "physical foot contact/collision correctness"
+    "physical foot contact/collision correctness",
+    "human motor-learning efficacy"
   ],
-  "backup_tag": "backup-v53-before-kinematics-20261111",
-  "backup_commit": "a406676cf2c92d8c537f4d5ed64f70fef675629f",
-  "generated_at_utc": "2026-11-11T01:22:43.985122+00:00"
+  "note": "Source commit identifies implementation and assets. A later manifest/evidence-only commit may be the head of main. Original GLB bytes are unchanged; runtime skin/geometry modifications are tracked by model_geometry_revision and source_commit.",
+  "generated_at_utc": "2026-11-11T02:39:04.792702+00:00"
 }
