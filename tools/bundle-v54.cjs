@@ -20,7 +20,8 @@ replaceBetween('/* AEGIS v56 motion:','/* AEGIS v60 visor:','aegis-motion-v56.js
 replaceBetween('/* AEGIS v60 visor:','/* AEGIS v58 appearance:','aegis-visor-v60.js');
 replaceBetween('/* AEGIS v58 appearance:','/* AEGIS v58 details:','appearance-v58.js');
 replaceBetween('/* AEGIS v58 details:','// AEGIS v58 runtime:','aegis-details-v58.js');
-replaceBetween('// AEGIS v58 runtime:','function parseGLB','aegis-runtime-v58.js');
+replaceBetween('// AEGIS v58 runtime:','/* v61 punch sequences:','aegis-runtime-v58.js');
+replaceBetween('/* v61 punch sequences:','function parseGLB','punch-sequences-v61.js');
 if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
 else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);

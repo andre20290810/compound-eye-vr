@@ -343,7 +343,7 @@ function v54Seek(time){
  }
  if(v47.A&&v47.A.avatar===state.model&&v47.A.motion===state.motion)v47Seek(t);
  else{
-  state.paused=true;state.pauseTime=t/Math.max(.001,/punch/i.test(state.motion)?state.punchPlayback:1);
+  state.paused=true;state.pauseTime=t/Math.max(.001,v61IsPunch(state.motion)?state.punchPlayback:1);
   draw(performance.now());
  }
  v54UpdateCursor();

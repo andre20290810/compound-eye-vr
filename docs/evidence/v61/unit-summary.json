@@ -1,0 +1,8 @@
+{
+  "tested_at": "2026-11-12T02:26:45.092190+09:00",
+  "command": "node --test tests/v54-kinematics.test.cjs tests/v54-uploaded-csv.test.cjs tests/v54-edge-cases.test.cjs tests/v55-geometry.test.cjs tests/v58-details.test.cjs tests/v60-visor.test.cjs tests/v61-punches.test.cjs",
+  "summary": {
+    "passed": 40,
+    "failed": 0
+  }
+}

@@ -1,0 +1,519 @@
+{
+  "date": "2026-11-11T17:27:11.398Z",
+  "renderer": "desktop Edge WebGL2; mobile viewport emulation, not real iPhone",
+  "checks": [
+    {
+      "name": "v61 boots as one eye with real WebGL2 and public preset fetched",
+      "status": "PASS",
+      "details": {
+        "version": "61",
+        "eyeCount": 1,
+        "title": "人工複眼シミュレーションシステム",
+        "error": 0,
+        "public": "appearance-2026-11-11T17:02:32.300Z"
+      }
+    },
+    {
+      "name": "both avatars have one screenshot-side antenna +/-10deg and forward inset camera triples",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "ants": [
+            {
+              "side": -1,
+              "base": 45
+            }
+          ],
+          "min": 35.04386618034906,
+          "max": 54.956133819650944,
+          "lenses": [
+            {
+              "count": 3,
+              "minZ": 0.07959333807229996,
+              "maxZ": 0.10020474344491959
+            },
+            {
+              "count": 3,
+              "minZ": 0.07959333807229996,
+              "maxZ": 0.10020474344491959
+            }
+          ],
+          "joints": 13,
+          "skeletonUnchanged": true
+        },
+        {
+          "model": "aegisSoldier",
+          "ants": [
+            {
+              "side": -1,
+              "base": 45
+            }
+          ],
+          "min": 35.04386618034906,
+          "max": 54.956133819650944,
+          "lenses": [
+            {
+              "count": 3,
+              "minZ": 0.07959333807229996,
+              "maxZ": 0.10020474344491959
+            },
+            {
+              "count": 3,
+              "minZ": 0.07959333807229996,
+              "maxZ": 0.10020474344491959
+            }
+          ],
+          "joints": 13,
+          "skeletonUnchanged": true
+        }
+      ]
+    },
+    {
+      "name": "base white marking materials retain user-selected public colors; static2 absent",
+      "status": "PASS",
+      "details": {
+        "marks": [
+          {
+            "name": "Aegis_Ceramic_Plate",
+            "finish": "white",
+            "style": {
+              "group": "chestMarks",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                0.975,
+                1.055
+              ],
+              "brightness": 1,
+              "unlit": 1
+            },
+            "expected": {
+              "group": "chestMarks",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                0.975,
+                1.055
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          },
+          {
+            "name": "Aegis_Luminous_Trim",
+            "finish": "white",
+            "style": {
+              "group": "chestMarks",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                0.975,
+                1.055
+              ],
+              "brightness": 1,
+              "unlit": 1
+            },
+            "expected": {
+              "group": "chestMarks",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                0.975,
+                1.055
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          },
+          {
+            "name": "visor_white_bar_left",
+            "finish": "white",
+            "style": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                0.9333333333333333,
+                1,
+                0
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            },
+            "expected": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                0.9333333333333333,
+                1,
+                0
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          },
+          {
+            "name": "visor_white_bar_right",
+            "finish": "white",
+            "style": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                0.9333333333333333,
+                1,
+                0
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            },
+            "expected": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                0.9333333333333333,
+                1,
+                0
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          }
+        ],
+        "mask": {
+          "group": "mask",
+          "mode": 1,
+          "a": [
+            0.7215686274509804,
+            0.7215686274509804,
+            0.7215686274509804
+          ],
+          "b": [
+            0.7215686274509804,
+            0.7215686274509804,
+            0.7215686274509804
+          ],
+          "axis": 1,
+          "range": [
+            1.07,
+            1.26
+          ],
+          "brightness": 1,
+          "unlit": 0
+        },
+        "oldMotion": false,
+        "fans": 0
+      }
+    },
+    {
+      "name": "editor live preview changes per-part gradient, color, brightness and real shader output",
+      "status": "PASS",
+      "details": {
+        "style": {
+          "group": "jet",
+          "mode": 2,
+          "a": [
+            1,
+            0.2,
+            0
+          ],
+          "b": [
+            0,
+            0.2,
+            1
+          ],
+          "axis": 2,
+          "range": [
+            -0.28,
+            -0.08
+          ],
+          "brightness": 1.35,
+          "unlit": 0
+        },
+        "soldier": {
+          "group": "jet",
+          "mode": 0,
+          "a": [
+            0.6,
+            0.6,
+            0.6
+          ],
+          "b": [
+            0.6,
+            0.6,
+            0.6
+          ],
+          "axis": 1,
+          "range": [
+            0.69,
+            1.14
+          ],
+          "brightness": 1,
+          "unlit": 0
+        },
+        "error": 0,
+        "visible": true
+      }
+    },
+    {
+      "name": "SOLDIER red-yellow defaults remain protected until explicitly unlocked",
+      "status": "PASS",
+      "details": {
+        "locked": {
+          "disabled": true,
+          "style": {
+            "group": "heat",
+            "mode": 0,
+            "a": [
+              1,
+              0.8784313725490196,
+              0
+            ],
+            "b": [
+              1,
+              0.1450980392156863,
+              0.047058823529411764
+            ],
+            "axis": 1,
+            "range": [
+              0.17,
+              1.19
+            ],
+            "brightness": 1,
+            "unlit": 1
+          }
+        },
+        "explicitUnlockWorks": true
+      }
+    },
+    {
+      "name": "local save survives reload and remains separate from public preset",
+      "status": "PASS",
+      "details": {
+        "working": "#aaccee",
+        "public": "#b8b8b8"
+      }
+    },
+    {
+      "name": "JSON export/import roundtrip retains both models and rejects invalid input without mutation",
+      "status": "PASS",
+      "details": {
+        "roundtrip": true,
+        "invalidRejected": true
+      }
+    },
+    {
+      "name": "new public revision overrides obsolete local settings for visitors",
+      "status": "PASS",
+      "details": {
+        "published": "test-new-public",
+        "color": "#c0c0c0"
+      }
+    },
+    {
+      "name": "GitHub publish handoff opens fixed authenticated editor, never sends a write request",
+      "status": "PASS",
+      "details": {
+        "url": "https://github.com/andre20290810/compound-eye-vr/edit/main/public-appearance.json",
+        "requiresAuthenticatedCommit": true
+      }
+    },
+    {
+      "name": "all 10 existing body motions and score columns match published v60 exactly",
+      "status": "PASS",
+      "details": {
+        "motions": 10,
+        "matched": true
+      }
+    },
+    {
+      "name": "SOLDIER red-yellow source buffers remain byte-identical to published v60",
+      "status": "PASS",
+      "details": {
+        "matched": true
+      }
+    },
+    {
+      "name": "all facets and stereo rendering preserve WebGL validity with color overrides",
+      "status": "PASS",
+      "details": [
+        {
+          "n": 1,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 1,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": true,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "mobile editor fits viewport while keeping model preview available",
+      "status": "PASS",
+      "details": {
+        "left": 6,
+        "right": 384,
+        "height": 379.796875,
+        "width": 390,
+        "viewportHeight": 844,
+        "scrollWidth": 390,
+        "error": 0
+      }
+    },
+    {
+      "name": "no runtime JavaScript errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "palette-gradient-preview.png",
+    "navy-overview.png",
+    "navy-head-front.png",
+    "navy-head-right.png",
+    "navy-head-left.png",
+    "navy-rear.png",
+    "soldier-overview.png",
+    "soldier-head-front.png",
+    "soldier-head-right.png",
+    "soldier-head-left.png",
+    "soldier-rear.png"
+  ],
+  "browser": "Edg/157.0.4341.46",
+  "summary": {
+    "passed": 14,
+    "failed": 0
+  }
+}

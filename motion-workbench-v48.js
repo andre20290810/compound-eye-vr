@@ -9,7 +9,7 @@ const v47Options=m=>{
  return items.filter(id=>id!=='spin');
 };
 function v47Format(n,dp=2){return Number.isFinite(n)?n.toFixed(dp):'—';}
-function v47MotionRate(m){return /punch/i.test(m)?state.punchPlayback:1;}
+function v47MotionRate(m){return v61IsPunch(m)?state.punchPlayback:1;}
 function v47Duration(md,m){
  const actual=analysisSourceDuration(md,m);
  return Math.max(.28,Math.min(7.99,actual));
@@ -805,7 +805,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v60',
+  app_version:'v61',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,

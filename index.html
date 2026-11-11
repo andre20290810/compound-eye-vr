@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/12 01:30（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/12 02:26（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -984,9 +984,8 @@ const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AE
 const MOTION_NAMES={
  xbot_idle:'静止',xbot_fight_idle:'構え',xbot_walk:'歩行A',xbot_walk2:'歩行B',xbot_run:'走行',
  xbot_punch:'パンチA',xbot_punch1:'パンチB',xbot_punch2:'パンチC',xbot_hook:'パンチD',
- armor_breathe:'静止・呼吸',armor_guard:'構え',armor_walk:'歩行',armor_run:'走行',
- armor_power_punch:'パンチA',armor_punch:'パンチB',
- armor_raise:'腕上げ',armor_reach:'腕伸ばし',armor_bend:'肘曲げ',armor_step:'踏み込み',
+ armor_breathe:'静止・呼吸',armor_walk:'歩行',armor_run:'走行',
+ armor_power_punch:'パンチA',armor_punch:'パンチB',armor_alternate_punch:'パンチC',
  idle:'静止',spin:'回転',walk:'歩行',micro:'呼吸',guard:'構え',
  punch:'パンチA',block:'受け',kick:'前蹴り'
 };
@@ -1578,6 +1577,59 @@ function v58UpdateAccessories(md,motion,time){
   if(a.kind==='tachometer')mesh.v57GaugeLevel=D.gaugeLevel(time,a.side);
  }
 }
+/* v61 punch sequences: deterministic timing, mirrored poses and source-directed retargeting. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__Punch61=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function cycle(t,d){if(!Number.isFinite(t)||!Number.isFinite(d)||d<=0)throw Error('invalid_cycle');return((t%d)+d)%d;}
+function smooth(t){t=clamp(t,0,1);return t*t*t*(10+t*(-15+6*t));}
+function sequence(t,a,b,bridge=.12){if(![a,b,bridge].every(x=>Number.isFinite(x)&&x>0))throw Error('invalid_sequence');const duration=a+b+2*bridge,p=cycle(t,duration);if(p<a)return{kind:'a',time:p,duration};if(p<a+bridge)return{kind:'a_to_b',mix:smooth((p-a)/bridge),duration};if(p<a+bridge+b)return{kind:'b',time:p-a-bridge,duration};return{kind:'b_to_a',mix:smooth((p-a-bridge-b)/bridge),duration};}
+const mirrorVector=v=>[-v[0],v[1],v[2]],mirrorQuaternion=q=>[q[0],-q[1],-q[2],q[3]];
+function mirrorPose(nodes,pose){const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));const pairs=nodes.map((n,i)=>/^L_/.test(n.name)?ids[n.name.replace(/^L_/,'R_')]:/^R_/.test(n.name)?ids[n.name.replace(/^R_/,'L_')]:i);return{T:pairs.map(i=>mirrorVector(pose.T[i])),R:pairs.map(i=>mirrorQuaternion(pose.R[i])),S:pairs.map(i=>pose.S[i].slice())};}
+function sampleChannel(ch,time,slerp){const inp=ch.input,out=ch.output,size=ch.size;if(!inp.length)throw Error('empty_animation_track');if(inp.length===1)return Array.from(out.slice(0,size));let lo=0,hi=inp.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(inp[mid]<time)lo=mid+1;else hi=mid;}const next=Math.min(inp.length-1,Math.max(1,lo)),prev=next-1,f=clamp((time-inp[prev])/Math.max(inp[next]-inp[prev],1e-6),0,1),a=Array.from(out.slice(prev*size,(prev+1)*size)),b=Array.from(out.slice(next*size,(next+1)*size));return ch.path==='rotation'?slerp(a,b,f):a.map((v,k)=>v+(b[k]-v)*f);}
+return{cycle,smooth,sequence,mirrorVector,mirrorQuaternion,mirrorPose,sampleChannel,revision:'punch-sequences-v61-001'};
+});
+// v61 runtime: only the requested punch modes use these pose paths.
+function v61Source(){const source=getModel('xbot'),a=source.animations.find(c=>c.name==='XBot_Punching_Original52'),c=source.animations.find(c=>c.name==='Boxer_Punching2');if(!a||!c)throw Error('X Bot punch source missing');return{source,a,c};}
+function v61Blank(nodes){return{T:nodes.map(n=>n.translation.slice()),R:nodes.map(n=>n.rotation.slice()),S:nodes.map(n=>n.scale.slice())};}
+function v61ClipPose(source,clip,time){const p=v61Blank(source.nodes);for(const ch of clip.channels){const v=window.__Punch61.sampleChannel(ch,time,qSlerp);if(ch.path==='translation')p.T[ch.node]=v;else if(ch.path==='rotation')p.R[ch.node]=v;else if(ch.path==='scale')p.S[ch.node]=v;}return p;}
+function v61Blend(a,b,u){return{T:a.T.map((v,i)=>v.map((x,k)=>lerp(x,b.T[i][k],u))),R:a.R.map((q,i)=>qSlerp(q,b.R[i],u)),S:a.S.map((v,i)=>v.map((x,k)=>lerp(x,b.S[i][k],u)))};}
+function v61ComboPose(time){const{source,a,c}=v61Source(),M=window.__Punch61,s=M.sequence(time,1.10,c.duration);const ap=t=>v61ClipPose(source,a,Math.min(t,Math.max(a.duration-.001,0))),cp=t=>v61ClipPose(source,c,t);if(s.kind==='a')return ap(s.time);if(s.kind==='b')return cp(s.time);return s.kind==='a_to_b'?v61Blend(ap(1.10),cp(0),s.mix):v61Blend(cp(c.duration),ap(0),s.mix);}
+function v61AlternatePose(nodes,time){const M=window.__Punch61,s=M.sequence(time,1.65,1.65);const right=t=>{const p=v61Blank(nodes);aegisFullBodyPunch(nodes,p.T,p.R,Math.min(t,1.65-.000001));return p;},left=t=>M.mirrorPose(nodes,right(t));if(s.kind==='a')return right(s.time);if(s.kind==='b')return left(s.time);return s.kind==='a_to_b'?v61Blend(right(1.65),left(0),s.mix):v61Blend(left(1.65),right(0),s.mix);}
+function v61World(nodes,pose){const matrices=[],quats=[];function calc(i){if(matrices[i])return;const n=nodes[i],local=n.matrix?new Float32Array(n.matrix):matTRS(pose.T[i],pose.R[i],pose.S[i]);if(n.parent>=0){calc(n.parent);matrices[i]=mul(matrices[n.parent],local);quats[i]=qmul(quats[n.parent],pose.R[i]);}else{matrices[i]=local;quats[i]=pose.R[i].slice();}}nodes.forEach((_,i)=>calc(i));return{matrices,quats};}
+function v61FrameQuat(bindDirection,bindSecondary,direction,secondary){
+ const u=norm(direction),q=quatBetween(bindDirection,u),project=v=>v.map((x,k)=>x-u[k]*v.reduce((sum,vv,j)=>sum+vv*u[j],0));
+ const a=project(rotateQ(q,bindSecondary)),b=project(secondary);if(Math.hypot(...a)<1e-7||Math.hypot(...b)<1e-7)return q;
+ const na=norm(a),nb=norm(b),angle=Math.atan2(u.reduce((sum,v,i)=>sum+v*cross(na,nb)[i],0),clamp(na.reduce((sum,v,i)=>sum+v*nb[i],0),-1,1));return qmul(window.__AegisMotion56.axisQuaternion(u,angle),q);
+}
+let v61SourceBindCache=null;
+function v61RetargetCPose(md,time){
+ const{source,c}=v61Source(),M=window.__Punch61,phase=M.cycle(time,c.duration),sample=v61ClipPose(source,c,phase),world=v61World(source.nodes,sample),ids=Object.fromEntries(source.nodes.map((n,i)=>[n.name,i])),target=Object.fromEntries(md.nodes.map((n,i)=>[n.name,i])),p=v61Blank(md.nodes),targetQ={};
+ if(v61SourceBindCache?.source!==source)v61SourceBindCache={source,world:v61World(source.nodes,v61Blank(source.nodes))};
+ const bind=v61SourceBindCache.world,ref=M.mirrorVector,sub=(a,b)=>a.map((v,k)=>v-b[k]),point=name=>Array.from(world.matrices[ids[name]]).slice(12,15),direction=(a,b)=>ref(sub(point(b),point(a)));
+ // X Bot's named right side is negative X; AEGIS's named right side is positive X.
+ // Reflect model X while preserving both rigs' forward (+Z) direction and anatomical labels.
+ const worldDelta=name=>M.mirrorQuaternion(qmul(world.quats[ids[name]],qInv(bind.quats[ids[name]])));
+ targetQ.Pelvis=worldDelta('Hips');targetQ.Chest=worldDelta('Spine2');targetQ.Head=worldDelta('Head');
+ p.R[target.Pelvis]=targetQ.Pelvis;p.R[target.Chest]=qmul(qInv(targetQ.Pelvis),targetQ.Chest);p.R[target.Head]=qmul(qInv(targetQ.Chest),targetQ.Head);
+ const ratio=md.nodes[target.Pelvis].translation[1]/source.nodes[ids.Hips].translation[1],delta=ref(sub(sample.T[ids.Hips],source.nodes[ids.Hips].translation));p.T[target.Pelvis]=p.T[target.Pelvis].map((v,k)=>v+ratio*delta[k]);
+ for(const [prefix,side] of [['Left','L'],['Right','R']]){
+  const u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'],du=direction(prefix+'Arm',prefix+'ForeArm'),df=direction(prefix+'ForeArm',prefix+'Hand');
+  const qu=v61FrameQuat(md.nodes[f].translation,md.nodes[h].translation,du,df),qf=qmul(quatBetween(rotateQ(qu,md.nodes[h].translation),df),qu);
+  p.R[u]=qmul(qInv(targetQ.Chest),qu);p.R[f]=qmul(qInv(qu),qf);
+  // The AEGIS glove bind is offset from the wrist. Preserve its neutral attachment;
+  // transfer only the source forearm-axis pronation instead of rotating the offset into a gap.
+  const sourceLocalHand=sample.R[ids[prefix+'Hand']],twist=-2*Math.atan2(sourceLocalHand[1],sourceLocalHand[3]);
+  p.R[h]=window.__AegisMotion56.axisQuaternion(norm(md.nodes[h].translation),twist);
+  const thigh=target[side+'_UpperLeg'],shin=target[side+'_LowerLeg'],dt=direction(prefix+'UpLeg',prefix+'Leg'),ds=direction(prefix+'Leg',prefix+'Foot'),lowerBind=[0,-.317,.004];
+  const qt=v61FrameQuat(md.nodes[shin].translation,lowerBind,dt,ds),qs=qmul(quatBetween(rotateQ(qt,lowerBind),ds),qt);p.R[thigh]=qmul(qInv(targetQ.Pelvis),qt);p.R[shin]=qmul(qInv(qt),qs);
+ }
+ return p;
+}
+function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
+function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return v61Source().c.duration;if(motion==='armor_alternate_punch')return 3.54;return null;}
+function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
+function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'world segment directions and torso rotations; X reflection for named sides; target bone lengths retained',source_duration_seconds:v61Source().c.duration,limitations:['AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -1607,9 +1659,9 @@ if(!geo.length)throw Error('no mesh primitives');
 let skin=j.skins?.[0],invBind=skin?accessor(j,bin,skin.inverseBindMatrices):null;
 let animations=(j.animations||[]).map(a=>({name:a.name||'',channels:a.channels.map(ch=>{let sm=a.samplers[ch.sampler],input=accessor(j,bin,sm.input),output=accessor(j,bin,sm.output);return{node:ch.target.node,path:ch.target.path,input,output,size:ch.target.path==='rotation'?4:3};}),duration:Math.max(0,...a.samplers.map(s=>j.accessors[s.input].max?.[0]||0))}));
 return{geo,geometryAudit,geometryRevision:modelId==='aegisEmber'?window.__AegisVisor60.revision:null,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
-const XBOT_CLIPS={xbot_idle:'Boxer_Idle',xbot_fight_idle:'Boxer_FightIdle',xbot_hook:'Boxer_Hook',xbot_punch1:'Boxer_Punching1',xbot_punch2:'Boxer_Punching2',xbot_walk:'Boxer_Walk',xbot_walk2:'Boxer_Walk2',xbot_run:'Boxer_Run'};
+const XBOT_CLIPS={xbot_idle:'Boxer_Idle',xbot_fight_idle:'Boxer_FightIdle',xbot_hook:'XBot_Combo_AC_v61',xbot_punch1:'Boxer_Punching1',xbot_punch2:'Boxer_Punching2',xbot_walk:'Boxer_Walk',xbot_walk2:'Boxer_Walk2',xbot_run:'Boxer_Run'};
 function xbotClip(motion){return modelData?.animations.find(a=>a.name===XBOT_CLIPS[motion]||(motion==='xbot_punch'&&a.name==='XBot_Punching_Original52'));}
-function motionDuration(){let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
+function motionDuration(){return modelData?analysisSourceDuration(modelData,state.motion):1.64;}
 function quatBetween(from,to){
  const a=norm(from),b=norm(to),d=clamp(a.reduce((t,v,i)=>t+v*b[i],0),-1,1);
  if(d<-.9999){const ax=norm(cross(a,Math.abs(a[0])<.7?[1,0,0]:[0,1,0]));return [ax[0],ax[1],ax[2],0];}
@@ -1956,7 +2008,7 @@ function aegisRetargetGait(nodes,T,R,motion,t){
 }
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
-if(md.animations.length && !['armor_punch','armor_power_punch','armor_walk','armor_run'].includes(motion)){
+if(md.animations.length && !['armor_punch','armor_power_punch','armor_alternate_punch','armor_walk','armor_run','xbot_hook'].includes(motion)){
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
@@ -1988,10 +2040,10 @@ if(!clip&&(motion==='walk'||motion==='micro')&&nodes.some(n=>n.name==='LeftUpper
    }
  }
 if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model)){
- if(motion==='armor_punch')aegisProceduralPunch(nodes,R,t);
  if(motion==='armor_power_punch')aegisFullBodyPunch(nodes,T,R,t);
  if(motion==='armor_walk'||motion==='armor_run')aegisRetargetGait(nodes,T,R,motion,t);
 }
+v61ApplyPunch(md,motion,t,T,R,S);
 if(md.gaitBlendPose&&state.gameMode&&['armor_walk','armor_run','armor_breathe'].includes(motion)){
  const elapsed=(performance.now()-md.gaitBlendPose.start)/md.gaitBlendPose.duration;
  const u=clamp01(elapsed),easing=u*u*(3-2*u);
@@ -2446,7 +2498,7 @@ function firstPersonBodyMask(){
 let xbotPunchGhostMask=null;
 function shouldShowPunchGhost(){
  return state.punchGhost&&state.viewMode==='pov'&&['aegisEmber','aegisSoldier'].includes(state.model)&&
-   ['armor_power_punch','armor_punch'].includes(state.motion);
+   ['armor_power_punch'].includes(state.motion);
 }
 function xbotGhostArmMask(src){
  if(xbotPunchGhostMask)return xbotPunchGhostMask;
@@ -2844,7 +2896,7 @@ const smoothing=isVrRender()?.38:.28;const sensed=!isVrRender()&&sensorLive();
  state.viewYaw=lerp(state.viewYaw,yTarget,smoothing);
  state.viewPitch=lerp(state.viewPitch,pTarget,smoothing);
 const t=state.paused?state.pauseTime:(now*.001-state.timeStart)*state.motionSpeed;state.renderTime=t;
-const animationRate=/punch/i.test(state.motion)?state.punchPlayback:state.gameMode&&/(walk|run)/i.test(state.motion)?(state.gameAction==='run'?1.55:1.35):1;
+const animationRate=v61IsPunch(state.motion)?state.punchPlayback:state.gameMode&&/(walk|run)/i.test(state.motion)?(state.gameAction==='run'?1.55:1.35):1;
 state._renderedAnimationTime=t*animationRate;
 if(modelData.skin||modelData.animations.length)animateModel(modelData,state.motion,state._renderedAnimationTime);else animateModel(modelData,'idle',t);
 let pulse=state.model==='heart'&&state.motion==='spin'?1+.045*Math.sin(t*2*Math.PI*1.12):1;
@@ -2874,7 +2926,7 @@ if(typeof v47DrawMarkers==='function')v47DrawMarkers(markerPVs);
 if(typeof v54OverlayDraw==='function')v54OverlayDraw(markerPVs);
 updateCompactHandles();if(typeof v47Tick==='function')v47Tick(now);
 frameCount++;if(frameCount%10===0)updateCameraBadgePositions();if(frameCount%20===0){
- if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot')?(state.motion==='xbot_punch'?1.10:motionDuration()):1.64;$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
+ if($('motionScrub')&&!state.paused){const duration=motionDuration();$('motionScrub').max=duration;$('motionScrub').value=(state._renderedAnimationTime%duration).toFixed(2);$('motionTime').textContent=(state._renderedAnimationTime%duration).toFixed(2)+'s';}
  const g=$('gyroReadout');const live=sensorLive();const text=live?'受信中（'+state.sensorPackets+'回）':state.gyro?'許可済み・未受信':'許可なし';
  if(g)g.textContent='ジャイロ: '+text+' ｜ Yaw: '+(state.yaw*180/Math.PI).toFixed(1)+'° ｜ Pitch: '+(state.pitch*180/Math.PI).toFixed(1)+'°'+(state.baseline?' ｜ 基準設定済み':' ｜ 基準未設定');
  if($('vrSensorText'))$('vrSensorText').textContent=state.vr?'ジャイロOFF｜LT左寄せ RT右寄せ Y長押し保存 X長押し10秒切替':live?'回転ジャイロ追従中  '+(state.viewYaw*180/Math.PI).toFixed(0)+'° / '+(state.viewPitch*180/Math.PI).toFixed(0)+'°':'ジャイロ未受信：タッチ操作可';if($('gyroRaw')){$('gyroRaw').textContent='α '+((state.rawEuler?.[0]??0).toFixed(1))+'° / β '+((state.rawEuler?.[1]??0).toFixed(1))+'° / γ '+((state.rawEuler?.[2]??0).toFixed(1))+'° / 画面 '+currentScreenAngle()+'° / '+(window.isSecureContext?'HTTPS利用可':'HTTPS必須')+' / '+(window.innerWidth>window.innerHeight?'横向き':'縦向き')+' / 基準α '+((state.baseGyro?.a??0).toFixed(1))+'°';}updateVRNotice(live);
@@ -2988,7 +3040,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_guard','armor_walk','armor_run','armor_power_punch','armor_punch','armor_step','armor_raise','armor_reach','armor_bend'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -3080,7 +3132,7 @@ function setEyeCount(n,reason='manual'){
  if(previous!==state.eyeCount)recordExperimentEvent('eye_count_change',{from:previous,to:state.eyeCount,reason});
  renderUI();toast(state.eyeCount+'視点へ切替');
 }
-function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
+function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=motionDuration().toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
 function nextModel(){const items=['xbot','aegisEmber','aegisSoldier'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
 function nextMotion(){const items=motionOptions();setMotion(items[(items.indexOf(state.motion)+1)%items.length]);}
 const SHORT_LENS_LABELS={
@@ -4280,7 +4332,7 @@ $('gyroSensitivity').oninput=e=>{state.gyroSensitivity=Number(e.target.value);$(
 $('gestureSensitivity').oninput=e=>{state.gestureSensitivity=Number(e.target.value);$('gestureSensitivityLabel').textContent=state.gestureSensitivity.toFixed(1)+'×';};
 $('gestureEnabled').onchange=e=>{state.gestureEnabled=e.target.checked;};
 $('motionSpeed').oninput=e=>{let time=state.paused?state.pauseTime:(performance.now()*.001-state.timeStart)*state.motionSpeed;state.motionSpeed=Number(e.target.value);if(!state.paused)state.timeStart=performance.now()*.001-time/state.motionSpeed;$('speedLabel').textContent=state.motionSpeed.toFixed(2)+'×';};
-$('motionScrub').oninput=e=>{state.paused=true;state.pauseTime=Number(e.target.value);$('motionTime').textContent=state.pauseTime.toFixed(2)+'s';$('togglePause').textContent='動作再開';};
+$('motionScrub').oninput=e=>{const sourceTime=Number(e.target.value),rate=v61IsPunch(state.motion)?state.punchPlayback:state.gameMode&&/(walk|run)/i.test(state.motion)?(state.gameAction==='run'?1.55:1.35):1;state.paused=true;state.pauseTime=sourceTime/Math.max(.001,rate);$('motionTime').textContent=sourceTime.toFixed(2)+'s';$('togglePause').textContent='動作再開';};
 let pointer=null,dragSuppressUntil=0;canvas.addEventListener('pointerdown',e=>{pointer={x:e.clientX,y:e.clientY,yaw:state.dragYaw,pitch:state.dragPitch};try{canvas.setPointerCapture(e.pointerId);}catch(_){} });canvas.addEventListener('pointermove',e=>{if(!pointer)return;state.dragYaw=pointer.yaw+(e.clientX-pointer.x)*.008;state.dragPitch=clamp(pointer.pitch+(e.clientY-pointer.y)*.008,-1.35,1.35);});canvas.addEventListener('pointerup',()=>pointer=null);canvas.addEventListener('pointercancel',()=>pointer=null);
 $('screen').addEventListener('click',()=>{if(state.vr&&!state.calibration){/* VR menu is opened exclusively by LB or the explicit menu button. */}});
 window.addEventListener('keydown',e=>{if(!state.gameMode&&['2','3','4','5'].includes(e.key))setEyeCount(e.key);if(e.key==='Escape'&&state.vr)endVR();if(e.key==='m'&&state.vr)toggleMenu();});
@@ -4980,6 +5032,7 @@ const ANALYSIS_METRICS={
  angular:{label:'関節角速度',unit:'度/秒',get:j=>j.angular*180/Math.PI}
 };
 function analysisSourceDuration(md,motion){
+ const combined=v61PunchDuration(motion);if(combined!==null)return combined;
  if(motion==='xbot_punch')return 1.10;
  if(motion==='armor_power_punch')return 1.65;
  if(motion==='armor_walk'||motion==='armor_run'){
@@ -4988,7 +5041,6 @@ function analysisSourceDuration(md,motion){
   const clip=source?.animations?.find(a=>a.name===name);
   return Math.max(.25,clip?.duration||(motion==='armor_run'?.63:1.03));
  }
- if(motion==='armor_punch')return 1.65;
  const sourceName=XBOT_CLIPS?.[motion]||motion;
  const target=motion.startsWith('armor_')?{
   armor_breathe:'armor_breathe',armor_guard:'armor_guard',
@@ -5012,7 +5064,7 @@ function scheduleMotionAnalysis(){
 function analyzeCurrentMotion(){
  if(!modelData||!modelData.nodes?.length){toast('解析できる3Dモデルがありません');return;}
  const md=modelData,motion=state.motion,avatar=state.model,eyeCount=state.eyeCount;
- const factor=Math.max(.01,state.motionSpeed*(/punch/i.test(motion)?state.punchPlayback:1));
+ const factor=Math.max(.01,state.motionSpeed*(v61IsPunch(motion)?state.punchPlayback:1));
  const fullDuration=analysisSourceDuration(md,motion);
  const visibleDuration=Math.min(6,fullDuration/factor);
  const frames=Math.max(3,Math.min(181,Math.floor(visibleDuration*30)+1));
@@ -5392,7 +5444,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   renderUI();v47Init();showStatus('人工複眼シミュレーションシステム v54：AEGIS動作修正・再解析CSV・部位間の時間関係');
-  window.__compoundTest={version:"60",v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"61",v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -5439,6 +5491,9 @@ const V54_SCHEMA='compound-eye-single-motion-v2';
 let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){
+ if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
    ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':
@@ -5456,7 +5511,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v60'?experimentBuildManifest.source_commit:'unverified_build_v60';
+ const runtime=experimentBuildManifest?.app_version==='v61'?experimentBuildManifest.source_commit:'unverified_build_v61';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -5534,7 +5589,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v60',runtime,JSON.stringify(config),
+    'v61',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -5574,9 +5629,10 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v60',
+   motion_revision_id:asset.motion_revision_id,app_version:'v61',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
+   motion_composition:v61MotionMetadata(motion),
    cosmetic_animation:{schema:'aegis-accessory-v60',visor_triangle:'adjustable head-bound marker',visor_settings:A58.models.includes(avatar)?{...v58Appearance.visor[avatar]}:null,shoulder_armor:false,...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
@@ -5640,7 +5696,7 @@ const v47Options=m=>{
  return items.filter(id=>id!=='spin');
 };
 function v47Format(n,dp=2){return Number.isFinite(n)?n.toFixed(dp):'—';}
-function v47MotionRate(m){return /punch/i.test(m)?state.punchPlayback:1;}
+function v47MotionRate(m){return v61IsPunch(m)?state.punchPlayback:1;}
 function v47Duration(md,m){
  const actual=analysisSourceDuration(md,m);
  return Math.max(.28,Math.min(7.99,actual));
@@ -6436,7 +6492,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v60',
+  app_version:'v61',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -6963,7 +7019,7 @@ function v54Seek(time){
  }
  if(v47.A&&v47.A.avatar===state.model&&v47.A.motion===state.motion)v47Seek(t);
  else{
-  state.paused=true;state.pauseTime=t/Math.max(.001,/punch/i.test(state.motion)?state.punchPlayback:1);
+  state.paused=true;state.pauseTime=t/Math.max(.001,v61IsPunch(state.motion)?state.punchPlayback:1);
   draw(performance.now());
  }
  v54UpdateCursor();

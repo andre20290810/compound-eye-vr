@@ -38,6 +38,9 @@ const V54_SCHEMA='compound-eye-single-motion-v2';
 let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){
+ if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
    ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':
@@ -55,7 +58,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v60'?experimentBuildManifest.source_commit:'unverified_build_v60';
+ const runtime=experimentBuildManifest?.app_version==='v61'?experimentBuildManifest.source_commit:'unverified_build_v61';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -133,7 +136,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v60',runtime,JSON.stringify(config),
+    'v61',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -173,9 +176,10 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v60',
+   motion_revision_id:asset.motion_revision_id,app_version:'v61',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
+   motion_composition:v61MotionMetadata(motion),
    cosmetic_animation:{schema:'aegis-accessory-v60',visor_triangle:'adjustable head-bound marker',visor_settings:A58.models.includes(avatar)?{...v58Appearance.visor[avatar]}:null,shoulder_armor:false,...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
