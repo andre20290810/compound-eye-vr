@@ -1,0 +1,822 @@
+{
+  "date": "2026-11-11T02:37:10.215Z",
+  "errors": [],
+  "versions": {
+    "before": {
+      "geometryAudit": null,
+      "revision": null,
+      "edge_stretch": [
+        {
+          "material": "cables",
+          "motion": "armor_walk",
+          "edges": 3468,
+          "samples": 138720,
+          "min": 0.17704856955890577,
+          "p50": 1.0000000013244421,
+          "p95": 1.384321032350135,
+          "p99": 2.386059743733657,
+          "max": 3.9355671230707245,
+          "count_over_2": 2455,
+          "worst": {
+            "ratio": 3.9355671230707245,
+            "time": 0.7879166543483734,
+            "edge": [
+              132,
+              133
+            ],
+            "bind_length": 0.03284167681142996,
+            "bind_positions": [
+              [
+                0.07320352643728256,
+                0.42207372188568115,
+                0.0705186054110527
+              ],
+              [
+                0.0441046766936779,
+                0.4343573749065399,
+                0.06152168661355972
+              ]
+            ]
+          }
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_walk",
+          "edges": 6228,
+          "samples": 249120,
+          "min": 0.08788839006948684,
+          "p50": 0.9999999622297008,
+          "p95": 1.059884791903358,
+          "p99": 1.242330168629035,
+          "max": 1.9666707605615943,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.9666707605615943,
+            "time": 0.7879166543483734,
+            "edge": [
+              24,
+              421
+            ],
+            "bind_length": 0.004616739869871821,
+            "bind_positions": [
+              [
+                0.07101240754127502,
+                0.664558470249176,
+                0.09126778692007065
+              ],
+              [
+                0.06644757837057114,
+                0.6639443635940552,
+                0.09158321470022202
+              ]
+            ]
+          }
+        },
+        {
+          "material": "boots",
+          "motion": "armor_walk",
+          "edges": 4928,
+          "samples": 197120,
+          "min": 0.9568230946428907,
+          "p50": 1.0000000002612577,
+          "p95": 1.0000000580860058,
+          "p99": 1.0000758729390806,
+          "max": 1.0448944310309463,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0448944310309463,
+            "time": 0.7116666555404663,
+            "edge": [
+              802,
+              816
+            ],
+            "bind_length": 0.003882443961702093,
+            "bind_positions": [
+              [
+                0.08628380298614502,
+                0.020267954096198082,
+                0.11522107571363449
+              ],
+              [
+                0.08815953880548477,
+                0.01953759789466858,
+                0.11854095011949539
+              ]
+            ]
+          }
+        },
+        {
+          "material": "pants",
+          "motion": "armor_walk",
+          "edges": 8408,
+          "samples": 336320,
+          "min": 0.1186370731824597,
+          "p50": 1.000000003624643,
+          "p95": 2.419577029306677,
+          "p99": 6.680439001256695,
+          "max": 17.499887446866154,
+          "count_over_2": 20741,
+          "worst": {
+            "ratio": 17.499887446866154,
+            "time": 0.7370833218097687,
+            "edge": [
+              1070,
+              1092
+            ],
+            "bind_length": 0.009595172351290602,
+            "bind_positions": [
+              [
+                0.06893741339445114,
+                0.15462367236614227,
+                -0.012777294032275677
+              ],
+              [
+                0.06020611152052879,
+                0.15078921616077423,
+                -0.01383967138826847
+              ]
+            ]
+          }
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_walk",
+          "edges": 1577,
+          "samples": 63080,
+          "min": 0.45419510936051805,
+          "p50": 0.9999999946249787,
+          "p95": 1.1315420624186485,
+          "p99": 1.5728016907063833,
+          "max": 2.217172067006709,
+          "count_over_2": 92,
+          "worst": {
+            "ratio": 2.217172067006709,
+            "time": 0.8133333206176758,
+            "edge": [
+              1322,
+              1324
+            ],
+            "bind_length": 0.018813646323901787,
+            "bind_positions": [
+              [
+                0.04749101400375366,
+                0.6269611716270447,
+                -0.10249758511781693
+              ],
+              [
+                0.06603261083364487,
+                0.6272931098937988,
+                -0.09932705014944077
+              ]
+            ]
+          }
+        },
+        {
+          "material": "cables",
+          "motion": "armor_run",
+          "edges": 3468,
+          "samples": 138720,
+          "min": 0.13370121457537343,
+          "p50": 1.0000000027544746,
+          "p95": 1.6599231119639675,
+          "p99": 3.248896066932549,
+          "max": 5.459522752577265,
+          "count_over_2": 4271,
+          "worst": {
+            "ratio": 5.459522752577265,
+            "time": 0.04749999940395355,
+            "edge": [
+              64,
+              65
+            ],
+            "bind_length": 0.03284167886753131,
+            "bind_positions": [
+              [
+                -0.04410466179251671,
+                0.43435728549957275,
+                0.06152169406414032
+              ],
+              [
+                -0.07320352643728256,
+                0.4220736622810364,
+                0.0705186128616333
+              ]
+            ]
+          }
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_run",
+          "edges": 6228,
+          "samples": 249120,
+          "min": 0.03607637237853901,
+          "p50": 0.9999999673671597,
+          "p95": 1.111825657401738,
+          "p99": 1.387349234545436,
+          "max": 2.655975692156632,
+          "count_over_2": 42,
+          "worst": {
+            "ratio": 2.655975692156632,
+            "time": 0.04749999940395355,
+            "edge": [
+              29,
+              462
+            ],
+            "bind_length": 0.004616739413847908,
+            "bind_positions": [
+              [
+                -0.07101241499185562,
+                0.664558470249176,
+                0.09126778692007065
+              ],
+              [
+                -0.06644759327173233,
+                0.6639443039894104,
+                0.09158319979906082
+              ]
+            ]
+          }
+        },
+        {
+          "material": "boots",
+          "motion": "armor_run",
+          "edges": 4928,
+          "samples": 197120,
+          "min": 0.9518777298810891,
+          "p50": 1.0000000002023033,
+          "p95": 1.0000000501319344,
+          "p99": 1.000066791802041,
+          "max": 1.0717542975474657,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0717542975474657,
+            "time": 0.44333332777023315,
+            "edge": [
+              329,
+              344
+            ],
+            "bind_length": 0.003694524292873855,
+            "bind_positions": [
+              [
+                -0.08628382533788681,
+                0.020267751067876816,
+                0.11522100865840912
+              ],
+              [
+                -0.08585225045681,
+                0.01663247123360634,
+                0.11571899801492691
+              ]
+            ]
+          }
+        },
+        {
+          "material": "pants",
+          "motion": "armor_run",
+          "edges": 8408,
+          "samples": 336320,
+          "min": 0.0911884697669499,
+          "p50": 1.0000000067308568,
+          "p95": 3.5058450186168164,
+          "p99": 9.262706986235251,
+          "max": 23.021272159437423,
+          "count_over_2": 27997,
+          "worst": {
+            "ratio": 23.021272159437423,
+            "time": 0.44333332777023315,
+            "edge": [
+              589,
+              625
+            ],
+            "bind_length": 0.010690351871429717,
+            "bind_positions": [
+              [
+                -0.0593264177441597,
+                0.13535155355930328,
+                -0.0827440693974495
+              ],
+              [
+                -0.06996665149927139,
+                0.13545113801956177,
+                -0.08377321064472198
+              ]
+            ]
+          }
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_run",
+          "edges": 1577,
+          "samples": 63080,
+          "min": 0.1276183045219738,
+          "p50": 0.9999999992532473,
+          "p95": 1.2476195277565025,
+          "p99": 1.8368952909327438,
+          "max": 2.7452013433963813,
+          "count_over_2": 408,
+          "worst": {
+            "ratio": 2.7452013433963813,
+            "time": 0.04749999940395355,
+            "edge": [
+              1279,
+              1288
+            ],
+            "bind_length": 0.01871539972554411,
+            "bind_positions": [
+              [
+                -0.06603259593248367,
+                0.6272932291030884,
+                -0.09932707250118256
+              ],
+              [
+                -0.0475739948451519,
+                0.6274093985557556,
+                -0.1024145856499672
+              ]
+            ]
+          }
+        }
+      ]
+    },
+    "after": {
+      "geometryAudit": [
+        {
+          "material": "cables",
+          "changed_vertices": 1188,
+          "removed_triangles": 0,
+          "rigid_components": 8,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "gloves",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "backpack",
+          "changed_vertices": 0,
+          "removed_triangles": 1194,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 4
+        },
+        {
+          "material": "vest hardware",
+          "changed_vertices": 2178,
+          "removed_triangles": 12,
+          "rigid_components": 38,
+          "knife_components": 1,
+          "backpack_components": 0
+        },
+        {
+          "material": "boots",
+          "changed_vertices": 1736,
+          "removed_triangles": 0,
+          "rigid_components": 22,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "pants",
+          "changed_vertices": 2915,
+          "removed_triangles": 0,
+          "rigid_components": 16,
+          "knife_components": 0,
+          "backpack_components": 0,
+          "segmented_main_panels": true
+        },
+        {
+          "material": "visor",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "armor fabric",
+          "changed_vertices": 502,
+          "removed_triangles": 105,
+          "rigid_components": 2,
+          "knife_components": 2,
+          "backpack_components": 0
+        },
+        {
+          "material": "Aegis_Ceramic_Plate",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "Aegis_Luminous_Trim",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "Aegis_Luminous_Trim",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "Aegis_Luminous_Trim",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        },
+        {
+          "material": "Aegis_Luminous_Trim",
+          "changed_vertices": 0,
+          "removed_triangles": 0,
+          "rigid_components": 0,
+          "knife_components": 0,
+          "backpack_components": 0
+        }
+      ],
+      "revision": "aegis-anatomical-skin-jet-v55-001",
+      "edge_stretch": [
+        {
+          "material": "cables",
+          "motion": "armor_walk",
+          "edges": 3468,
+          "samples": 138720,
+          "min": 0.22690098585059024,
+          "p50": 0.9999999984881581,
+          "p95": 1.0364753871626575,
+          "p99": 1.1870438907108702,
+          "max": 1.4524169537205003,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.4524169537205003,
+            "time": 0.7879166543483734,
+            "edge": [
+              1275,
+              1289
+            ],
+            "bind_length": 0.024297066298060797,
+            "bind_positions": [
+              [
+                0.10758101940155029,
+                0.6670816540718079,
+                -0.08065271377563477
+              ],
+              [
+                0.10560564696788788,
+                0.6909515261650085,
+                -0.0847361609339714
+              ]
+            ]
+          }
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_walk",
+          "edges": 6228,
+          "samples": 249120,
+          "min": 0.9999999028349013,
+          "p50": 0.9999999985586735,
+          "p95": 1.0000000449460056,
+          "p99": 1.0000000690092468,
+          "max": 1.00000009357888,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.00000009357888,
+            "time": 0.17791666388511657,
+            "edge": [
+              2208,
+              2273
+            ],
+            "bind_length": 0.09740662389018874,
+            "bind_positions": [
+              [
+                -0.12774933874607086,
+                0.26869505643844604,
+                -0.024895012378692627
+              ],
+              [
+                -0.12806472182273865,
+                0.3660837411880493,
+                -0.023052461445331573
+              ]
+            ]
+          }
+        },
+        {
+          "material": "boots",
+          "motion": "armor_walk",
+          "edges": 4928,
+          "samples": 197120,
+          "min": 0.9999999028415305,
+          "p50": 1.0000000002582596,
+          "p95": 1.0000000533845024,
+          "p99": 1.0000000749123263,
+          "max": 1.0000000935717692,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0000000935717692,
+            "time": 0.17791666388511657,
+            "edge": [
+              258,
+              263
+            ],
+            "bind_length": 0.019358949604326662,
+            "bind_positions": [
+              [
+                -0.05016348883509636,
+                0.02446731925010681,
+                -0.036863088607788086
+              ],
+              [
+                -0.05026308819651604,
+                0.04382224753499031,
+                -0.03648130223155022
+              ]
+            ]
+          }
+        },
+        {
+          "material": "pants",
+          "motion": "armor_walk",
+          "edges": 18680,
+          "samples": 747200,
+          "min": 0.9999999028590039,
+          "p50": 0.9999999981621474,
+          "p95": 1.0000000413120744,
+          "p99": 1.0000000593792835,
+          "max": 1.0000000935955438,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0000000935955438,
+            "time": 0.17791666388511657,
+            "edge": [
+              2976,
+              2977
+            ],
+            "bind_length": 0.020609947668141722,
+            "bind_positions": [
+              [
+                -0.06746012717485428,
+                0.23030045628547668,
+                -0.08963285386562347
+              ],
+              [
+                -0.06712810695171356,
+                0.2509004473686218,
+                -0.08908506482839584
+              ]
+            ]
+          }
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_walk",
+          "edges": 1577,
+          "samples": 63080,
+          "min": 0.45419510936051805,
+          "p50": 0.9999999968201524,
+          "p95": 1.0000000468500927,
+          "p99": 1.0476938491909225,
+          "max": 1.4679327062257017,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.4679327062257017,
+            "time": 0.7879166543483734,
+            "edge": [
+              3117,
+              3118
+            ],
+            "bind_length": 0.0029261665412224783,
+            "bind_positions": [
+              [
+                -0.3073902428150177,
+                0.7208884954452515,
+                0.16093654930591583
+              ],
+              [
+                -0.308813214302063,
+                0.723325788974762,
+                0.16170933842658997
+              ]
+            ]
+          }
+        },
+        {
+          "material": "cables",
+          "motion": "armor_run",
+          "edges": 3468,
+          "samples": 138720,
+          "min": 0.1857702712115251,
+          "p50": 0.999999999827339,
+          "p95": 1.0513695496592825,
+          "p99": 1.2694109041668848,
+          "max": 1.6077341317590843,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.6077341317590843,
+            "time": 0.04749999940395355,
+            "edge": [
+              1186,
+              1200
+            ],
+            "bind_length": 0.024297303716234783,
+            "bind_positions": [
+              [
+                -0.1075809895992279,
+                0.6670816540718079,
+                -0.08065272867679596
+              ],
+              [
+                -0.10560563951730728,
+                0.6909517645835876,
+                -0.08473620563745499
+              ]
+            ]
+          }
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_run",
+          "edges": 6228,
+          "samples": 249120,
+          "min": 0.9999998956488828,
+          "p50": 0.9999999999134432,
+          "p95": 1.0000000398738873,
+          "p99": 1.0000000604706885,
+          "max": 1.0000000895962322,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0000000895962322,
+            "time": 0.5066666603088379,
+            "edge": [
+              2850,
+              2851
+            ],
+            "bind_length": 0.0030523657292006873,
+            "bind_positions": [
+              [
+                0.13091981410980225,
+                0.3249008357524872,
+                0.010677644982933998
+              ],
+              [
+                0.1309364140033722,
+                0.3279384970664978,
+                0.010976433753967285
+              ]
+            ]
+          }
+        },
+        {
+          "material": "boots",
+          "motion": "armor_run",
+          "edges": 4928,
+          "samples": 197120,
+          "min": 0.9999998955679182,
+          "p50": 1.00000000022024,
+          "p95": 1.0000000470171513,
+          "p99": 1.000000068338698,
+          "max": 1.0000000896030272,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0000000896030272,
+            "time": 0.5066666603088379,
+            "edge": [
+              736,
+              737
+            ],
+            "bind_length": 0.018995612441318848,
+            "bind_positions": [
+              [
+                0.0509934276342392,
+                0.02307320013642311,
+                -0.0640529915690422
+              ],
+              [
+                0.05104322358965874,
+                0.04193011671304703,
+                -0.0617622472345829
+              ]
+            ]
+          }
+        },
+        {
+          "material": "pants",
+          "motion": "armor_run",
+          "edges": 18680,
+          "samples": 747200,
+          "min": 0.9999998956819081,
+          "p50": 0.9999999999749982,
+          "p95": 1.000000035938158,
+          "p99": 1.0000000545325407,
+          "max": 1.0000000896068608,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.0000000896068608,
+            "time": 0.5066666603088379,
+            "edge": [
+              5922,
+              5923
+            ],
+            "bind_length": 0.010173718873149154,
+            "bind_positions": [
+              [
+                0.03828359767794609,
+                0.3479999899864197,
+                0.020886600017547607
+              ],
+              [
+                0.038593657314777374,
+                0.33788156509399414,
+                0.019873734563589096
+              ]
+            ]
+          }
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_run",
+          "edges": 1577,
+          "samples": 63080,
+          "min": 0.1276183045219738,
+          "p50": 0.9999999988475037,
+          "p95": 1.0004725905709164,
+          "p99": 1.2223043783264615,
+          "max": 1.9068916605977015,
+          "count_over_2": 0,
+          "worst": {
+            "ratio": 1.9068916605977015,
+            "time": 0.3166666626930237,
+            "edge": [
+              2832,
+              2833
+            ],
+            "bind_length": 0.0022258328838054915,
+            "bind_positions": [
+              [
+                0.316755086183548,
+                0.721863865852356,
+                0.15866431593894958
+              ],
+              [
+                0.31660395860671997,
+                0.7234140634536743,
+                0.16025440394878387
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "screens": [
+    "before-navy-run-front.png",
+    "before-navy-run-side.png",
+    "before-navy-walk-front.png",
+    "before-navy-walk-side.png",
+    "before-navy-guard-front.png",
+    "before-navy-guard-back.png",
+    "before-navy-guard-rear-angle.png",
+    "before-soldier-run-front.png",
+    "before-soldier-run-side.png",
+    "before-soldier-walk-front.png",
+    "before-soldier-walk-side.png",
+    "before-soldier-guard-front.png",
+    "before-soldier-guard-back.png",
+    "before-soldier-guard-rear-angle.png",
+    "after-navy-run-front.png",
+    "after-navy-run-side.png",
+    "after-navy-walk-front.png",
+    "after-navy-walk-side.png",
+    "after-navy-guard-front.png",
+    "after-navy-guard-back.png",
+    "after-navy-guard-rear-angle.png",
+    "after-soldier-run-front.png",
+    "after-soldier-run-side.png",
+    "after-soldier-walk-front.png",
+    "after-soldier-walk-side.png",
+    "after-soldier-guard-front.png",
+    "after-soldier-guard-back.png",
+    "after-soldier-guard-rear-angle.png"
+  ],
+  "ui": {
+    "title": "人工複眼シミュレーションシステム",
+    "h1": "人工複眼シミュレーションシステム",
+    "editorDisplay": "none",
+    "supplements": "補足・操作ガイド",
+    "remainingHelpers": [],
+    "updated": "最終更新：2026/11/11 11:37（日本時間）"
+  }
+}

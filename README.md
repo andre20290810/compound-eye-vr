@@ -1,6 +1,14 @@
+## 最新の改修：AEGIS脚メッシュ・背面ジェット・UI整理
+
+AEGIS NAVY / SOLDIER の歩行・走行で装甲が引き伸ばされる不具合を、脚メッシュの関節別分割とバインド再構成で修正しました。肩のナイフ状意匠を除去し、背中に縦長の双発ジェット推進装置を追加しています。双眼時は魚眼を既定ONとし、版番号を含まないタイトル・ビューアー直下の更新日時・最下部の補足欄に整理しました。個眼レイアウト調整のUIは設定を維持したまま非表示です。
+
+[6点の実装とテスト詳細](docs/V55_FIXES.md) ／ [脚の変形検査](docs/evidence/v55/geometry-inspection.json) ／ [UI・外観の検証結果](docs/evidence/v55/ui-regression.json) ／ [背面ジェット](docs/evidence/v55/after-navy-guard-back.png)
+
+内部版はv55。実機HMD・GameSir・Safariは未検証です。
+
 ## v54 — 再解析CSV・部位間の時間関係・AEGIS修正
 
-公開版はv54です。パンチA・歩行・走行の修正、全関節86列CSV、元姿勢・骨格JSON、部位間の開始／ピーク／増減と速度比、同一骨格のX/Y差分を追加しました。解析は設定内で明示的に開く方式で、通常の複眼・単眼／双眼・VR操作を維持します。
+v54公開時点の変更：パンチA・歩行・走行の修正、全関節86列CSV、元姿勢・骨格JSON、部位間の開始／ピーク／増減と速度比、同一骨格のX/Y差分を追加しました。解析は設定内で明示的に開く方式で、通常の複眼・単眼／双眼・VR操作を維持します。
 
 [実装・列定義・使い方・テスト・制約](docs/V54_IMPLEMENTATION.md) ／ [ブラウザ検証結果](docs/evidence/v54/browser-regression.json) ／ [NAVYの動作比較](docs/evidence/v54/navy-after-punch-a.png) ／ [SOLDIERの動作比較](docs/evidence/v54/soldier-after-punch-a.png)
 

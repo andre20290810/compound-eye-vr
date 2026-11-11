@@ -1,0 +1,102 @@
+TAP version 13
+# Subtest: adjacent duplicate times invalidate every touching stencil
+ok 1 - adjacent duplicate times invalidate every touching stencil
+  ---
+  duration_ms: 1.768
+  type: 'test'
+  ...
+# Subtest: missing central samples cannot acquire invented derivative values
+ok 2 - missing central samples cannot acquire invented derivative values
+  ---
+  duration_ms: 0.5584
+  type: 'test'
+  ...
+# Subtest: plateau reaching outside selected phase is not a phase-local peak
+ok 3 - plateau reaching outside selected phase is not a phase-local peak
+  ---
+  duration_ms: 0.4868
+  type: 'test'
+  ...
+# Subtest: static and constant-velocity trajectories distinguish speed change from vector acceleration
+ok 4 - static and constant-velocity trajectories distinguish speed change from vector acceleration
+  ---
+  duration_ms: 3.8303
+  type: 'test'
+  ...
+# Subtest: CSV protects column identity, duplicate times and independent trial groups
+ok 5 - CSV protects column identity, duplicate times and independent trial groups
+  ---
+  duration_ms: 2.7846
+  type: 'test'
+  ...
+# Subtest: different exact joint IDs cannot silently compare under one canonical name
+ok 6 - different exact joint IDs cannot silently compare under one canonical name
+  ---
+  duration_ms: 0.4241
+  type: 'test'
+  ...
+# Subtest: v2 reading retains quaternion and raw coordinates without extra smoothing
+ok 7 - v2 reading retains quaternion and raw coordinates without extra smoothing
+  ---
+  duration_ms: 0.4106
+  type: 'test'
+  ...
+# PASS fixed user CSV rates, peaks/lag, quaternion sign, flat peak, circle, missing/legacy, time and no double smoothing
+# Subtest: C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-kinematics.test.cjs
+ok 2 - C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-kinematics.test.cjs
+  ---
+  duration_ms: 77.8172
+  type: 'test'
+  ...
+# PASS fixed excerpt of uploaded user CSV: 70 real rows, sign rates 19.39,-36.21,-20.93, 23.18 acceleration differs, peaks lag 66.7ms, Spine distinct, no raw fabrication
+# Subtest: C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-uploaded-csv.test.cjs
+ok 3 - C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-uploaded-csv.test.cjs
+  ---
+  duration_ms: 86.1363
+  type: 'test'
+  ...
+# Subtest: anatomical leg weights are normalized and have no opposite-leg influences
+ok 10 - anatomical leg weights are normalized and have no opposite-leg influences
+  ---
+  duration_ms: 1.1538
+  type: 'test'
+  ...
+# Subtest: rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+ok 11 - rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+  ---
+  duration_ms: 1.939
+  type: 'test'
+  ...
+# Subtest: shoulder blade components are removed from fabric, not unrelated neck cables
+ok 12 - shoulder blade components are removed from fabric, not unrelated neck cables
+  ---
+  duration_ms: 0.6799
+  type: 'test'
+  ...
+# Subtest: X Bot geometry is not altered by AEGIS repair
+ok 13 - X Bot geometry is not altered by AEGIS repair
+  ---
+  duration_ms: 0.7957
+  type: 'test'
+  ...
+# Subtest: twin rocket geometry has chest binding, closed profile parts and finite coordinates
+ok 14 - twin rocket geometry has chest binding, closed profile parts and finite coordinates
+  ---
+  duration_ms: 3.0024
+  type: 'test'
+  ...
+# Subtest: mechanical joint covers retain side-specific single-bone attachment
+ok 15 - mechanical joint covers retain side-specific single-bone attachment
+  ---
+  duration_ms: 2.1485
+  type: 'test'
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 149.6827

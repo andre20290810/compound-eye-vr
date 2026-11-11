@@ -1,13 +1,15 @@
 {
   "name": "compound-eye-vr",
-  "version": "54.0.0",
+  "version": "55.0.0",
   "private": true,
   "description": "Self-contained compound-eye VR viewer and exploratory kinematics",
   "scripts": {
     "build": "node tools/bundle-v54.cjs",
     "check": "node tools/bundle-v54.cjs --check",
     "test": "node --test tests/*.test.cjs",
-    "test:browser": "node tests/browser-v54.cjs"
+    "test:browser": "node tests/browser-v55.cjs && node tests/browser-v55-ui.cjs",
+    "test:visual": "node tools/inspect-v55-visual.cjs",
+    "verify:public": "node tools/verify-public-v55.cjs"
   },
   "devDependencies": {
     "puppeteer": "25.14.0"
