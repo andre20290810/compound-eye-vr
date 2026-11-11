@@ -1,18 +1,17 @@
 {
-  "app_version": "v62",
-  "source_commit": "ddd3ba50f19f7986b2da1cbd0b2d173007edf30c",
+  "app_version": "v63",
+  "source_commit": "fe88c89a6da5449e4082d66c8847163ec5ccc3ec",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
-  "data_schema": "compound-eye-single-motion-v2",
-  "model_geometry_revision": "aegis-closed-fists-stabilized-v62",
-  "motion_revision": "xbot-ybot-known-perturbation-v62",
-  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62",
+  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62-with-v63-readable-view",
+  "motion_revision": "aegis-retarget-xbot-punchC-fist-v63-001",
+  "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
-    "index.html": "87a04cb5ff9bebc58f05e01500fa85ad58481284ab84ee7d2026d37045c4f9bd",
+    "index.html": "2136ad8f2e3855e39e9c3ac09cf8ac670f5e2e265d808568bf9855791f0a33c8",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "13ae9832edaedb95f8878f2b3f23f6a816aef85dfa36bb46f98059be54815db4",
-    "kinematic-view-v54.js": "c936c18420e0aea6b86fc452d25df76e24e001ab3f1c9c751f884ce3780c2927",
+    "motion-csv-v54.js": "c2f70a63c4774633283cbcb9e6662b6fe3c62f7cadf47104195c31f8f1f1438a",
+    "kinematic-view-v54.js": "4fa28f9937b2e0d156b00fe3edf49e3b06e2dd398e8f0e28a11f45bb66796358",
     "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
     "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
@@ -21,12 +20,13 @@
     "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
     "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
     "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
-    "punch-sequences-v61.js": "9c340e23e451894e5a0c120dcceee7f9f277dac0385866fdd5bd8121bdf7a893",
+    "punch-sequences-v61.js": "706e74ced9780c8aa5ca77fc49594370e1febca450cf8048197fbeff3bb4dc05",
     "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
     "ybot-runtime-v62.js": "029f01926c23027e2b2488959fe79c96dd316a20b050690964d02d2e41c21639",
     "motion-timeline-v62.js": "1749076dedfaff66026b51fc921a17347c16d3b29179f5f679bf6cb9f394a280",
-    "timeline-ui-v62.js": "7ac341e5ca7cc05874063361ef4682e8428747fb2c3b61d383416bd987dbed4f",
-    "aegis-fists-v62.js": "9ea64860346823e197f58863b9be6d53dc965139ca4637769b8b2f934f6c23ec"
+    "timeline-ui-v62.js": "bf47bab76b28bec028bd0efd978fe4457c268fc8e7dfac4d72e9f123008f128b",
+    "timeline-clear-v63.js": "16f9756ba7816ea0733f56ae196607959beeefb96f80e2bd5a5081468fdcfd1d",
+    "aegis-fists-v62.js": "b69b168179f24e1fafdc98c100976038157ff8e3668b48d19c9e54b8363675f8"
   },
   "public_appearance": {
     "path": "public-appearance.json",
@@ -38,48 +38,48 @@
     "path": "ybot-modifications.json",
     "revision": "ybot-known-shifts-v62-001",
     "sha256": "ab555d82a9abd6c485bd9c7b46728681ebc10db40e4a943231cf4e7490be812a",
-    "synthetic_not_beginner": true
+    "motion_data_unchanged": true
   },
   "test_reports": {
     "browser-regression": {
-      "sha256": "6a801907186aba4ffe3c2c0245f9f4dcf872710b4972c9bace4ed7c9e12b05e6",
+      "sha256": "a0ce9cd0dd9ab0e09141771975e1644421ffa6587092c12ec117fa2f14bc4fbc",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "ui-regression": {
-      "sha256": "29ac3db526c5e85054f2ff08c2a162fe509a6eb1608116c0d9c497d94dbec8a1",
+      "sha256": "624be7eafe3d59cba3d9267b6dea0222395111e265a495d832af4d8b2cadb7a3",
       "summary": {
         "passed": 8,
         "failed": 0
       }
     },
     "additions-regression": {
-      "sha256": "fb1991d499cdbe13c1bafd9199c5e033b77a29b621521ed6cb41cc4d293a859e",
+      "sha256": "2175b3e8892b00aa82a16155176aefc82157714b30cb626dbad57fad20e3b969",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "visor-regression": {
-      "sha256": "16507df3a0d76f7014a4a3193c5b6e0051751c7bbc0ef1488f3987415b8529b1",
+      "sha256": "3d0e2fecf6444cb596c2a27a4003d7048ca7492d91b671a20cad193bea7588c1",
       "summary": {
         "passed": 13,
         "failed": 0
       }
     },
     "punch-regression": {
-      "sha256": "6ea6bdd1257b7d5fee66963788d59a2ca9b0279633a0907caba0fef678fbf4af",
+      "sha256": "5130f3059de9f7c51bba8226ce6fceb75395cf4ea6aa636cf92d9c8f4a3c62c2",
       "summary": {
         "passed": 14,
         "failed": 0
       }
     },
     "timeline-regression": {
-      "sha256": "a0a2771a7b1a363e1b4a0e19fe947450d9e04c3928066a4023adc316c1e73de8",
+      "sha256": "de86494d21dcd759d349149eaea5d6129c48ce2b1415db5931042419ca1c4b38",
       "summary": {
-        "passed": 15,
+        "passed": 16,
         "failed": 0
       }
     }
@@ -89,18 +89,17 @@
     "failed": 0
   },
   "browser_tests": {
-    "passed": 78,
+    "passed": 79,
     "failed": 0
   },
-  "backup_tag": "backup-v61-before-v62-20261112",
-  "backup_commit": "0ed45180fdf2838abf53d51a7f1bae54e8ba5094",
+  "backup_tag": "backup-v62-before-v63-20261112",
+  "backup_commit": "01c131baa6f63f66adc14c6d062c7de1cb262c42",
   "untested": [
-    "physical iPhone Safari",
-    "physical HMD",
-    "physical GameSir",
-    "physical collisions and human motion validity",
-    "kinetic forces, torques, energy transfer or causal inference"
+    "physical iPhone/Safari",
+    "physical HMD and GameSir",
+    "physical joint contact/collision",
+    "human motor-learning efficacy"
   ],
-  "note": "Source commit identifies implementation. Current main may later include manifest and public verification-only commits. YBot copies XBot rig/mesh, with motion revision metadata. AEGIS B is adjusted and not numerically identical to old B.",
-  "generated_at_utc": "2026-11-11T19:32:34.472145+00:00"
+  "note": "This is a visual/readability repair. Real source motion data and XBot/YBot rig hierarchy remain; altered AEGIS B body and fist require new revision. The published appearance JSON remains byte-identical. A later metadata-only main commit is possible.",
+  "generated_at_utc": "2026-11-11T20:08:41.581897+00:00"
 }
