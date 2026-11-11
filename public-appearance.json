@@ -1,6 +1,6 @@
 {
   "schema": "compound-eye-appearance-v1",
-  "revision": "appearance-2026-11-11T14:56:59.106Z",
+  "revision": "appearance-2026-11-11T17:02:09.911Z",
   "models": {
     "aegisEmber": {
       "mask": {
@@ -40,9 +40,9 @@
       },
       "visorBars": {
         "mode": "solid",
-        "colorA": "#ffffff",
+        "colorA": "#f9f106",
         "colorB": "#ffffff",
-        "brightness": 1,
+        "brightness": 1.05,
         "axis": "y"
       },
       "chestMarks": {
@@ -98,7 +98,7 @@
       },
       "visorBars": {
         "mode": "solid",
-        "colorA": "#ffffff",
+        "colorA": "#eeff00",
         "colorB": "#ffffff",
         "brightness": 1,
         "axis": "y"
@@ -117,6 +117,26 @@
         "brightness": 1,
         "axis": "y"
       }
+    }
+  },
+  "visor": {
+    "aegisEmber": {
+      "triangleScale": 1.11,
+      "barThickness": 0.72,
+      "leftAngle": 3,
+      "rightAngle": -3,
+      "barLength": 1,
+      "barSpacing": 1,
+      "triangleOffset": 0
+    },
+    "aegisSoldier": {
+      "triangleScale": 1.11,
+      "barThickness": 0.72,
+      "leftAngle": 3,
+      "rightAngle": -3,
+      "barLength": 1,
+      "barSpacing": 1,
+      "triangleOffset": 0
     }
   }
 }
