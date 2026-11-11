@@ -106,7 +106,7 @@ function jetGeometry(){
  const meshes=[];
  const make=name=>{const o={name,p:[],tri:[],col:[],joints:[],weights:[]};meshes.push(o);return o;};
  const body=make('jet_body'),trim=make('jet_trim'),dark=make('jet_nozzle'),glow=make('jet_exhaust');
- const colors={jet_body:[.58,.68,.85,1],jet_trim:[.88,.92,.98,1],jet_nozzle:[.12,.16,.23,1],jet_exhaust:[1,.35,.055,1]};
+ const colors={jet_body:[.58,.68,.85,1],jet_trim:[.88,.92,.98,1],jet_nozzle:[.62,.72,.96,1],jet_exhaust:[1,.35,.055,1]};
  function vertex(m,p){const i=m.p.length/3;m.p.push(...p);m.col.push(...colors[m.name]);m.joints.push(1,0,0,0);m.weights.push(1,0,0,0);return i;}
  function lathe(m,cx,cz,rings,N=20){
   const start=m.p.length/3;for(const [y,r] of rings)for(let k=0;k<N;k++){const a=k*2*Math.PI/N;vertex(m,[cx+r*Math.cos(a),y,cz+r*Math.sin(a)]);}

@@ -347,9 +347,9 @@ function v47Init(){
  $('v47ExportJson').onclick=v47ExportJSON;
  for(const id of ['v47Ghost','v47Markers','v47MarkerLimit'])
   $(id).onchange=()=>{v47DrawMarkers(v47.lastProjections||[]);};
- $('v47Panel').addEventListener('toggle',()=>{if($('v47Panel').open&&!v47.A) v47Analyze();});
+ $('v47Panel').addEventListener('toggle',()=>{if($('v47Panel').open&&!v47.A) v56AnalyzeCurrentViewer();});
  $('experimentPanel').addEventListener('toggle',()=>{
-  if($('experimentPanel').open&&!v47.A)setTimeout(v47Analyze,60);
+  if($('experimentPanel').open&&!v47.A)setTimeout(()=>{if($('experimentPanel').open&&!v47.A)v56AnalyzeCurrentViewer();},60);
  });
 }
 function v47ResetSelection(){
@@ -805,7 +805,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v55',
+  app_version:'v56',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -979,4 +979,11 @@ function v47DrawMarkers(projections){
    }
   }
  }
+}
+
+function v56AnalyzeCurrentViewer(){
+ $('v47AvatarA').value=state.model;
+ v47OptionsFor(state.model,$('v47MotionA'));
+ $('v47MotionA').value=state.motion;
+ v47Analyze();
 }

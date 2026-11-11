@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/11 11:37（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/11 13:57（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -979,12 +979,12 @@ function currentScreenAngle(){
 }
 function qFromEvent(e){let alpha=rad(e.alpha||0),beta=rad(e.beta||0),gamma=rad(e.gamma||0);let x=beta/2,y=alpha/2,z=-gamma/2,cx=Math.cos(x),sx=Math.sin(x),cy=Math.cos(y),sy=Math.sin(y),cz=Math.cos(z),sz=Math.sin(z);let q=[sx*cy*cz+cx*sy*sz,cx*sy*cz-sx*cy*sz,cx*cy*sz-sx*sy*cz,cx*cy*cz+sx*sy*sz];let q1=[-Math.SQRT1_2,0,0,Math.SQRT1_2];let oa=currentScreenAngle();let sh=rad(oa)*.5;return qmul(qmul(q,q1),[0,0,-Math.sin(sh),Math.cos(sh)]);}
 function angles(q){let [x,y,z,w]=q;let m13=2*(x*z+y*w),m33=1-2*(x*x+y*y),m23=2*(y*z-x*w),m21=2*(x*y+z*w),m22=1-2*(x*x+z*z);return{yaw:Math.atan2(m13,m33),pitch:Math.asin(clamp(-m23,-1,1)),roll:Math.atan2(m21,m22)};}
-const state={fourEyeGap:.100,anchorAlphaCustom:false,radialMode:true,radialDistance:.080,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:2,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:0,lensScale:2.20,lensPull:1.10,showLabels:true,showMotionMarkers:true};
+const state={fourEyeGap:.100,anchorAlphaCustom:false,radialMode:true,radialDistance:.080,radialScale:1,adjustEllipses:false,model:'xbot',eyeCount:1,motion:'idle',feather:.18,blend:.90,gyroInvert:false,vr:false,gyro:false,raw:null,baseline:null,baseGyro:null,calibration:false,gyroMode:'rotate',yaw:0,pitch:0,roll:0,lastYaw:0,accYaw:0,viewYaw:0,viewPitch:0,dragYaw:0,dragPitch:0,gyroStartAngle:0,gyroStartPitch:0,rawScreenAngle:0,zoom:1,angle:70,vertical:8,fish:false,paused:false,menuOpen:false,menuBase:{yaw:0,pitch:0},menuStart:0,dwellKey:null,dwellAt:0,gazeX:.5,gazeY:.5,calibId:0,rollReady:true,rollStart:0,modelRot:0,vizMode:'lenses',motionSpeed:.65,anchorAlpha:0,lensScale:2.20,lensPull:1.10,showLabels:true,showMotionMarkers:true};
 const MODEL_NAMES={xbot:'X Bot / Boxer・9動作（32関節）',aegisCeramic:'AEGIS SILVER・明銀',aegisEmber:'AEGIS NAVY・濃紺',aegisSoldier:'AEGIS SOLDIER・発光チューブ'};
 const MOTION_NAMES={
  xbot_idle:'静止',xbot_fight_idle:'構え',xbot_walk:'歩行A',xbot_walk2:'歩行B',xbot_run:'走行',
  xbot_punch:'パンチA',xbot_punch1:'パンチB',xbot_punch2:'パンチC',xbot_hook:'パンチD',
- armor_breathe:'静止・呼吸',armor_guard:'構え',armor_walk:'歩行',armor_run:'走行',
+ armor_breathe:'静止・呼吸',armor_idle2:'静止2',armor_guard:'構え',armor_walk:'歩行',armor_run:'走行',
  armor_power_punch:'パンチA',armor_punch:'パンチB',
  armor_raise:'腕上げ',armor_reach:'腕伸ばし',armor_bend:'肘曲げ',armor_step:'踏み込み',
  idle:'静止',spin:'回転',walk:'歩行',micro:'呼吸',guard:'構え',
@@ -1238,7 +1238,7 @@ function jetGeometry(){
  const meshes=[];
  const make=name=>{const o={name,p:[],tri:[],col:[],joints:[],weights:[]};meshes.push(o);return o;};
  const body=make('jet_body'),trim=make('jet_trim'),dark=make('jet_nozzle'),glow=make('jet_exhaust');
- const colors={jet_body:[.58,.68,.85,1],jet_trim:[.88,.92,.98,1],jet_nozzle:[.12,.16,.23,1],jet_exhaust:[1,.35,.055,1]};
+ const colors={jet_body:[.58,.68,.85,1],jet_trim:[.88,.92,.98,1],jet_nozzle:[.62,.72,.96,1],jet_exhaust:[1,.35,.055,1]};
  function vertex(m,p){const i=m.p.length/3;m.p.push(...p);m.col.push(...colors[m.name]);m.joints.push(1,0,0,0);m.weights.push(1,0,0,0);return i;}
  function lathe(m,cx,cz,rings,N=20){
   const start=m.p.length/3;for(const [y,r] of rings)for(let k=0;k<N;k++){const a=k*2*Math.PI/N;vertex(m,[cx+r*Math.cos(a),y,cz+r*Math.sin(a)]);}
@@ -1264,6 +1264,142 @@ function jetGeometry(){
 }
 return {prepare,components,legWeights,jetGeometry,jointCovers,splitPants,revision:'aegis-anatomical-skin-jet-v55-001'};
 });
+/* AEGIS v56 motion: periodic curves, without framewise angle clipping. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisMotion56=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const TAU=2*Math.PI;
+function fitPeriodic(values,harmonics=5){
+ if(values.length<8||!values.every(Number.isFinite))throw Error('Invalid periodic samples');
+ const N=values.length,H=Math.min(harmonics,Math.floor((N-1)/2));
+ const mean=values.reduce((a,b)=>a+b,0)/N,cos=[],sin=[];
+ for(let k=1;k<=H;k++){let a=0,b=0;for(let i=0;i<N;i++){const phase=TAU*k*i/N;a+=values[i]*Math.cos(phase);b+=values[i]*Math.sin(phase);}cos.push(2*a/N);sin.push(2*b/N);}
+ return {mean,cos,sin,sampleCount:N,harmonics:H};
+}
+function evaluate(curve,phase,derivative=0){
+ let value=derivative===0?curve.mean:0;
+ for(let i=0;i<curve.cos.length;i++){const w=TAU*(i+1),a=phase*w;
+  value+=derivative===0?curve.cos[i]*Math.cos(a)+curve.sin[i]*Math.sin(a):
+   derivative===1?w*(-curve.cos[i]*Math.sin(a)+curve.sin[i]*Math.cos(a)):
+   -w*w*(curve.cos[i]*Math.cos(a)+curve.sin[i]*Math.sin(a));}
+ return value;
+}
+function range(curve){let min=Infinity,max=-Infinity;for(let i=0;i<2048;i++){const v=evaluate(curve,i/2048);min=Math.min(min,v);max=Math.max(max,v);}return {min,max};}
+function fitToRange(values,low,high,harmonics=5){
+ if(!(high>low))throw Error('Invalid range');const raw=fitPeriodic(values,harmonics),r=range(raw);
+ const span=r.max-r.min;if(span<1e-9)throw Error('Source has no periodic motion');
+ // One affine map for the WHOLE cycle: derivatives never become artificial plateaus.
+ const gain=(high-low)*.98/span,mid=(r.min+r.max)/2;
+ return {...raw,mean:(low+high)/2+(raw.mean-mid)*gain,cos:raw.cos.map(x=>x*gain),sin:raw.sin.map(x=>x*gain),sourceRange:r,targetRange:[low,high],gain,method:'periodic_Fourier_then_cyclewise_affine_range'};
+}
+function fitBounded(values,maxAbs,harmonics=4){const c=fitPeriodic(values,harmonics),r=range(c),gain=Math.min(1,maxAbs/Math.max(Math.abs(r.min),Math.abs(r.max),1e-9));return {...c,mean:c.mean*gain,cos:c.cos.map(x=>x*gain),sin:c.sin.map(x=>x*gain),gain};}
+function unwrap(values){const out=[];for(const v of values){let x=v;if(out.length){while(x-out.at(-1)>Math.PI)x-=TAU;while(x-out.at(-1)<-Math.PI)x+=TAU;}out.push(x);}return out;}
+function axisQuaternion(axis,angle){const n=Math.hypot(...axis);if(n<1e-10)throw Error('Invalid axis');const h=angle/2;return [...axis.map(x=>x/n*Math.sin(h)),Math.cos(h)];}
+function accessoryAngle(animation,motion,time){
+ if(!Number.isFinite(time))return 0;
+ if(animation.kind==='visor_clockwise')return motion==='armor_idle2'?-TAU*time/4:0;
+ if(animation.kind==='turbine')return TAU*1.5*time*(animation.direction||1);
+ return 0;
+}
+return {fitPeriodic,evaluate,range,fitToRange,fitBounded,unwrap,axisQuaternion,accessoryAngle};
+});
+/* AEGIS v56 details: paired temple antennae and working exposed turbine rotors. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisDetails56=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const palette={navy:[.62,.72,.96,1],steel:[.78,.84,.98,1],panel:[.48,.60,.88,1],white:[1,1,1,1]};
+function builder(name,bone=1,color=palette.navy,animation=null){return {name,bone,color,animation,p:[],tri:[],col:[],joints:[],weights:[]};}
+function vertex(m,p){const i=m.p.length/3;m.p.push(...p);m.col.push(...m.color);m.joints.push(m.bone,0,0,0);m.weights.push(1,0,0,0);return i;}
+function face(m,points){const base=m.p.length/3;for(const p of points)vertex(m,p);for(let i=1;i<points.length-1;i++)m.tri.push(base,base+i,base+i+1);}
+function box(m,c,size){const v=[];for(const x of [-1,1])for(const y of [-1,1])for(const z of [-1,1])v.push(c.map((n,k)=>n+[x,y,z][k]*size[k]/2));for(const q of [[0,1,3,2],[4,6,7,5],[0,4,5,1],[2,3,7,6],[0,2,6,4],[1,5,7,3]])face(m,q.map(i=>v[i]));}
+function ring(m,c,inner,outer,depth,axis='z',N=24){
+ const point=(r,a,d)=>axis==='z'?[c[0]+r*Math.cos(a),c[1]+r*Math.sin(a),c[2]+d]:[c[0]+r*Math.cos(a),c[1]+d,c[2]+r*Math.sin(a)];
+ for(let k=0;k<N;k++){const a=k*2*Math.PI/N,b=(k+1)*2*Math.PI/N,d=depth/2;
+  for(const rr of [inner,outer])face(m,[point(rr,a,-d),point(rr,b,-d),point(rr,b,d),point(rr,a,d)]);
+  for(const dd of [-d,d])face(m,[point(inner,a,dd),point(outer,a,dd),point(outer,b,dd),point(inner,b,dd)]);
+ }
+}
+function tube(m,start,end,r1,r2,N=10){
+ const dir=end.map((x,k)=>x-start[k]),len=Math.hypot(...dir),d=dir.map(x=>x/len),ref=Math.abs(d[1])<.9?[0,1,0]:[1,0,0];
+ const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+ let u=cross(d,ref);u=u.map(x=>x/Math.hypot(...u));const v=cross(d,u);
+ const point=(p,r,a)=>p.map((x,k)=>x+r*(u[k]*Math.cos(a)+v[k]*Math.sin(a)));
+ for(let k=0;k<N;k++){const a=k*2*Math.PI/N,b=(k+1)*2*Math.PI/N;face(m,[point(start,r1,a),point(start,r1,b),point(end,r2,b),point(end,r2,a)]);}
+ face(m,Array.from({length:N},(_,k)=>point(start,r1,-k*2*Math.PI/N)));face(m,Array.from({length:N},(_,k)=>point(end,r2,k*2*Math.PI/N)));
+}
+function rotor(m,c,radius,axis='z',blades=9){
+ const p=(r,a,offset=0)=>axis==='z'?[c[0]+r*Math.cos(a),c[1]+r*Math.sin(a),c[2]+offset]:[c[0]+r*Math.cos(a),c[1]+offset,c[2]+r*Math.sin(a)];
+ ring(m,c,.002,radius*.20,.007,axis,16);
+ for(let k=0;k<blades;k++){const a=k*2*Math.PI/blades;
+  face(m,[p(radius*.18,a,-.002),p(radius*.87,a+.13,.003),p(radius*.93,a+.35,.003),p(radius*.25,a+.48,-.002)]);
+  face(m,[p(radius*.25,a+.48,-.003),p(radius*.93,a+.35,.002),p(radius*.87,a+.13,.002),p(radius*.18,a,-.003)]);
+ }
+}
+function typed(m){return {...m,p:Float32Array.from(m.p),tri:Uint32Array.from(m.tri),col:Float32Array.from(m.col),joints:Float32Array.from(m.joints),weights:Float32Array.from(m.weights)};}
+function geometry(){
+ const all=[],antenna=builder('temple_antennae',2,palette.steel),mounts=builder('temple_mounts',2,palette.navy);all.push(antenna,mounts);
+ // One slender rearward/upward antenna on each temple, as indicated in the photos.
+ for(const side of [-1,1]){const start=[side*.078,1.162,.030],end=[side*.111,1.253,-.071];box(mounts,start,[.013,.020,.022]);tube(antenna,start,end,.0047,.0018,8);}
+ const casing=builder('jet_intake_housings',1,palette.navy),rings=builder('jet_mechanical_rings',1,palette.steel),details=builder('jet_service_panels',1,palette.panel);all.push(casing,rings,details);
+ for(const [side,x] of [[-1,-.077],[1,.077]]){
+  const intake=[x,.923,-.230];
+  // Open back-facing fan port: the moving vanes remain visible inside a fixed rim.
+  ring(casing,intake,.034,.047,.030,'z');ring(rings,[x,.923,-.248],.033,.039,.006,'z');
+  const fan=builder('jet_intake_rotor_'+(side<0?'left':'right'),1,palette.steel,{kind:'turbine',pivot:[x,.923,-.247],axis:[0,0,1],direction:side});rotor(fan,fan.animation.pivot,.034,'z');all.push(fan);
+  const nozzle=[x,.699,-.177];ring(rings,nozzle,.040,.049,.008,'y');
+  const ex=builder('jet_exhaust_rotor_'+(side<0?'left':'right'),1,palette.steel,{kind:'turbine',pivot:[x,.705,-.177],axis:[0,1,0],direction:-side});rotor(ex,ex.animation.pivot,.037,'y',10);all.push(ex);
+  // Nested cooling collars, visible fasteners and longitudinal heat-exchanger fins.
+  for(const y of [.795,.812,.833,1.015,1.032])ring(rings,[x,y,-.177],.038,.044,.004,'y');
+  for(let k=0;k<8;k++){const a=2*Math.PI*k/8;const c=[x+.042*Math.cos(a),.923+.042*Math.sin(a),-.251];box(rings,c,[.004,.004,.006]);}
+  for(let k=0;k<4;k++)box(details,[x+side*.039,.85+k*.016,-.176],[.013,.006,.062]);
+  tube(casing,[x+side*.030,.80,-.19],[x+side*.030,1.02,-.19],.005,.005);
+  box(details,[x,.872,-.224],[.033,.020,.008]);
+ }
+ for(const side of [-1,1]){const bar=builder('visor_spinner_'+(side<0?'left':'right'),2,palette.white,{kind:'visor_clockwise',pivot:[side*.042,1.1765,.137],axis:[0,0,1]});bar.onlyMotion='armor_idle2';bar.whiteEmission=true;box(bar,bar.animation.pivot,[.037,.005,.002]);all.push(bar);}
+ return all.map(typed);
+}
+function isOriginalVisorBar(material,p,joints){return material==='Aegis_Luminous_Trim'&&p.length===12&&joints&&Math.round(joints[0])===2&&p[1]>1.17;}
+return {geometry,isOriginalVisorBar,palette,revision:'aegis-v56-temple-antenna-working-turbines'};
+});
+// AEGIS v56 runtime: original-time animation, source-run curve fitting and rigid accessories.
+let v56RunCache=null;
+function v56BuildRunProfile(nodes){
+ const info=getAegisRetargetSource(),{source,idx,worldBind}=info,data=info.clips.armor_run;
+ if(!data)throw Error('X Bot run clip missing');
+ if(v56RunCache?.source===source&&v56RunCache.nodes===nodes)return v56RunCache;
+ const A=window.__AegisMotion56,N=256,duration=data.clip.duration;
+ const targetIndex=Object.fromEntries(nodes.map((n,i)=>[n.name,i])),targetWorld=new Map();
+ const world=i=>{if(i===undefined||i<0)return[0,0,0,1];if(!targetWorld.has(i))targetWorld.set(i,qmul(world(nodes[i].parent),nodes[i].rotation));return targetWorld.get(i);};
+ const sample=(name,path,time)=>{const ch=data.channels.get(idx[name]+':'+path);if(!ch)return path==='rotation'?source.nodes[idx[name]].rotation:source.nodes[idx[name]].translation;
+  let i=0;while(i<ch.input.length-2&&ch.input[i+1]<time)i++;const next=Math.min(ch.input.length-1,i+1),u=clamp01((time-ch.input[i])/Math.max(ch.input[next]-ch.input[i],1e-9));
+  const a=Array.from(ch.output.slice(i*ch.size,(i+1)*ch.size)),b=Array.from(ch.output.slice(next*ch.size,(next+1)*ch.size));return path==='rotation'?qSlerp(a,b,u):a.map((v,k)=>lerp(v,b[k],u));};
+ const curves={};
+ for(const [src,dst,low,high] of [['LeftUpLeg','L_UpperLeg',-52,22],['RightUpLeg','R_UpperLeg',-52,22],['LeftLeg','L_LowerLeg',5,64],['RightLeg','R_LowerLeg',5,64]]){
+  const sourceNode=source.nodes[idx[src]],targetNode=nodes[targetIndex[dst]],conversion=qmul(qInv(world(targetNode.parent)),worldBind.get(sourceNode.parent)||[0,0,0,1]);
+  const values=Array.from({length:N},(_,k)=>{const delta=qmul(sample(src,'rotation',duration*k/N),qInv(sourceNode.rotation)),local=qmul(qmul(conversion,delta),qInv(conversion));return 2*Math.atan2(local[0],local[3]);});
+  curves[dst]=A.fitToRange(A.unwrap(values),rad(low),rad(high),5);
+ }
+ const base=source.nodes[idx.Hips].translation,positions=Array.from({length:N},(_,k)=>sample('Hips','translation',duration*k/N));
+ const rootX=A.fitBounded(positions.map(p=>(p[0]-base[0])*.55),.022,4),rootY=A.fitBounded(positions.map(p=>(p[1]-base[1])*.55),.033,4);
+ v56RunCache={source,nodes,duration,curves,rootX,rootY,sourceClip:'Boxer_Run',sampleCount:N,harmonics:5,method:'periodic source-derived Fourier; whole-cycle range scaling; no framewise leg-angle clamps'};
+ return v56RunCache;
+}
+function v56ApplyRunLegs(nodes,T,R,time){
+ const profile=v56BuildRunProfile(nodes),A=window.__AegisMotion56,phase=time/profile.duration;
+ for(const [name,curve] of Object.entries(profile.curves)){const i=nodes.findIndex(n=>n.name===name);R[i]=qmul(A.axisQuaternion([1,0,0],A.evaluate(curve,phase)),nodes[i].rotation);}
+ const root=nodes.findIndex(n=>n.name==='Pelvis');
+ T[root]=nodes[root].translation.slice();T[root][0]+=A.evaluate(profile.rootX,phase);T[root][1]+=A.evaluate(profile.rootY,phase);
+}
+function v56UpdateAccessories(md,motion,time){
+ md.currentMotion=motion;md.originalAnimationTime=time;
+ const A=window.__AegisMotion56;
+ for(const mesh of md.geo){
+  const a=mesh.v56Animation;if(!a)continue;
+  const angle=A.accessoryAngle(a,motion,time),q=A.axisQuaternion(a.axis,angle),p=a.pivot;
+  const transform=mul(trans(...p),mul(matTRS([0,0,0],q,[1,1,1]),trans(...p.map(x=>-x))));
+  mesh.v56Bones??=new Float32Array(md.bones.length);mesh.v56Bones.set(md.bones);
+  mesh.v56Bones.set(mul(md.bones.slice(mesh.v56Bone*16,mesh.v56Bone*16+16),transform),mesh.v56Bone*16);
+  mesh.v56Angle=angle;
+ }
+}
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -1278,19 +1414,21 @@ let joints=pr.attributes.JOINTS_0!==undefined?accessor(j,bin,pr.attributes.JOINT
 let skinned=nd.skin!==undefined;
 if(skinned){const fixed=window.__AegisGeometry55.prepare({modelId,materialName:mat?.name,p,n,col,tri,joints,weights});tri=fixed.tri;if(fixed.p){p=fixed.p;n=fixed.n;col=fixed.col;joints=fixed.joints;weights=fixed.weights;}geometryAudit.push(fixed.report);}
 let gpu=makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned);
-gpu.materialName=mat?.name||'';geo.push(gpu);
+gpu.materialName=mat?.name||'';
+if(modelId==='aegisEmber')gpu.v56OriginalVisor=window.__AegisDetails56.isOriginalVisorBar(gpu.materialName,p,joints);
+geo.push(gpu);
 for(let i=0;i<p.length;i+=3){for(let k=0;k<3;k++){min[k]=Math.min(min[k],p[i+k]);max[k]=Math.max(max[k],p[i+k]);}}}}
-if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers()]){
+if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers(),...window.__AegisDetails56.geometry()]){
  const gpu=makeGpuMesh(jet.p,null,jet.col,jet.tri,jet.joints,jet.weights,meshNodeIndices[0],true);
- gpu.materialName=jet.name;geo.push(gpu);
+ gpu.materialName=jet.name;gpu.v56Animation=jet.animation||null;gpu.v56Bone=jet.bone??1;gpu.v56OnlyMotion=jet.onlyMotion||null;gpu.v56White=!!jet.whiteEmission;geo.push(gpu);
 }
 if(!geo.length)throw Error('no mesh primitives');
 let skin=j.skins?.[0],invBind=skin?accessor(j,bin,skin.inverseBindMatrices):null;
 let animations=(j.animations||[]).map(a=>({name:a.name||'',channels:a.channels.map(ch=>{let sm=a.samplers[ch.sampler],input=accessor(j,bin,sm.input),output=accessor(j,bin,sm.output);return{node:ch.target.node,path:ch.target.path,input,output,size:ch.target.path==='rotation'?4:3};}),duration:Math.max(0,...a.samplers.map(s=>j.accessors[s.input].max?.[0]||0))}));
-return{geo,geometryAudit,geometryRevision:modelId==='aegisEmber'?window.__AegisGeometry55.revision:null,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
+return{geo,geometryAudit,geometryRevision:modelId==='aegisEmber'?window.__AegisDetails56.revision:null,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
 const XBOT_CLIPS={xbot_idle:'Boxer_Idle',xbot_fight_idle:'Boxer_FightIdle',xbot_hook:'Boxer_Hook',xbot_punch1:'Boxer_Punching1',xbot_punch2:'Boxer_Punching2',xbot_walk:'Boxer_Walk',xbot_walk2:'Boxer_Walk2',xbot_run:'Boxer_Run'};
 function xbotClip(motion){return modelData?.animations.find(a=>a.name===XBOT_CLIPS[motion]||(motion==='xbot_punch'&&a.name==='XBot_Punching_Original52'));}
-function motionDuration(){let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
+function motionDuration(){if(state.motion==='armor_idle2')return 4;let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
 function quatBetween(from,to){
  const a=norm(from),b=norm(to),d=clamp(a.reduce((t,v,i)=>t+v*b[i],0),-1,1);
  if(d<-.9999){const ax=norm(cross(a,Math.abs(a[0])<.7?[1,0,0]:[0,1,0]));return [ax[0],ax[1],ax[2],0];}
@@ -1590,6 +1728,7 @@ function aegisRetargetGait(nodes,T,R,motion,t){
  // Excessive >80° knee flexion and copied ankle twist deform the rigid
  // lower-leg plate like rubber. Preserve the source running rhythm, but
  // hinge the knee about its anatomical flexion axis and cap joint excursions.
+ if(motion!=='armor_run'){
  apply(['LeftUpLeg'],'L_UpperLeg',.91,motion==='armor_run'?54:60);
  apply(['RightUpLeg'],'R_UpperLeg',.91,motion==='armor_run'?54:60);
  apply(['LeftLeg'],'L_LowerLeg',.94,motion==='armor_run'?64:68);
@@ -1619,6 +1758,7 @@ function aegisRetargetGait(nodes,T,R,motion,t){
  isolateLegHinge('R_UpperLeg',motion==='armor_run'?54:60,true);
  isolateLegHinge('L_LowerLeg',motion==='armor_run'?64:68,false);
  isolateLegHinge('R_LowerLeg',motion==='armor_run'?64:68,false);
+ }
  // X Bot's Neck/Head two joints become AEGIS's single Head pivot.
  apply(['Neck','Head'],'Head',.45,19);
  const pelvis=targetByName.get('Pelvis');
@@ -1631,6 +1771,7 @@ function aegisRetargetGait(nodes,T,R,motion,t){
   // Do not add X Bot root forward displacement: movement comes from the game
   // controller, so double translation would cause visible foot skating.
  }
+ if(motion==='armor_run')v56ApplyRunLegs(nodes,T,R,t);
 }
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
@@ -1638,6 +1779,7 @@ if(md.animations.length && !['armor_punch','armor_power_punch','armor_walk','arm
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
+ else if(motion==='armor_idle2'){clip=md.animations.find(a=>a.name==='armor_breathe')||md.animations[0];ct=0;}
  else if(motion.startsWith('armor_')){
   const map={armor_breathe:'armor_breathe',armor_raise:'armor_raise_right_arm',armor_reach:'armor_reach_forward',armor_bend:'armor_bend_elbow',armor_step:'armor_small_step',armor_guard:'armor_guard',armor_punch:'mixamo_punch_retarget'};
   clip=md.animations.find(a=>a.name===map[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);
@@ -1686,6 +1828,7 @@ function calc(i){if(world[i])return world[i];world[i]=nodes[i].parent>=0?mul(cal
 world.fill(null);nodes.forEach((n,i)=>calc(i));
 let bones=md.bones;bones.fill(0);for(let i=0;i<48;i++)for(let k=0;k<16;k++)bones[i*16+k]=(k%5===0)?1:0;
 if(md.skin){md.skin.joints.forEach((joint,i)=>{const bind=md.invBind.slice(i*16,i*16+16);bones.set(mul(world[joint],bind),i*16);});}
+v56UpdateAccessories(md,motion,t);
 }
 let partMaskCache={};
 function partMask(idx){
@@ -1738,7 +1881,7 @@ function renderMesh(pv,fit,region,modelOverride=null,ghostAlpha=0){gl.useProgram
  gl.uniform1f(shaderProg.uNavy,ghostAlpha>0?0:['aegisEmber','aegisSoldier'].includes(state.model)?1.0:0.0);gl.uniform1f(shaderProg.uGhostAlpha,ghostAlpha);gl.uniform1i(shaderProg.uPartActive,region?1:0);gl.uniform1f(shaderProg.uOutsideAlpha,ghostAlpha>0?0:state.outsideAlpha);gl.uniform1f(shaderProg.uExclusive,ghostAlpha>0?1:(state.eyeCount===6?1:0));
  gl.uniform1fv(shaderProg.uPartMask,region||new Float32Array(48).fill(1));
  let md=modelOverride||modelData;
-for(const mesh of md.geo){if(md.nodes[mesh.modelNode]?.name?.startsWith('SwordProp_')&&state.model!=='sword')continue;gl.uniform1f(shaderProg.uSoldierTube,(mesh.materialName==='jet_exhaust'||state.model==='aegisSoldier'&&mesh.materialName==='cables')?1:0);gl.uniform1f(shaderProg.uTime,state.renderTime||0);gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,md.bones);
+for(const mesh of md.geo){if(mesh.v56OnlyMotion&&mesh.v56OnlyMotion!==md.currentMotion)continue;if(mesh.v56OriginalVisor&&md.currentMotion==='armor_idle2')continue;gl.uniform1f(shaderProg.uNavy,ghostAlpha>0||mesh.v56White?0:['aegisEmber','aegisSoldier'].includes(state.model)?1:0);if(md.nodes[mesh.modelNode]?.name?.startsWith('SwordProp_')&&state.model!=='sword')continue;gl.uniform1f(shaderProg.uSoldierTube,(mesh.materialName==='jet_exhaust'||state.model==='aegisSoldier'&&mesh.materialName==='cables')?1:0);gl.uniform1f(shaderProg.uTime,state.renderTime||0);gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,mesh.v56Bones||md.bones);
 let nodeWorld=md.world[mesh.modelNode]||ID();gl.uniformMatrix4fv(shaderProg.uWorld,false,mesh.skinned?fit:mul(fit,nodeWorld));
 for(const [attr,buffer,components] of [['aP',mesh.p,3],['aN',mesh.n,3],['aColor',mesh.col,4],['aJoints',mesh.joint,4],['aWeights',mesh.weight,4]]){let loc=shaderProg[attr];if(loc<0)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,components,gl.FLOAT,false,0,0);}
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_INT,0);}}
@@ -2542,7 +2685,7 @@ if(typeof v47DrawMarkers==='function')v47DrawMarkers(markerPVs);
 if(typeof v54OverlayDraw==='function')v54OverlayDraw(markerPVs);
 updateCompactHandles();if(typeof v47Tick==='function')v47Tick(now);
 frameCount++;if(frameCount%10===0)updateCameraBadgePositions();if(frameCount%20===0){
- if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot')?(state.motion==='xbot_punch'?1.10:motionDuration()):1.64;$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
+ if($('motionScrub')&&!state.paused){const duration=(state.model==='xbot')?(state.motion==='xbot_punch'?1.10:motionDuration()):(state.motion==='armor_idle2'?4:1.64);$('motionScrub').max=duration;$('motionScrub').value=(t%duration).toFixed(2);$('motionTime').textContent=(t%duration).toFixed(2)+'s';}
  const g=$('gyroReadout');const live=sensorLive();const text=live?'受信中（'+state.sensorPackets+'回）':state.gyro?'許可済み・未受信':'許可なし';
  if(g)g.textContent='ジャイロ: '+text+' ｜ Yaw: '+(state.yaw*180/Math.PI).toFixed(1)+'° ｜ Pitch: '+(state.pitch*180/Math.PI).toFixed(1)+'°'+(state.baseline?' ｜ 基準設定済み':' ｜ 基準未設定');
  if($('vrSensorText'))$('vrSensorText').textContent=state.vr?'ジャイロOFF｜LT左寄せ RT右寄せ Y長押し保存 X長押し10秒切替':live?'回転ジャイロ追従中  '+(state.viewYaw*180/Math.PI).toFixed(0)+'° / '+(state.viewPitch*180/Math.PI).toFixed(0)+'°':'ジャイロ未受信：タッチ操作可';if($('gyroRaw')){$('gyroRaw').textContent='α '+((state.rawEuler?.[0]??0).toFixed(1))+'° / β '+((state.rawEuler?.[1]??0).toFixed(1))+'° / γ '+((state.rawEuler?.[2]??0).toFixed(1))+'° / 画面 '+currentScreenAngle()+'° / '+(window.isSecureContext?'HTTPS利用可':'HTTPS必須')+' / '+(window.innerWidth>window.innerHeight?'横向き':'縦向き')+' / 基準α '+((state.baseGyro?.a??0).toFixed(1))+'°';}updateVRNotice(live);
@@ -2656,7 +2799,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(state.model==='xbot')return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_guard','armor_walk','armor_run','armor_power_punch','armor_punch','armor_step','armor_raise','armor_reach','armor_bend'];
+function motionOptions(){if(state.model==='xbot')return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_idle2','armor_guard','armor_walk','armor_run','armor_power_punch','armor_punch','armor_step','armor_raise','armor_reach','armor_bend'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -2748,7 +2891,7 @@ function setEyeCount(n,reason='manual'){
  if(previous!==state.eyeCount)recordExperimentEvent('eye_count_change',{from:previous,to:state.eyeCount,reason});
  renderUI();toast(state.eyeCount+'視点へ切替');
 }
-function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):1.64).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
+function setMotion(m){if(!motionOptions().includes(m))m=motionOptions()[0];const oldMotion=state.motion;state.motion=m;if(oldMotion!==m)recordExperimentEvent('motion_change',{from:oldMotion,to:m});resetSkeletonMotion();state.paused=false;state.timeStart=performance.now()*.001;if($('motionScrub'))$('motionScrub').max=((state.model==='xbot')?(m==='xbot_punch'?1.10:motionDuration()):(state.motion==='armor_idle2'?4:1.64)).toFixed(3);$('togglePause').textContent='動作停止';renderUI();toast('動作: '+MOTION_NAMES[m]);}
 function nextModel(){const items=['xbot','aegisEmber','aegisSoldier'];changeModel(items[(items.indexOf(state.model)+1)%items.length]);}
 function nextMotion(){const items=motionOptions();setMotion(items[(items.indexOf(state.motion)+1)%items.length]);}
 const SHORT_LENS_LABELS={
@@ -3477,8 +3620,8 @@ function applyDefaultSettings(){
   }
   state.lensScale=2.20;
   if(saved.vizMode&&['lenses','inspect'].includes(saved.vizMode))state.vizMode=saved.vizMode;
-  // The new default viewer is 2-eye single-screen, regardless of old global default snapshots.
-  state.eyeCount=2;syncBodyOpacityDefault();
+  // The new default viewer is 1-eye single-screen, regardless of old global default snapshots.
+  state.eyeCount=1;syncBodyOpacityDefault();
   if(typeof saved.facingBack==='boolean')state.facingBack=saved.facingBack;
   if(typeof saved.showMotionMarkers==='boolean')state.showMotionMarkers=saved.showMotionMarkers;
   if(saved.defaultsVersion>=PUBLIC_DEFAULTS_VERSION&&typeof saved.showLabels==='boolean')state.showLabels=saved.showLabels;
@@ -3499,7 +3642,7 @@ function resetDefaultSettings(){try{
  state.lensScale=2.20;state.lensPull=1.10;state.anchorAlphaCustom=false;state.anchorAlpha=0;state.showLabels=PUBLIC_UI_DEFAULTS.showLensLabels;
  state.armImageZoom=1;state.legImageZoom=1;state.coreImageZoom=1;
  state.limbImageZoom=1;state.facingBack=false;state.poseAligned=true;state.vizMode='lenses';state.cameras=cloneCameras(CAMERA_DEFAULTS);
- state.showMotionMarkers=true;state.markerScoreThreshold=30;state.markerThresholds={score:30,linear:.12,angular:.7};state.markerLensVisibility={};state.focusMode='auto';state.manualLens=0;state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.2;state.focusTransitionMs=250;state.focusLens=-1;state.zoom=1;state.eyeCount=2;loadEyeLayoutsV50();setMarkerScoreThreshold(7);syncBodyOpacityDefault();state.outsideAlpha=0;state.vrFraming=1;
+ state.showMotionMarkers=true;state.markerScoreThreshold=30;state.markerThresholds={score:30,linear:.12,angular:.7};state.markerLensVisibility={};state.focusMode='auto';state.manualLens=0;state.focusMaxArea=1.35;state.focusHoldMs=750;state.focusSwitchMargin=.2;state.focusTransitionMs=250;state.focusLens=-1;state.zoom=1;state.eyeCount=1;loadEyeLayoutsV50();setMarkerScoreThreshold(7);syncBodyOpacityDefault();state.outsideAlpha=0;state.vrFraming=1;
  renderUI();toast('保存設定を解除し、アプリ初期値に戻しました');
 }
 function setGameAction(a){
@@ -4412,7 +4555,7 @@ $('lensEditorFile').onchange=async e=>{
 const EXPERIMENT_SCHEMA_VERSION='compound-eye-experiment-v1';
 const EXPERIMENT_SAMPLE_INTERVAL_MS=1000/30;
 const EXPERIMENT_MAX_JOINT_ROWS=500000;
-let experimentBuildManifest={source_commit:'unverified',app_version:'v55'};
+let experimentBuildManifest={source_commit:'unverified',app_version:'v56'};
 const MATERIAL_REFERENCES={
  xbot:{asset_id:'embedded-glb-xbot',origin:'bundled GLB (index.html)',license:'not specified / verify before redistribution',skeleton_id:'xbot-32-node-bones'},
  aegisEmber:{asset_id:'embedded-glb-aegis-ceramic-plus-navy-material',origin:'bundled AEGIS GLB+material variant (index.html)',license:'not specified / verify before redistribution',skeleton_id:'aegis-23-node-hierarchy'},
@@ -4607,7 +4750,7 @@ function getExperimentMetadata(){
    lens_visibility_overrides:{...state.markerLensVisibility},
    ui_mode:state.vizMode
   },
-  environment:{app_version:'v55',git_source_commit:experimentBuildManifest.source_commit,
+  environment:{app_version:'v56',git_source_commit:experimentBuildManifest.source_commit,
    source_commit_note:'implementation commit; metadata manifest may have a later commit',
    browser_family_version:experimentBrowserName(),vr_used:r.displayRows.some(x=>x[14]===1),
    avg_fps:fps===null?null:Number(fps.toFixed(3)),
@@ -4649,6 +4792,7 @@ const ANALYSIS_METRICS={
 };
 function analysisSourceDuration(md,motion){
  if(motion==='xbot_punch')return 1.10;
+ if(motion==='armor_idle2')return 4.0;
  if(motion==='armor_power_punch')return 1.65;
  if(motion==='armor_walk'||motion==='armor_run'){
   const source=getModel('xbot');
@@ -5060,7 +5204,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();loadVRAlignments();loadVRLensEditor();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   renderUI();v47Init();showStatus('人工複眼シミュレーションシステム v54：AEGIS動作修正・再解析CSV・部位間の時間関係');
-  window.__compoundTest={version:"55",v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"56",v56BuildRunProfile,v56UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -5072,8 +5216,8 @@ async function startApplication(){
 const K54=window.__Kinematics54;
 const V54_ASSET_META={
  xbot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'xbot-original-glb'},
- aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-anatomical-skin-jet-v55-001'},
- aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-anatomical-skin-jet-v55-001'}
+ aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-smooth-run-turbine-antenna-v56-001'},
+ aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-smooth-run-turbine-antenna-v56-001'}
 };
 const V54_V1_HEADERS=[
  'data_schema','source_type','avatar_id','motion_id','source_asset_id','skeleton_id',
@@ -5108,9 +5252,10 @@ let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
-   motion==='armor_power_punch'?'aegis-punchA-ik-skin-v55-001':
-   ['armor_walk','armor_run'].includes(motion)?'aegis-gait-skin-v55-001':
-   'aegis-procedural-motion-skin-v55-001';
+   motion==='armor_idle2'?'aegis-static2-visor-clockwise-v56-001':
+   motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
+   ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':
+   'aegis-procedural-motion-skin-v56-001';
 }
 function v54SourceMetadata(avatar,motion){
  const base=V54_ASSET_META[avatar]||{source_sha256:'unrecorded',source_revision:'unrecorded'};
@@ -5124,7 +5269,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v55'?experimentBuildManifest.source_commit:'unverified_build_v55';
+ const runtime=experimentBuildManifest?.app_version==='v56'?experimentBuildManifest.source_commit:'unverified_build_v56';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -5202,7 +5347,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v55',runtime,JSON.stringify(config),
+    'v56',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -5242,8 +5387,9 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v55',
+   motion_revision_id:asset.motion_revision_id,app_version:'v56',
    implementation_commit:runtime,original_time_axis:true,
+   cosmetic_animation:{schema:'aegis-accessory-v56',clock:'original_animation_seconds',visor:{motion_id:'armor_idle2',period_s:4,direction:'clockwise_seen_from_avatar_front'},turbines:{revolutions_per_source_second:1.5},note:'Cosmetic rigid-part matrices are not human skeleton joints and do not add trials'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
     'evidence_metrics','correction_direction','expected_result','exceptions','defer_conditions','version'],
@@ -5644,9 +5790,9 @@ function v47Init(){
  $('v47ExportJson').onclick=v47ExportJSON;
  for(const id of ['v47Ghost','v47Markers','v47MarkerLimit'])
   $(id).onchange=()=>{v47DrawMarkers(v47.lastProjections||[]);};
- $('v47Panel').addEventListener('toggle',()=>{if($('v47Panel').open&&!v47.A) v47Analyze();});
+ $('v47Panel').addEventListener('toggle',()=>{if($('v47Panel').open&&!v47.A) v56AnalyzeCurrentViewer();});
  $('experimentPanel').addEventListener('toggle',()=>{
-  if($('experimentPanel').open&&!v47.A)setTimeout(v47Analyze,60);
+  if($('experimentPanel').open&&!v47.A)setTimeout(()=>{if($('experimentPanel').open&&!v47.A)v56AnalyzeCurrentViewer();},60);
  });
 }
 function v47ResetSelection(){
@@ -6102,7 +6248,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v55',
+  app_version:'v56',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,
@@ -6276,6 +6422,13 @@ function v47DrawMarkers(projections){
    }
   }
  }
+}
+
+function v56AnalyzeCurrentViewer(){
+ $('v47AvatarA').value=state.model;
+ v47OptionsFor(state.model,$('v47MotionA'));
+ $('v47MotionA').value=state.motion;
+ v47Analyze();
 }
 // v54: opt-in, offline kinematic exploration. Never infers forces/skill.
 const v54={enabled:false,mode:'normal',result:null,comparison:null,events:[],
