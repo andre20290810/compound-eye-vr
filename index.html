@@ -1720,7 +1720,7 @@ function v62SourcePose(motion,time){
  return v61ClipPose(src,clip,t);
 }
 function v62ApplyYMotion(md,motion,time,T,R,S){
- const config=v62YConfig.motions[motion]||[];if(!config.length)return;
+ const configured=v62YConfig.motions[motion]||[],config=window.__TimelineLiveV65?.getModifiers(motion,configured)||configured;if(!config.length)return;
  for(const mod of config){
   const i=mod.joint_id,t=window.__YBot62.sampleShift(time,mod);
   if(t!==time){const source=v62SourcePose(motion,Math.max(0,t));T[i]=source.T[i].slice();R[i]=source.R[i].slice();S[i]=source.S[i].slice();}
@@ -2369,7 +2369,7 @@ function v64Render(){
  if(!a.compatibility.ok){v64$('tl64Status').textContent=a.compatibility.reason||'関節対応が検証されていないため比較不可';}
  else if(!a.source_y){v64$('tl64Status').textContent='X単独表示です。X/Y比較を有効にすると同じ時間軸で比較できます。';}
  else if(v64Live.overlay){v64$('tl64Status').textContent='3D重ね合わせ中：姿勢差のある関節を差分色で表示しています。';}
- const compact=v64Live.workspace?.dataset.multiview==='true';
+ const compact=v64Live.workspace?.dataset.multiview==='true'||v64Live.wideTimeline===true;
  const visibleRows=a.rows.filter(row=>row.X);
  const width=Math.max(300,Math.floor(plot.clientWidth)),left=62,right=8,top=22,rowH=compatible?(compact?27:41):(compact?24:30),height=top+Math.max(1,visibleRows.length)*rowH+10;
  const [from,to]=v64AxisRange(a,'X'),span=Math.max(.001,to-from),plotWidth=Math.max(140,width-left-right),scaleX=t=>left+(t-from)/span*plotWidth;
@@ -2473,6 +2473,212 @@ tl62Analyze=function(){
  v64RefreshAfterAnalysis();return result;
 };
 window.__LiveDynamicsV64={state:v64Live,render:v64Render,refresh:v64Render,preparePose:v64PrepareComparisonPose,drawMarkers:v64Draw3DMarkers,setOverlay:v64SetOverlay,colorRgb:v64BaseColor,renderSecondary:v64RenderSecondary};
+/* v65: full-width live dynamics, foldable viewer settings, synchronized XBot/YBot variants. */
+const V65_VARIANT_KEY='compoundeye.v65.ybotVariant';
+let v65Installed=false;
+function v65$(id){return document.getElementById(id);}
+function v65CurrentVariant(){return v65$('tl65YVariant')?.value||'trajectory';}
+const v65Trajectory=[
+ {joint_id:3,modification_type:'rotation_delta_deg',requested_change:2.5,start_time:.06,end_time:1.04,axis:'z'},
+ {joint_id:6,modification_type:'rotation_delta_deg',requested_change:5.5,start_time:.06,end_time:1.04,axis:'y'},
+ {joint_id:7,modification_type:'rotation_delta_deg',requested_change:6.5,start_time:.06,end_time:1.04,axis:'y'},
+ {joint_id:8,modification_type:'rotation_delta_deg',requested_change:-5.5,start_time:.06,end_time:1.04,axis:'z'},
+ {joint_id:10,modification_type:'rotation_delta_deg',requested_change:-3.5,start_time:.06,end_time:1.04,axis:'y'},
+ {joint_id:11,modification_type:'rotation_delta_deg',requested_change:-6.5,start_time:.06,end_time:1.04,axis:'y'},
+ {joint_id:12,modification_type:'rotation_delta_deg',requested_change:5.5,start_time:.06,end_time:1.04,axis:'z'}
+];
+function v65GetYBotModifiers(motion,configured){
+ const source=Array.isArray(configured)?configured:[];
+ if(motion!=='xbot_punch')return source;
+ const variant=v65CurrentVariant();
+ if(variant==='configured')return source;
+ const retained=source.filter(m=>!String(m.modification_type).includes('shift'));
+ const path=v65Trajectory.map(m=>({...m}));
+ if(variant==='trajectory')return retained.concat(path);
+ if(variant==='timingTrajectory')return retained.concat(path,{joint_id:8,modification_type:'local_time_shift',requested_change:.04,start_time:.05,end_time:.96,axis:'x'});
+ return source;
+}
+function v65Revision(motion){
+ if(motion!=='xbot_punch')return null;
+ const variant=v65CurrentVariant(),copy=window.__YBot62.clone(v62YConfig);
+ copy.revision=String(copy.revision)+'-v65-'+variant;
+ copy.motions[motion]=v65GetYBotModifiers(motion,copy.motions[motion]||[]);
+ return window.__YBot62.revise(copy,motion);
+}
+function v65DrawExistingMarkers(){
+ const layer=v65$('motionMarkers'),analysis=timeline62.analysis;
+ if(!layer||!analysis||!state.showMotionMarkers)return;
+ const duration=timeline62.sourceX?.data?.duration||1;
+ const time=((Number(state._renderedAnimationTime)||0)%duration+duration)%duration;
+ const byName=new Map(analysis.rows.filter(r=>r.X).map(r=>[r.X.joint.name,r]));
+ for(const mark of layer.querySelectorAll('span[data-joint-name]')){
+  const row=byName.get(mark.dataset.jointName);if(!row)continue;
+  const value=v64StateAt(row.X,time,analysis);
+  const size=v64Clamp(6+(value.radius||3)*.75,8,14);
+  mark.style.width=size+'px';mark.style.height=size+'px';
+  mark.dataset.timelineState=value.state;
+ }
+}
+function v65StoreDetails(details,key){try{localStorage.setItem(key,details.open?'1':'0');}catch(e){}}
+function v65InstallWideUi(){
+ if(v65Installed||!v64Live?.workspace)return;
+ v65Installed=true;
+ const workspace=v64Live.workspace,main=document.querySelector('.main');
+ const settings=main&&[...main.children].find(el=>el.classList?.contains('panel')&&el.querySelector('h2')?.textContent.includes('見たいもの'));
+ if(settings){
+  const heading=settings.querySelector('h2'),content=document.createElement('div');
+  content.id='viewOptionsContent';
+  while(settings.firstChild){const child=settings.firstChild;if(child===heading){child.remove();continue;}content.append(child);}
+  const summary=document.createElement('summary');summary.textContent='見たいもの・複眼数';
+  settings.replaceWith(Object.assign(document.createElement('details'),{id:'viewOptionsPanel'}));
+  const options=v65$('viewOptionsPanel');options.className='panel';
+  options.append(summary,content);
+  const saved=(()=>{try{return localStorage.getItem('compoundeye.v65.viewOptionsOpen')==='1';}catch(e){return false;}})();
+  options.open=saved;options.addEventListener('toggle',()=>v65StoreDetails(options,'compoundeye.v65.viewOptionsOpen'));
+  if(main){
+   main.classList.add('v65TimelineMain');
+   main.insertBefore(options,main.firstChild);
+   main.insertBefore(workspace,options.nextSibling);
+  }
+  const eyes=content.querySelector('.eyes')?.closest('.group');
+  const appearance=v65$('appearanceOpen58'),visor=v65$('visorOpen60');
+  const quick=document.createElement('div');quick.id='v65QuickControls';quick.setAttribute('aria-label','複眼数とAEGIS表示設定');
+  const eyeLabel=document.createElement('strong');eyeLabel.textContent='複眼数';quick.append(eyeLabel);
+  if(eyes){eyes.querySelector('.label')?.remove();quick.append(eyes);}
+  if(appearance)quick.append(appearance);
+  if(visor)quick.append(visor);
+  content.prepend(quick);
+  const aegis=document.createElement('details');aegis.id='v65AegisSettings';
+  const aegisSummary=document.createElement('summary');aegisSummary.textContent='AEGIS固有設定 — 配色・バイザー';
+  aegis.append(aegisSummary);content.insertBefore(aegis,quick.nextSibling);
+  const editor=v65$('appearancePanel58');if(editor)aegis.append(editor);
+  const openAegis=()=>{options.open=true;aegis.open=true;};
+  if(appearance){const prior=appearance.onclick;appearance.onclick=async function(e){openAegis();await prior?.call(this,e);v65$('appearancePanel58')?.scrollIntoView({block:'nearest'});};}
+  if(visor){const prior=visor.onclick;visor.onclick=async function(e){openAegis();await prior?.call(this,e);v65$('appearancePanel58')?.scrollIntoView({block:'nearest'});};}
+  const close=v65$('appearanceClose58');if(close)close.addEventListener('click',()=>setTimeout(()=>{aegis.open=false;},0));
+  aegis.addEventListener('toggle',()=>v65StoreDetails(aegis,'compoundeye.v65.aegisSettingsOpen'));
+  try{aegis.open=localStorage.getItem('compoundeye.v65.aegisSettingsOpen')==='1';}catch(e){}
+  v65SyncAegisTools();
+  setInterval(v65SyncAegisTools,250);
+ }else if(main){main.insertBefore(workspace,main.firstChild);main.classList.add('v65TimelineMain');}
+ const controls=v65$('liveDynamicsControls');
+ if(controls){
+  const compare=v64$('tl64Compare3d')?.parentElement;
+  const variant=document.createElement('label');variant.id='tl65VariantWrap';variant.textContent='YBot差分';
+  const select=document.createElement('select');select.id='tl65YVariant';select.setAttribute('aria-label','YBotパンチの差分方式');
+  select.innerHTML='<option value="trajectory">軌道のみ</option><option value="timingTrajectory">タイミング＋軌道</option><option value="configured">現行設定JSON</option>';
+  try{select.value=localStorage.getItem(V65_VARIANT_KEY)||'trajectory';}catch(e){select.value='trajectory';}
+  if(!['trajectory','timingTrajectory','configured'].includes(select.value))select.value='trajectory';
+  variant.append(select);
+  const sync=document.createElement('button');sync.id='tl65SyncStart';sync.type='button';sync.textContent='X/Y先頭同期して再生';sync.title='両動作を0秒から開始し、元の時間軸の速度差を保って比較します';
+  const speed=document.createElement('label');speed.id='tl65SpeedWrap';speed.textContent='共通スロー';
+  const range=document.createElement('input');range.id='tl65SlowRate';range.type='range';range.min='.25';range.max='1';range.step='.05';range.setAttribute('aria-label','X/Y共通再生速度');
+  const value=document.createElement('span');value.id='tl65SlowValue';speed.append(range,value);
+  if(compare)compare.append(variant,sync,speed);
+  const note=document.createElement('p');note.id='tl65CompareNote';note.textContent='XBotを基準にYBotを重ねます。両方を同じ0秒から再生し、元の動作時間の差を残します。全体のスロー倍率は両方に同じ値を掛けます。軌道のみは関節回転を変え、タイミング＋軌道はさらに前腕の局所タイミングを40 msずらします。AEGIS比較は関節対応確認後に追加します。';
+  v64Live.dock.append(note);
+  range.value='0.50';
+  const originalSpeed=v65$('motionSpeed');
+  const setSpeed=n=>{const val=v64Clamp(Number(n),.25,1);if(originalSpeed){originalSpeed.value=String(val);originalSpeed.dispatchEvent(new Event('input',{bubbles:true}));}range.value=String(val);value.textContent=val.toFixed(2)+'×';};
+  if(originalSpeed)setSpeed(.50);else value.textContent='0.50×';
+  range.addEventListener('input',()=>setSpeed(range.value));
+  select.addEventListener('change',()=>{
+   try{localStorage.setItem(V65_VARIANT_KEY,select.value);}catch(e){}
+   timeline62.latestModificationReport=[];timeline62.lastKey='';
+   tl62Analyze();v64Render();
+   if(v64Live.overlay){v64Live.frame=null;draw(performance.now());}
+  });
+  sync.addEventListener('click',v65SyncStart);
+  const align=v65$('tl62Alignment');if(align)align.addEventListener('change',()=>{if(v64Live.overlay&&align.value!=='raw'){align.value='raw';tl62Analyze();v64Render();}});
+  const compareBox=v65$('tl62Compare');if(compareBox)compareBox.addEventListener('change',()=>{v65UpdateCompareUi();});
+  const motionY=v65$('tl62MotionY');if(motionY)motionY.addEventListener('change',()=>v65UpdateCompareUi());
+  const sourceX=v65$('tl62X'),sourceY=v65$('tl62Y');
+  for(const selectEl of [sourceX,sourceY])if(selectEl)selectEl.addEventListener('change',v65UpdateCompareUi);
+  v65UpdateCompareUi();
+ }
+ const style=document.createElement('style');style.id='v65WideTimelineStyles';style.textContent=[
+  '.main.v65TimelineMain{display:flex!important;flex-direction:column!important;gap:10px!important;width:100%!important;min-width:0!important}',
+  '.main.v65TimelineMain>*{width:100%;min-width:0;box-sizing:border-box}',
+  '#viewOptionsPanel{width:100%;box-sizing:border-box;margin:0 0 2px}',
+  '#viewOptionsPanel>summary,#v65AegisSettings>summary{cursor:pointer;font-weight:700;padding:8px 2px}',
+  '#viewOptionsContent{display:flex;flex-direction:column;gap:8px;padding-top:8px}',
+  '#v65QuickControls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:8px 10px;border:1px solid #426a80;border-radius:10px;background:#102b40}',
+  '#v65QuickControls>strong{font-size:12px;color:#e8f7fc}',
+  '#v65QuickControls .group{display:flex!important;align-items:center;gap:8px;margin:0!important}',
+  '#v65QuickControls .eyes{display:flex;gap:5px;flex-wrap:wrap}',
+  '#v65QuickControls #appearanceOpen58,#v65QuickControls #visorOpen60{display:none}',
+  '#v65QuickControls.aegis-active #appearanceOpen58,#v65QuickControls.aegis-active #visorOpen60{display:inline-flex}',
+  '#v65AegisSettings{border:1px solid #385c73;border-radius:9px;padding:3px 9px;background:#0d2435}',
+  '#appearancePanel58[hidden]{display:none!important}',
+  '#v65AegisSettings #appearancePanel58{position:static!important;inset:auto!important;width:100%!important;max-width:none!important;max-height:none!important;overflow:visible!important;margin:6px 0 8px;padding:10px!important;box-sizing:border-box;box-shadow:none!important}',
+  '#v65AegisSettings #appearancePanel58 .apHead{position:static!important}',
+  '#viewerWorkspace{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto auto auto!important;gap:10px!important;align-items:stretch!important;width:100%!important;min-width:0!important}',
+  '#liveDynamicsDock{grid-column:1!important;grid-row:1!important;width:100%!important;height:clamp(480px,58vh,620px)!important;min-height:470px!important;max-height:none!important;overflow:hidden}',
+  '#tl64Sequence{max-height:36px!important}',
+  '#tl64PlotWrap{flex:0 0 238px!important;height:238px!important;min-height:220px!important;overflow:auto!important}',
+  '#tl64Plot{min-height:220px!important}',
+  '#liveDynamicsDock .v64Note{display:none!important}',
+  '#liveMotionMarkers{display:none!important}',
+  '#viewerWorkspace>#screen{grid-column:1!important;grid-row:2!important;width:100%!important;height:clamp(380px,62vh,700px)!important;min-height:360px!important}',
+  '#viewerControlShelf{grid-column:1!important;grid-row:3!important;width:100%!important;box-sizing:border-box}',
+  '#tl65CompareNote{margin:0;color:#b8d3df;font-size:10px;line-height:1.4}',
+  '#tl65VariantWrap,#tl65SpeedWrap{display:inline-flex;align-items:center;gap:5px;color:#d7edf5;font-size:10px}',
+  '#tl65VariantWrap[hidden],#tl65CompareNote[hidden],#v65AegisSettings[hidden]{display:none!important}',
+  '#tl65VariantWrap select{max-width:160px!important}',
+  '#tl65SlowRate{width:95px;max-width:25vw}',
+  '#tl65SlowValue{min-width:32px;font-variant-numeric:tabular-nums}',
+  '#tl65SyncStart{font-size:10px!important;padding:6px 8px!important}',
+  '@media(max-width:700px){#liveDynamicsDock{height:clamp(480px,58vh,540px)!important;min-height:470px!important;padding:7px!important}#viewerWorkspace>#screen{height:clamp(340px,58vh,600px)!important}#tl64PlotWrap{flex-basis:225px!important;height:225px!important;min-height:210px!important}#v65QuickControls{gap:5px;padding:7px}#tl65VariantWrap select{max-width:140px!important}}',
+  'body.compact-layout #viewerWorkspace{display:block!important}body.compact-layout #liveDynamicsDock,body.compact-layout #viewerControlShelf{display:none!important}body.compact-layout #viewOptionsPanel{display:none!important}',
+  '#tl62Panel{margin-top:8px}'
+ ].join('');document.head.append(style);
+ workspace.dataset.v65Wide='true';v64Live.wideTimeline=true;
+ if(window.__LiveDynamicsV64)window.__LiveDynamicsV64.drawMarkers=v65DrawExistingMarkers;
+ timeline62.latestModificationReport=[];timeline62.lastKey='';tl62Analyze();
+ v64Layout();v64Render();
+}
+function v65SyncAegisTools(){
+ const quick=v65$('v65QuickControls');if(!quick)return;
+ const aegis=['aegisEmber','aegisSoldier'].includes(state.model);
+ quick.classList.toggle('aegis-active',aegis);
+ const details=v65$('v65AegisSettings');if(details)details.hidden=!aegis;
+}
+function v65UpdateCompareUi(){
+ const x=v65$('tl62X')?.value,y=v65$('tl62Y')?.value,variant=v65$('tl65VariantWrap');
+ const xy=x==='xbot'&&y==='ybot';
+ if(variant)variant.hidden=!(xy&&v65$('tl62MotionY')?.value==='xbot_punch');
+ const note=v65$('tl65CompareNote');if(note)note.hidden=!xy;
+}
+function v65SyncStart(){
+ const sx=v65$('tl62X'),sy=v65$('tl62Y'),mx=v65$('tl62MotionX'),my=v65$('tl62MotionY'),cmp=v65$('tl62Compare'),align=v65$('tl62Alignment');
+ if(sx&&sx.value!=='xbot'){sx.value='xbot';sx.dispatchEvent(new Event('change',{bubbles:true}));}
+ if(sy&&sy.value!=='ybot'){sy.value='ybot';sy.dispatchEvent(new Event('change',{bubbles:true}));}
+ if(mx&&mx.value!=='xbot_punch'){mx.value='xbot_punch';mx.dispatchEvent(new Event('change',{bubbles:true}));}
+ if(my&&my.value!=='xbot_punch'){my.value='xbot_punch';my.dispatchEvent(new Event('change',{bubbles:true}));}
+ if(cmp&&!cmp.checked){cmp.checked=true;cmp.dispatchEvent(new Event('change',{bubbles:true}));}
+ if(align&&align.value!=='raw'){align.value='raw';align.dispatchEvent(new Event('change',{bubbles:true}));}
+ timeline62.latestModificationReport=[];timeline62.lastKey='';tl62Analyze();
+ if(state.model!=='xbot')changeModel('xbot');
+ if(state.motion!=='xbot_punch')setMotion('xbot_punch');
+ if(!v64Live.overlay)v64SetOverlay(true);
+ const now=performance.now()*.001;state.paused=false;state.pauseTime=0;state.timeStart=now;state._renderedAnimationTime=0;
+ draw(performance.now());v64Tick();v64UpdatePlayLabel();
+}
+const v65BaseInstall=v64InstallLiveDynamics;
+v64InstallLiveDynamics=function(){v64Live.wideTimeline=true;const result=v65BaseInstall.apply(this,arguments);v65InstallWideUi();return result;};
+const v65BaseRecalculate=v62RecalculateModifications;
+v62RecalculateModifications=function(){
+ const current=v62YConfig;
+ try{
+  if(v65CurrentVariant()!=='configured'&&v65$('tl65VariantWrap')?.hidden!==true){
+   v62YConfig=window.__YBot62.clone(current);
+   v62YConfig.revision=String(current.revision)+'-v65-'+v65CurrentVariant();
+   v62YConfig.motions={...current.motions,xbot_punch:v65GetYBotModifiers('xbot_punch',current.motions.xbot_punch||[])};
+  }
+  return v65BaseRecalculate.apply(this,arguments);
+ }finally{v62YConfig=current;}
+};
+window.__TimelineLiveV65={getModifiers:v65GetYBotModifiers,revision:v65Revision,variant:v65CurrentVariant,drawMarkers:v65DrawExistingMarkers,syncStart:v65SyncStart,trajectory:v65Trajectory};
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -3642,7 +3848,8 @@ function appendMotionMarkerV51(x,y,eye,count,joint,index,placement,value,average
  const mark=document.createElement('span');
  mark.title=joint.name+'｜'+v52MetricInfo().name+' '+v52FormatMetric(value)+
    '｜表示平均 '+v52FormatMetric(average);
- mark.dataset.lensIndex=String(index);
+ mark.dataset.jointName=joint.name;
+  mark.dataset.lensIndex=String(index);
  mark.dataset.eye=String(eye);
  mark.dataset.markerScore=joint.score.toFixed(2);
  mark.dataset.markerValue=Number(value).toFixed(5);
@@ -6295,7 +6502,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();await v62LoadYBotConfig();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   v62RegisterYBot();renderUI();v47Init();tl62Init();showStatus('人工複眼シミュレーションシステム：運動連鎖タイムライン／YBot比較');
-  window.__compoundTest={version:"64",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"65",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -6342,7 +6549,7 @@ const V54_MORE_HEADERS=[
 const V54_SCHEMA='compound-eye-single-motion-v2';
 let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
-function v54Revision(avatar,motion){if(avatar==='ybot')return window.__YBot62.revise(v62YConfig,motion);
+function v54Revision(avatar,motion){if(avatar==='ybot')return window.__TimelineLiveV65?.revision(motion)||window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
  if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-retarget-xbot-punchC-fist-v63-001';
  if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
@@ -6363,7 +6570,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v64'?experimentBuildManifest.source_commit:'unverified_build_v63';
+ const runtime=experimentBuildManifest?.app_version==='v65'?experimentBuildManifest.source_commit:'unverified_build_v63';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -6441,7 +6648,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v64',runtime,JSON.stringify(config),
+    'v65',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -6481,11 +6688,11 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v64',
+   motion_revision_id:asset.motion_revision_id,app_version:'v65',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
    motion_composition:avatar==='ybot'?{
-    source_motion_id:motion,source_avatar_id:'xbot',modifications:v62YConfig.motions[motion]||[],
+    source_motion_id:motion,source_avatar_id:'xbot',variant:motion==='xbot_punch'?(window.__TimelineLiveV65?.variant?.()||'configured'):'configured',modifications:window.__TimelineLiveV65?.getModifiers(motion,v62YConfig.motions[motion]||[])||v62YConfig.motions[motion]||[],
     actual_changes_after_recalculation:v62YLastValidation?.filter(m=>m.motion_id===motion)||[],
     motion_revision_id:v54Revision(avatar,motion),quality:'synthetic_known_perturbation'
    }:v61MotionMetadata(motion),

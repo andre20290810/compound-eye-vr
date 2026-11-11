@@ -1,6 +1,6 @@
 {
   "name": "compound-eye-vr",
-  "version": "64.0.0",
+  "version": "65.0.0",
   "private": true,
   "description": "Self-contained compound-eye VR viewer and exploratory kinematics",
   "scripts": {

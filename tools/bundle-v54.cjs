@@ -29,8 +29,8 @@ replaceBetween('/* v62 research timeline:','// v62 multi-joint kinematic timelin
 replaceBetween('// v62 multi-joint kinematic timeline.','// v63: a readable sequence','timeline-ui-v62.js');
 replaceBetween('// v63: a readable sequence','function parseGLB','timeline-clear-v63.js');
 const parseMarker='function parseGLB',parseAt=html.indexOf(parseMarker);
-if(parseAt<0||html.indexOf(parseMarker,parseAt+parseMarker.length)!==-1)throw Error('Ambiguous v64 insertion marker');
-html=html.slice(0,parseAt)+read(path.join(root,'timeline-live-v64.js')).trimEnd()+'\n'+html.slice(parseAt);
+if(parseAt<0||html.indexOf(parseMarker,parseAt+parseMarker.length)!==-1)throw Error('Ambiguous v65 insertion marker');
+html=html.slice(0,parseAt)+read(path.join(root,'timeline-live-v64.js')).trimEnd()+'\n'+read(path.join(root,'timeline-live-v65.js')).trimEnd()+'\n'+html.slice(parseAt);
 if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
 else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);

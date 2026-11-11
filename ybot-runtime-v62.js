@@ -28,7 +28,7 @@ function v62SourcePose(motion,time){
  return v61ClipPose(src,clip,t);
 }
 function v62ApplyYMotion(md,motion,time,T,R,S){
- const config=v62YConfig.motions[motion]||[];if(!config.length)return;
+ const configured=v62YConfig.motions[motion]||[],config=window.__TimelineLiveV65?.getModifiers(motion,configured)||configured;if(!config.length)return;
  for(const mod of config){
   const i=mod.joint_id,t=window.__YBot62.sampleShift(time,mod);
   if(t!==time){const source=v62SourcePose(motion,Math.max(0,t));T[i]=source.T[i].slice();R[i]=source.R[i].slice();S[i]=source.S[i].slice();}

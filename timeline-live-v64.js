@@ -237,7 +237,7 @@ function v64Render(){
  if(!a.compatibility.ok){v64$('tl64Status').textContent=a.compatibility.reason||'関節対応が検証されていないため比較不可';}
  else if(!a.source_y){v64$('tl64Status').textContent='X単独表示です。X/Y比較を有効にすると同じ時間軸で比較できます。';}
  else if(v64Live.overlay){v64$('tl64Status').textContent='3D重ね合わせ中：姿勢差のある関節を差分色で表示しています。';}
- const compact=v64Live.workspace?.dataset.multiview==='true';
+ const compact=v64Live.workspace?.dataset.multiview==='true'||v64Live.wideTimeline===true;
  const visibleRows=a.rows.filter(row=>row.X);
  const width=Math.max(300,Math.floor(plot.clientWidth)),left=62,right=8,top=22,rowH=compatible?(compact?27:41):(compact?24:30),height=top+Math.max(1,visibleRows.length)*rowH+10;
  const [from,to]=v64AxisRange(a,'X'),span=Math.max(.001,to-from),plotWidth=Math.max(140,width-left-right),scaleX=t=>left+(t-from)/span*plotWidth;
