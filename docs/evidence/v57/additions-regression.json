@@ -1,0 +1,383 @@
+{
+  "date": "2026-11-11T11:42:05.901Z",
+  "renderer": "desktop Edge real WebGL2; not physical iPhone/HMD/GameSir",
+  "checks": [
+    {
+      "name": "v57 boots in one-eye mode with unchanged public title and real WebGL2",
+      "status": "PASS",
+      "details": {
+        "version": "57",
+        "eyeCount": 1,
+        "title": "人工複眼シミュレーションシステム",
+        "gl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "error": 0
+      }
+    },
+    {
+      "name": "static2 is absent from all AEGIS motion selectors; old ID falls back safely",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "motion": "armor_breathe",
+          "removedOptions": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_breathe",
+          "removedOptions": 0
+        }
+      ]
+    },
+    {
+      "name": "two antennae oscillate 70–90 degrees without changing skeleton matrices or joint count",
+      "status": "PASS",
+      "details": {
+        "result": [
+          {
+            "name": "temple_antenna_left",
+            "min": 70.01215186314377,
+            "max": 89.80689422720182,
+            "moved": true
+          },
+          {
+            "name": "temple_antenna_right",
+            "min": 70.12803422306523,
+            "max": 89.98237326948086,
+            "moved": true
+          }
+        ],
+        "bonesUnchanged": true,
+        "worldUnchanged": true,
+        "qUnchanged": true,
+        "joints": 13
+      }
+    },
+    {
+      "name": "back faces have bounded tachometer pointers, not continuously rotating fans",
+      "status": "PASS",
+      "details": {
+        "pointers": [
+          {
+            "name": "tachometer_needle_left",
+            "min": -1.9449308713311741,
+            "max": 1.8233045026845973
+          },
+          {
+            "name": "tachometer_needle_right",
+            "min": -1.9414164876160802,
+            "max": 1.8090494987492465
+          }
+        ],
+        "faceCount": 2,
+        "fanCount": 0
+      }
+    },
+    {
+      "name": "grey visor and equipment; two yellow fixed bars and camera triples per side",
+      "status": "PASS",
+      "details": {
+        "grey": [
+          {
+            "name": "backpack",
+            "maxRGBDifference": 0,
+            "finish": "grey"
+          },
+          {
+            "name": "vest hardware",
+            "maxRGBDifference": 0,
+            "finish": "grey"
+          },
+          {
+            "name": "visor",
+            "maxRGBDifference": 0,
+            "finish": "grey"
+          },
+          {
+            "name": "jet_body",
+            "maxRGBDifference": 0,
+            "finish": "grey"
+          },
+          {
+            "name": "jet_nozzle",
+            "maxRGBDifference": 0,
+            "finish": "grey"
+          }
+        ],
+        "bars": [
+          {
+            "name": "visor_yellow_bar_left",
+            "animated": false,
+            "finish": "yellow"
+          },
+          {
+            "name": "visor_yellow_bar_right",
+            "animated": false,
+            "finish": "yellow"
+          }
+        ],
+        "cameras": [
+          {
+            "name": "temple_camera_lenses_left",
+            "count": 3,
+            "bone": 2
+          },
+          {
+            "name": "temple_camera_lenses_right",
+            "count": 3,
+            "bone": 2
+          }
+        ]
+      }
+    },
+    {
+      "name": "cosmetic effects are excluded explicitly from motion scores, markers and exported skeleton",
+      "status": "PASS",
+      "details": {
+        "joints": 13,
+        "columns": 86,
+        "metadata": {
+          "schema": "aegis-accessory-v57",
+          "clock": "original_animation_seconds",
+          "antenna_elevation_deg": [
+            70,
+            90
+          ],
+          "antenna_angle_reference": "from horizontal in head-local sagittal plane",
+          "tachometer": "illustrative oscillating pointer; not measured engine RPM",
+          "exclude_from_motion_score": true,
+          "exclude_from_marker_selection": true,
+          "exclude_from_skeleton_csv": true,
+          "cameras_per_temple": 3,
+          "note": "Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection"
+        },
+        "jointNames": [
+          "Pelvis",
+          "Chest",
+          "Head",
+          "L_UpperArm",
+          "L_Forearm",
+          "L_Hand",
+          "R_UpperArm",
+          "R_Forearm",
+          "R_Hand",
+          "L_UpperLeg",
+          "L_LowerLeg",
+          "R_UpperLeg",
+          "R_LowerLeg"
+        ],
+        "version": "v57"
+      }
+    },
+    {
+      "name": "SOLDIER red-yellow cables and nozzle heat source bytes remain exactly unchanged",
+      "status": "PASS",
+      "details": {
+        "materials": [
+          "cables",
+          "jet_exhaust"
+        ],
+        "identical": true,
+        "sha256": "e2b030f0f2f418cd470a87fbcc4904316b48e4b2574644bc46d18393ac1a6c92"
+      }
+    },
+    {
+      "name": "all 10 baseline body motions retain positions/quaternions/speeds and score columns",
+      "status": "PASS",
+      "details": {
+        "motionCount": 10,
+        "identicalNumericSeries": true
+      }
+    },
+    {
+      "name": "all 1–6 facets and stereo modes render cosmetics without WebGL errors",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "count": 1,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 2,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 3,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 4,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 5,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 6,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 1,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 2,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 3,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 4,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 5,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisEmber",
+          "count": 6,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 1,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 2,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 3,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 4,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 5,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 6,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 1,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 2,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 3,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 4,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 5,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "count": 6,
+          "stereo": true,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "mobile portrait retains one eye and removed motion; no horizontal overflow",
+      "status": "PASS",
+      "details": {
+        "count": 1,
+        "overflow": 0,
+        "obsolete": false,
+        "error": 0
+      }
+    },
+    {
+      "name": "no runtime page errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "navy-overview.png",
+    "navy-head-front.png",
+    "navy-head-left.png",
+    "navy-head-right.png",
+    "navy-gauges-0.png",
+    "navy-gauges-0.3.png",
+    "navy-gauges-1.2.png",
+    "navy-run.png",
+    "soldier-overview.png",
+    "soldier-head-front.png",
+    "soldier-head-left.png",
+    "soldier-head-right.png",
+    "soldier-gauges-0.png",
+    "soldier-gauges-0.3.png",
+    "soldier-gauges-1.2.png",
+    "soldier-run.png",
+    "mobile-soldier.png"
+  ],
+  "browser": "Edg/157.0.4341.46",
+  "summary": {
+    "passed": 11,
+    "failed": 0
+  }
+}

@@ -1,0 +1,150 @@
+TAP version 13
+# Subtest: adjacent duplicate times invalidate every touching stencil
+ok 1 - adjacent duplicate times invalidate every touching stencil
+  ---
+  duration_ms: 1.721
+  type: 'test'
+  ...
+# Subtest: missing central samples cannot acquire invented derivative values
+ok 2 - missing central samples cannot acquire invented derivative values
+  ---
+  duration_ms: 0.5606
+  type: 'test'
+  ...
+# Subtest: plateau reaching outside selected phase is not a phase-local peak
+ok 3 - plateau reaching outside selected phase is not a phase-local peak
+  ---
+  duration_ms: 0.463
+  type: 'test'
+  ...
+# Subtest: static and constant-velocity trajectories distinguish speed change from vector acceleration
+ok 4 - static and constant-velocity trajectories distinguish speed change from vector acceleration
+  ---
+  duration_ms: 3.3443
+  type: 'test'
+  ...
+# Subtest: CSV protects column identity, duplicate times and independent trial groups
+ok 5 - CSV protects column identity, duplicate times and independent trial groups
+  ---
+  duration_ms: 2.2
+  type: 'test'
+  ...
+# Subtest: different exact joint IDs cannot silently compare under one canonical name
+ok 6 - different exact joint IDs cannot silently compare under one canonical name
+  ---
+  duration_ms: 0.4798
+  type: 'test'
+  ...
+# Subtest: v2 reading retains quaternion and raw coordinates without extra smoothing
+ok 7 - v2 reading retains quaternion and raw coordinates without extra smoothing
+  ---
+  duration_ms: 1.2217
+  type: 'test'
+  ...
+# PASS fixed user CSV rates, peaks/lag, quaternion sign, flat peak, circle, missing/legacy, time and no double smoothing
+# Subtest: C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-kinematics.test.cjs
+ok 2 - C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-kinematics.test.cjs
+  ---
+  duration_ms: 80.0983
+  type: 'test'
+  ...
+# PASS fixed excerpt of uploaded user CSV: 70 real rows, sign rates 19.39,-36.21,-20.93, 23.18 acceleration differs, peaks lag 66.7ms, Spine distinct, no raw fabrication
+# Subtest: C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-uploaded-csv.test.cjs
+ok 3 - C:\\Users\\admin\\AppData\\Local\\Temp\\compound-eye-vr-aegis-fix\\tests\\v54-uploaded-csv.test.cjs
+  ---
+  duration_ms: 87.4323
+  type: 'test'
+  ...
+# Subtest: anatomical leg weights are normalized and have no opposite-leg influences
+ok 10 - anatomical leg weights are normalized and have no opposite-leg influences
+  ---
+  duration_ms: 1.5807
+  type: 'test'
+  ...
+# Subtest: rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+ok 11 - rigid segmentation preserves rest-surface area and removes mixed-bone triangles
+  ---
+  duration_ms: 2.9152
+  type: 'test'
+  ...
+# Subtest: shoulder blade components are removed from fabric, not unrelated neck cables
+ok 12 - shoulder blade components are removed from fabric, not unrelated neck cables
+  ---
+  duration_ms: 1.1517
+  type: 'test'
+  ...
+# Subtest: X Bot geometry is not altered by AEGIS repair
+ok 13 - X Bot geometry is not altered by AEGIS repair
+  ---
+  duration_ms: 1.3248
+  type: 'test'
+  ...
+# Subtest: twin rocket geometry has chest binding, closed profile parts and finite coordinates
+ok 14 - twin rocket geometry has chest binding, closed profile parts and finite coordinates
+  ---
+  duration_ms: 4.2794
+  type: 'test'
+  ...
+# Subtest: mechanical joint covers retain side-specific single-bone attachment
+ok 15 - mechanical joint covers retain side-specific single-bone attachment
+  ---
+  duration_ms: 2.229
+  type: 'test'
+  ...
+# Subtest: antenna oscillation stays within 70–90 degrees over 20 source seconds
+ok 16 - antenna oscillation stays within 70–90 degrees over 20 source seconds
+  ---
+  duration_ms: 4.4072
+  type: 'test'
+  ...
+# Subtest: each antenna is head-bound and rotation produces the declared elevation
+ok 17 - each antenna is head-bound and rotation produces the declared elevation
+  ---
+  duration_ms: 14.9561
+  type: 'test'
+  ...
+# Subtest: tachometers contain one pointer per pod, no rotor/visor spinner geometries
+ok 18 - tachometers contain one pointer per pod, no rotor/visor spinner geometries
+  ---
+  duration_ms: 36.9208
+  type: 'test'
+  ...
+# Subtest: three separate camera apertures per temple and two fixed yellow bars
+ok 19 - three separate camera apertures per temple and two fixed yellow bars
+  ---
+  duration_ms: 11.3563
+  type: 'test'
+  ...
+# Subtest: grey equipment policy protects SOLDIER cable/exhaust red-yellow heat
+ok 20 - grey equipment policy protects SOLDIER cable/exhaust red-yellow heat
+  ---
+  duration_ms: 0.5274
+  type: 'test'
+  ...
+# Subtest: equipment geometry is finite, weighted to original head/chest joints only
+ok 21 - equipment geometry is finite, weighted to original head/chest joints only
+  ---
+  duration_ms: 15.8774
+  type: 'test'
+  ...
+# Subtest: cosmetic metadata excludes scoring, markers and skeleton CSV
+ok 22 - cosmetic metadata excludes scoring, markers and skeleton CSV
+  ---
+  duration_ms: 0.303
+  type: 'test'
+  ...
+# Subtest: v56 periodic running curve remains continuous across source loop
+ok 23 - v56 periodic running curve remains continuous across source loop
+  ---
+  duration_ms: 2.2117
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 230.2437

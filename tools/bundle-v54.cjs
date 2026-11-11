@@ -15,11 +15,11 @@ replaceBetween("// v47 motion-analysis workbench, resident in the app's existing
 replaceBetween('// v54: opt-in, offline kinematic exploration.','// v55 UI organization:','kinematic-view-v54.js');
 replaceBetween('// v55 UI organization:','window.__sensorTest={','ui-v55.js');
 replaceBetween('/* AEGIS v55:','/* AEGIS v56 motion:','aegis-geometry-v55.js');
-replaceBetween('/* AEGIS v56 motion:','/* AEGIS v56 details:','aegis-motion-v56.js');
-replaceBetween('/* AEGIS v56 details:','// AEGIS v56 runtime:','aegis-details-v56.js');
-replaceBetween('// AEGIS v56 runtime:','function parseGLB','aegis-runtime-v56.js');
-if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS v54 embedded/source equality');}
-else{fs.writeFileSync(file,html);console.log('Bundled v54 modules into self-contained index.html');}
+replaceBetween('/* AEGIS v56 motion:','/* AEGIS v57 details:','aegis-motion-v56.js');
+replaceBetween('/* AEGIS v57 details:','// AEGIS v57 runtime:','aegis-details-v57.js');
+replaceBetween('// AEGIS v57 runtime:','function parseGLB','aegis-runtime-v57.js');
+if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
+else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
 for(const [i,s] of scripts.entries())new (require('node:vm').Script)(s,{filename:'index-inline-'+i+'.js'});
 console.log('PASS '+scripts.length+' inline JavaScript syntax checks');
