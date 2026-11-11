@@ -1071,6 +1071,31 @@ function removeRightShoulderKnife(pos,indices){
  for(let i=0;i<indices.length;i+=3)if(root(indices[i])!==chosen)output.push(indices[i],indices[i+1],indices[i+2]);
  return new Uint32Array(output);
 }
+// Rigid AEGIS boot plates must not share weights with upper leg, pelvis or
+// opposite leg. The source 13-joint rig has no independent ankles. Keeping each
+// boot attached to its own shank prevents rubber-like vertex deformation
+// without changing the rest of the animated skeleton or overall model scale.
+function repairAegisBootWeights(modelId,materialName,p,joints,weights){
+ if(modelId!=='aegisEmber'||!['boots','pants'].includes(materialName)||!p||!joints||!weights)return 0;
+ let adjusted=0;
+ for(let i=0;i<p.length/3;i++){
+  const j=i*4;
+  if(materialName==='boots'){
+   const side=p[i*3]>=0?12:10; // R_LowerLeg / L_LowerLeg
+   if(joints[j]===side&&weights[j]>=.999)continue;
+   joints[j]=side;joints[j+1]=joints[j+2]=joints[j+3]=0;
+   weights[j]=1;weights[j+1]=weights[j+2]=weights[j+3]=0;
+  }else{
+   const w=[weights[j],weights[j+1],weights[j+2],weights[j+3]];
+   // Sharpen widely distributed cloth weights while retaining a narrow
+   // transition at the knee and pelvis. Do not weld both legs together.
+   const sum=w.reduce((v,x)=>v+Math.pow(Math.max(0,x),3),0)||1;
+   for(let k=0;k<4;k++)weights[j+k]=Math.pow(Math.max(0,w[k]),3)/sum;
+  }
+  adjusted++;
+ }
+ return adjusted;
+}
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
@@ -1083,6 +1108,7 @@ let mat=j.materials?.[pr.material];let mcol=mat?.pbrMetallicRoughness?.baseColor
 if(!col){col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set(mcol,i*4);}else if(mcol){for(let i=0;i<col.length;i+=4){for(let k=0;k<3;k++)col[i+k]*=mcol[k];}}
 let joints=pr.attributes.JOINTS_0!==undefined?accessor(j,bin,pr.attributes.JOINTS_0):null,weights=pr.attributes.WEIGHTS_0!==undefined?accessor(j,bin,pr.attributes.WEIGHTS_0):null;
 let skinned=nd.skin!==undefined;
+if(skinned)repairAegisBootWeights(modelId,mat?.name,p,joints,weights);
 if(modelId==='aegisEmber'&&mat?.name==='cables')tri=removeRightShoulderKnife(p,tri);
 let gpu=makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned);
 gpu.materialName=mat?.name||'';geo.push(gpu);
@@ -1100,7 +1126,7 @@ function quatBetween(from,to){
  const c=cross(a,b),n=Math.sqrt(Math.max(2*(1+d),1e-10));
  return [c[0]/n,c[1]/n,c[2]/n,n*.5];
 }
-function aegisSolveArm(nodes,R,side,handTarget,wristTurnDeg=0){
+function aegisSolveArm(nodes,R,side,handTarget,wristTurnDeg=0,elbowPoleY=-.50){
  const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
  const u=ids[side+'_UpperArm'],f=ids[side+'_Forearm'],h=ids[side+'_Hand'];
  if(u===undefined||f===undefined||h===undefined)return;
@@ -1110,7 +1136,7 @@ function aegisSolveArm(nodes,R,side,handTarget,wristTurnDeg=0){
  const aim=norm(T),along=clamp((L*L-M*M+dist*dist)/(2*dist),-L,L);
  const height=Math.sqrt(Math.max(0,L*L-along*along));
  // Elbow's pole lies toward the outside of the body to avoid unnatural inversion.
- const sideSign=side==='R'?1:-1,pole=[sideSign*.82,-.50,-.12];
+ const sideSign=side==='R'?1:-1,pole=[sideSign*.82,elbowPoleY,-.12];
  const proj=pole.reduce((v,x,i)=>v+x*aim[i],0);
  const perpendicular=norm(pole.map((v,i)=>v-aim[i]*proj));
  const elbow=aim.map((v,i)=>v*along+perpendicular[i]*height);
@@ -1124,6 +1150,42 @@ function aegisSolveArm(nodes,R,side,handTarget,wristTurnDeg=0){
  const half=rad(wristTurnDeg)*.5;
  R[h]=[twistAxis[0]*Math.sin(half),twistAxis[1]*Math.sin(half),
        twistAxis[2]*Math.sin(half),Math.cos(half)];
+}
+// The R_Hand bone is at the wrist. Its skinned glove centroid is not: it
+// sits ~0.125 model units in front of the hand bone in neutral bind pose.
+// This offset was measured from 1052 R_Hand-dominated glove mesh vertices.
+// IK controls the VISIBLE fist center; forearm pronation remains independent.
+const AEGIS_GLOVE_CENTER_LOCAL_R=[-.00511,-.01142,.12532];
+const AEGIS_GLOVE_CENTER_LOCAL_L=[.00511,-.01142,.12532];
+function aegisArmVisualPosition(nodes,R,side){
+ const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
+ const u=ids[side+'_UpperArm'],f=ids[side+'_Forearm'],h=ids[side+'_Hand'];
+ if(u===undefined||f===undefined||h===undefined)return null;
+ const elbow=rotateQ(R[u],nodes[f].translation);
+ const foreRot=qmul(R[u],R[f]);
+ const wristLocal=rotateQ(foreRot,nodes[h].translation);
+ const root=elbow.map((v,i)=>v+wristLocal[i]);
+ const c=side==='R'?AEGIS_GLOVE_CENTER_LOCAL_R:AEGIS_GLOVE_CENTER_LOCAL_L;
+ const offset=rotateQ(qmul(foreRot,R[h]),c);
+ return {wrist:root,elbow,visual:root.map((v,i)=>v+offset[i])};
+}
+function aegisSolveVisualFist(nodes,R,side,guardRoot,visualHit,extension,wristTurn){
+ // Guard root follows the legacy pose. Build a continuous visual trajectory
+ // from that pose, then target the visible glove centroid at full extension.
+ aegisSolveArm(nodes,R,side,guardRoot,0);
+ const guard=aegisArmVisualPosition(nodes,R,side);
+ if(!guard)return;
+ const goal=guard.visual.map((v,i)=>lerp(v,visualHit[i],extension));
+ let wristGoal=guardRoot.map((v,i)=>lerp(v,visualHit[i],extension));
+ for(let i=0;i<8;i++){
+  aegisSolveArm(nodes,R,side,wristGoal,wristTurn*extension,-.50+.50*extension);
+  const current=aegisArmVisualPosition(nodes,R,side);
+  const d=goal.map((v,k)=>v-current.visual[k]);
+  const error=Math.hypot(...d);
+  if(error<.0008)break;
+  const step=Math.min(.045,error*.75)/Math.max(error,1e-9);
+  wristGoal=wristGoal.map((v,k)=>v+d[k]*step);
+ }
 }
 function aegisProceduralPunch(nodes,R,t){
  const cycle=((t%1.65)+1.65)%1.65;
@@ -1179,13 +1241,13 @@ function aegisFullBodyPunch(nodes,T,R,t){
    ids.Pelvis===undefined?[0,0,0,1]:R[ids.Pelvis],
    ids.Chest===undefined?[0,0,0,1]:R[ids.Chest]
  );
- const jawHeight=(head?.[1]??.12)-.055;
+ const jawHeight=(head?.[1]??.12)-.14;
  const shoulderT=ids.R_UpperArm===undefined?[.198,-.005,.013]:T[ids.R_UpperArm];
- const worldCenterline=[0,jawHeight,.395];
+ const worldCenterline=[0,jawHeight,.50];
  const shoulderLocal=rotateQ(qInv(torsoQ),worldCenterline)
    .map((v,i)=>v-shoulderT[i]);
  const targetHit=shoulderLocal;
- aegisSolveArm(nodes,R,'R',targetGuard.map((v,i)=>lerp(v,targetHit[i],ext)),75*ext);
+ aegisSolveVisualFist(nodes,R,'R',targetGuard,targetHit,ext,10);
  aegisSolveArm(nodes,R,'L',[.020,-.14,.17]);
 }
 // The gait is retargeted from the actual Boxer_Walk / Boxer_Run animation tracks.
