@@ -1,0 +1,145 @@
+{
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "checked_at": "2026-11-11T02:39:10.416Z",
+  "expected_source_commit": "d89046862557442ab6ce55dae1d607f3d4595461",
+  "real_hardware_test": false,
+  "manifest": {
+    "app_version": "v55",
+    "source_commit": "d89046862557442ab6ce55dae1d607f3d4595461",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/11 11:37（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "unified_csv_columns": 86,
+    "model_geometry_revision": "aegis-anatomical-skin-jet-v55-001",
+    "source_files_sha256": {
+      "index.html": "18491772f80137e6d59c4114e38d4ea8456beac267e1afc6aa8c7b1bcc7df85d",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "d67fef93f6341992f6877c5f2e9f8515e0c8575c7a5a31edb7acff8f56affe50",
+      "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+      "motion-workbench-v48.js": "b3822fdba53a8b46b96c0a22b3e6a3a75fa69b3d5650111ec68f4cdf35d11ed2",
+      "aegis-geometry-v55.js": "c508b420256c02008575d80224dda0dbebca229bcb499b4d6ad25c3d32dba9fb",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09"
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "99ace581b69f9403878acea059603842029e91aa8a2298622e79d99a348da582",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "c08f3eb814071e6f066cfc87c5190826e79e8fab563caa67e650ee65082ccab4",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "geometry-inspection": {
+        "sha256": "0864508f768931f7d2bffd60b937f5e81b6cb05d80cc33b4e38f49402222638b",
+        "summary": null
+      }
+    },
+    "unit_tests": {
+      "passed": 15,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 22,
+      "failed": 0
+    },
+    "backup_tag": "backup-v54-before-v55-20261111",
+    "backup_commit": "c41344d6666129bfcd8efe99fe296bab79f0f9fc",
+    "untested": [
+      "physical HMD",
+      "physical GameSir",
+      "iPhone Safari",
+      "physical foot contact/collision correctness",
+      "human motor-learning efficacy"
+    ],
+    "note": "Source commit identifies implementation and assets. A later manifest/evidence-only commit may be the head of main. Original GLB bytes are unchanged; runtime skin/geometry modifications are tracked by model_geometry_revision and source_commit.",
+    "generated_at_utc": "2026-11-11T02:39:04.792702+00:00"
+  },
+  "html_sha256": "18491772f80137e6d59c4114e38d4ea8456beac267e1afc6aa8c7b1bcc7df85d",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=55&build=d890468",
+  "models": [
+    {
+      "model": "aegisEmber",
+      "bones": 13,
+      "parts": [
+        "cables",
+        "gloves",
+        "backpack",
+        "vest hardware",
+        "boots",
+        "pants",
+        "visor",
+        "armor fabric",
+        "Aegis_Ceramic_Plate",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "jet_body",
+        "jet_trim",
+        "jet_nozzle",
+        "jet_exhaust",
+        "leg_articulation_covers"
+      ],
+      "geometry_revision": "aegis-anatomical-skin-jet-v55-001",
+      "gl_error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "bones": 13,
+      "parts": [
+        "cables",
+        "gloves",
+        "backpack",
+        "vest hardware",
+        "boots",
+        "pants",
+        "visor",
+        "armor fabric",
+        "Aegis_Ceramic_Plate",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "jet_body",
+        "jet_trim",
+        "jet_nozzle",
+        "jet_exhaust",
+        "leg_articulation_covers"
+      ],
+      "geometry_revision": "aegis-anatomical-skin-jet-v55-001",
+      "gl_error": 0
+    }
+  ],
+  "ui": {
+    "fish_on_binocular_entry": true,
+    "title": "人工複眼シミュレーションシステム",
+    "editor_hidden": true,
+    "supplements_present": true,
+    "updated": "最終更新：2026/11/11 11:37（日本時間）"
+  },
+  "boot": {
+    "version": "55",
+    "title": "人工複眼シミュレーションシステム",
+    "rows": 1088,
+    "columns": 86,
+    "implementation_commit": "d89046862557442ab6ce55dae1d607f3d4595461",
+    "skeleton_joints": 32
+  },
+  "analysis": {
+    "peak_lag_s": 0.06666666666666668,
+    "source_time": 0.2,
+    "gl_error": 0,
+    "quality": "品質：元GLBを約30Hzで補間サンプリングしたオフライン計算。閾値 0.15、継続 3サンプル、ピーク検出割合 0.15。空値、平坦なピーク、静止は候補・評価不可を明示します。"
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
