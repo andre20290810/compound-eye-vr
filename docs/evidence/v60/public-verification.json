@@ -1,0 +1,171 @@
+{
+  "checked_at": "2026-11-11T16:32:16.135Z",
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "source_commit": "6a527bcabd516684700824486de7017fe3aa179c",
+  "physical_hardware_test": false,
+  "manifest": {
+    "app_version": "v60",
+    "source_commit": "6a527bcabd516684700824486de7017fe3aa179c",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/12 01:30（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "unified_csv_columns": 86,
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "model_geometry_revision": "aegis-v60-adjustable-visor-no-shoulder-armor",
+    "source_files_sha256": {
+      "index.html": "8339e8139dbd27b07e2307dbef3d031d9c53474fd1fbfc82e00794ad7f877157",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "216eff84c760431c5849bd9da41fa3dd16bcef1b2909011301022e311852d05f",
+      "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+      "motion-workbench-v48.js": "01cd28e3407fdf20cd8b26c8ef9f03c8924177d1869b45d600a14041aa0820df",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+      "aegis-details-v58.js": "e748384d6c8830f843462f678153624342327e1a74de5f1955aa9a9bbe5bcee4",
+      "aegis-runtime-v58.js": "109de3da27f3bc009521d218b8c298c0195e5815028cf8836f2aa6cc36d5b8ce",
+      "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
+      "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
+      "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc"
+    },
+    "public_appearance_config": {
+      "path": "public-appearance.json",
+      "revision_at_release": "appearance-2026-11-11T14:56:59.106Z",
+      "sha256_at_release": "17a6d8784b4d1dcf5018538b8700a77fb2d83d0ad0770e31d030a88b74829117",
+      "preserved_from_latest_user_edit": true,
+      "optional_shape_key": "visor",
+      "legacy_files_supported": true,
+      "requires_authenticated_repository_commit": true
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "2defec97a0931cacedc7d7961038e319e329b16562bf75cc6275352fdb615263",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "aaa2ba7f76a8c78a7dedaa39b6c352307cb7e38006c16bbd518536abd0f1a95c",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "fe9e94431fe823d4daa6ff962d0102c68bf44cc90fb0b2b75211e5101a28e098",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "visor-regression": {
+        "sha256": "eaa83ace34bc0040093de29ee7e4070a0ca406755ed602807999dd5c1db42bbf",
+        "summary": {
+          "passed": 13,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 33,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 49,
+      "failed": 0
+    },
+    "backup_tag": "backup-v59-before-v60-20261112",
+    "backup_commit": "ba7b6970fec7d46c29f2025c58417f86cd465b54",
+    "untested": [
+      "physical iPhone/Safari",
+      "physical HMD",
+      "physical GameSir",
+      "physical collision/contact",
+      "human motor-learning efficacy"
+    ],
+    "note": "Added shoulder armor is absent. Manual visor transforms are drawing-only. User public palette retained. Source commit precedes metadata-only publication commits.",
+    "generated_at_utc": "2026-11-11T16:32:08.302680+00:00"
+  },
+  "html_sha256": "8339e8139dbd27b07e2307dbef3d031d9c53474fd1fbfc82e00794ad7f877157",
+  "public_appearance_revision": "appearance-2026-11-11T14:56:59.106Z",
+  "browser": "Edg/157.0.4341.46",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=60&build=6a527bc",
+  "boot": {
+    "version": "60",
+    "eyeCount": 1,
+    "title": "人工複眼シミュレーションシステム",
+    "updated": "最終更新：2026/11/12 01:30（日本時間）",
+    "visorButton": true
+  },
+  "models": [
+    {
+      "model": "aegisEmber",
+      "shoulders": 0,
+      "triangle": 1,
+      "bars": 2,
+      "shape": {
+        "triangleScale": 1.5,
+        "barThickness": 0.6,
+        "leftAngle": 0,
+        "rightAngle": 0,
+        "barLength": 1,
+        "barSpacing": 1,
+        "triangleOffset": 0
+      },
+      "drawTransforms": 3,
+      "joints": 13,
+      "columns": 86,
+      "app": "v60",
+      "implementation_commit": "6a527bcabd516684700824486de7017fe3aa179c",
+      "error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "shoulders": 0,
+      "triangle": 1,
+      "bars": 2,
+      "shape": {
+        "triangleScale": 1.5,
+        "barThickness": 0.6,
+        "leftAngle": 0,
+        "rightAngle": 0,
+        "barLength": 1,
+        "barSpacing": 1,
+        "triangleOffset": 0
+      },
+      "drawTransforms": 3,
+      "joints": 13,
+      "columns": 86,
+      "app": "v60",
+      "implementation_commit": "6a527bcabd516684700824486de7017fe3aa179c",
+      "error": 0
+    }
+  ],
+  "editor": {
+    "visible": true,
+    "shape": {
+      "triangleScale": 1.85,
+      "barThickness": 0.4,
+      "leftAngle": 17,
+      "rightAngle": -12,
+      "barLength": 1,
+      "barSpacing": 1,
+      "triangleOffset": 0
+    },
+    "exportShape": {
+      "triangleScale": 1.85,
+      "barThickness": 0.4,
+      "leftAngle": 17,
+      "rightAngle": -12,
+      "barLength": 1,
+      "barSpacing": 1,
+      "triangleOffset": 0
+    },
+    "skeletonUnchanged": true,
+    "error": 0
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
