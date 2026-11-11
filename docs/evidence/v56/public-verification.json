@@ -1,0 +1,191 @@
+{
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "checked_at": "2026-11-11T04:58:50.971Z",
+  "expected_source_commit": "d894a5b1ca989eb94bcab174e83214d4cda2071b",
+  "real_hardware_test": false,
+  "manifest": {
+    "app_version": "v56",
+    "source_commit": "d894a5b1ca989eb94bcab174e83214d4cda2071b",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/11 13:57（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "unified_csv_columns": 86,
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "model_geometry_revision": "aegis-v56-temple-antenna-working-turbines",
+    "motion_revision": "AEGIS-smooth-run-turbine-antenna-v56-001",
+    "source_files_sha256": {
+      "index.html": "3c1b8ea44dbdaff964e7146fbfabcbd80594e7601577fe4e5aac0e722664e761",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "4bb47ac188ad2c7ae0a47ebac458f96994194a9b1e6ad3f8e0f1bc58e2d8ea92",
+      "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+      "motion-workbench-v48.js": "5ac1cf186b1e111c7a64582eec9e6884c1ee53cfe8e12e46cff79c62d9a15751",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "aegis-details-v56.js": "4411b5a555ef7b9a7f4948196dad600c1a3ce64315ab21f34b63b86d07671cee",
+      "aegis-runtime-v56.js": "3785c4cf8515f0e05546a9413385aebb47a6fb1b1e832e52458eaa6ca5373443"
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "777049ac176d05a9e3c76d8a20f309112c3260e5ca6eca7d972119974949dede",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "e112a06bf761052bca9393dfe760e67c30bf1b8ca9ed7cdce4535f3016a96cb5",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "15ef584f88f294ed9b5279355c94f65710ee19fb375dbc5ffa35ed321dfa1f66",
+        "summary": {
+          "passed": 9,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 22,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 31,
+      "failed": 0
+    },
+    "backup_tag": "backup-v55-before-v56-20261111",
+    "backup_commit": "4147eb0c3b538e5ff2ca62f48b0e3e5369084461",
+    "untested": [
+      "physical HMD",
+      "physical GameSir",
+      "iPhone Safari",
+      "physical foot contact/collision correctness",
+      "human motor-learning efficacy"
+    ],
+    "note": "Source commit identifies implementation; a later manifest/evidence-only commit may be main. Cosmetic rotor and visor matrices are separate from human skeleton joints. Real desktop WebGL2 tested; mobile viewport emulation is not an iPhone test.",
+    "generated_at_utc": "2026-11-11T04:58:43.354723+00:00"
+  },
+  "html_sha256": "3c1b8ea44dbdaff964e7146fbfabcbd80594e7601577fe4e5aac0e722664e761",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=56&build=d894a5b",
+  "startup_eye_count": 1,
+  "models": [
+    {
+      "model": "aegisEmber",
+      "bones": 13,
+      "parts": [
+        "cables",
+        "gloves",
+        "backpack",
+        "vest hardware",
+        "boots",
+        "pants",
+        "visor",
+        "armor fabric",
+        "Aegis_Ceramic_Plate",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "jet_body",
+        "jet_trim",
+        "jet_nozzle",
+        "jet_exhaust",
+        "leg_articulation_covers",
+        "temple_antennae",
+        "temple_mounts",
+        "jet_intake_housings",
+        "jet_mechanical_rings",
+        "jet_service_panels",
+        "jet_intake_rotor_left",
+        "jet_exhaust_rotor_left",
+        "jet_intake_rotor_right",
+        "jet_exhaust_rotor_right",
+        "visor_spinner_left",
+        "visor_spinner_right"
+      ],
+      "geometry_revision": "aegis-v56-temple-antenna-working-turbines",
+      "gl_error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "bones": 13,
+      "parts": [
+        "cables",
+        "gloves",
+        "backpack",
+        "vest hardware",
+        "boots",
+        "pants",
+        "visor",
+        "armor fabric",
+        "Aegis_Ceramic_Plate",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "Aegis_Luminous_Trim",
+        "jet_body",
+        "jet_trim",
+        "jet_nozzle",
+        "jet_exhaust",
+        "leg_articulation_covers",
+        "temple_antennae",
+        "temple_mounts",
+        "jet_intake_housings",
+        "jet_mechanical_rings",
+        "jet_service_panels",
+        "jet_intake_rotor_left",
+        "jet_exhaust_rotor_left",
+        "jet_intake_rotor_right",
+        "jet_exhaust_rotor_right",
+        "visor_spinner_left",
+        "visor_spinner_right"
+      ],
+      "geometry_revision": "aegis-v56-temple-antenna-working-turbines",
+      "gl_error": 0
+    }
+  ],
+  "ui": {
+    "fish_on_binocular_entry": true,
+    "title": "人工複眼シミュレーションシステム",
+    "editor_hidden": true,
+    "supplements_present": true,
+    "updated": "最終更新：2026/11/11 13:57（日本時間）"
+  },
+  "additional_motion": {
+    "motion": "armor_idle2",
+    "antennae": 1,
+    "rotors": [
+      -4.71238898038469,
+      4.71238898038469,
+      4.71238898038469,
+      -4.71238898038469
+    ],
+    "visor": [
+      -0.7853981633974483,
+      -0.7853981633974483
+    ],
+    "joints": 13,
+    "error": 0
+  },
+  "boot": {
+    "version": "56",
+    "title": "人工複眼シミュレーションシステム",
+    "rows": 1088,
+    "columns": 86,
+    "implementation_commit": "d894a5b1ca989eb94bcab174e83214d4cda2071b",
+    "skeleton_joints": 32
+  },
+  "analysis": {
+    "peak_lag_s": 0.06666666666666668,
+    "source_time": 0.2,
+    "gl_error": 0,
+    "quality": "品質：元GLBを約30Hzで補間サンプリングしたオフライン計算。閾値 0.15、継続 3サンプル、ピーク検出割合 0.15。空値、平坦なピーク、静止は候補・評価不可を明示します。"
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
