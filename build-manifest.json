@@ -1,8 +1,36 @@
 {
-  "app_version": "v53",
-  "source_commit": "1aa118ed48f7d5ef3503fd9ea4317af1eca3b7d0",
+  "app_version": "v54",
+  "source_commit": "4e22c5721afc8ff4b8fbec4b4f695a299291753a",
   "source_branch": "main",
   "data_schema": "compound-eye-motion-comparison-v2",
-  "note": "v53 implementation including all 32 X Bot skinned joints in the unified motion CSV; build manifest committed independently.",
-  "unified_csv_schema": "compound-eye-single-motion-v1"
+  "unified_csv_schema": "compound-eye-single-motion-v2",
+  "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+  "unified_csv_columns": 86,
+  "note": "Implementation source commit. This manifest is committed separately; GitHub main may therefore have a later metadata-only commit.",
+  "source_files_sha256": {
+    "index.html": "3ff1404eac988b6d3560ff4d06931a00ca0abc6cbdfe719fd18e52d15a6a71fe",
+    "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+    "motion-csv-v54.js": "ab2619356a8f9f2a0a9ee33d57ccd53a9ce9f48822c3be879dc62c98506a5ef6",
+    "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+    "motion-workbench-v48.js": "0a5ea48ca1e5b27e8779437718f9720bd701b465411314ea92fd7c0c6481e058"
+  },
+  "test_report_sha256": "78310df5635f6365f0b2889b1e48518c0b51911786aae5c53336f8f3694caf12",
+  "browser_regression": {
+    "passed": 14,
+    "failed": 0
+  },
+  "unit_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "untested": [
+    "physical HMD",
+    "physical GameSir",
+    "iPhone Safari",
+    "human motor-learning efficacy",
+    "physical foot contact/collision correctness"
+  ],
+  "backup_tag": "backup-v53-before-kinematics-20261111",
+  "backup_commit": "a406676cf2c92d8c537f4d5ed64f70fef675629f",
+  "generated_at_utc": "2026-11-11T01:22:43.985122+00:00"
 }
