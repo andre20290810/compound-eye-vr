@@ -1,0 +1,122 @@
+{
+  "schema": "compound-eye-appearance-v1",
+  "revision": "v58-defaults",
+  "models": {
+    "aegisEmber": {
+      "mask": {
+        "mode": "solid",
+        "colorA": "#b8b8b8",
+        "colorB": "#b8b8b8",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "jet": {
+        "mode": "original",
+        "colorA": "#999999",
+        "colorB": "#999999",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "decor": {
+        "mode": "original",
+        "colorA": "#999999",
+        "colorB": "#999999",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "body": {
+        "mode": "original",
+        "colorA": "#16325c",
+        "colorB": "#16325c",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "heat": {
+        "mode": "original",
+        "colorA": "#ffe000",
+        "colorB": "#ff250c",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "visorBars": {
+        "mode": "solid",
+        "colorA": "#ffffff",
+        "colorB": "#ffffff",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "chestMarks": {
+        "mode": "solid",
+        "colorA": "#ffffff",
+        "colorB": "#ffffff",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "gauges": {
+        "mode": "original",
+        "colorA": "#ffcc06",
+        "colorB": "#ffcc06",
+        "brightness": 1,
+        "axis": "y"
+      }
+    },
+    "aegisSoldier": {
+      "mask": {
+        "mode": "solid",
+        "colorA": "#b8b8b8",
+        "colorB": "#b8b8b8",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "jet": {
+        "mode": "original",
+        "colorA": "#999999",
+        "colorB": "#999999",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "decor": {
+        "mode": "original",
+        "colorA": "#999999",
+        "colorB": "#999999",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "body": {
+        "mode": "original",
+        "colorA": "#16325c",
+        "colorB": "#16325c",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "heat": {
+        "mode": "original",
+        "colorA": "#ffe000",
+        "colorB": "#ff250c",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "visorBars": {
+        "mode": "solid",
+        "colorA": "#ffffff",
+        "colorB": "#ffffff",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "chestMarks": {
+        "mode": "solid",
+        "colorA": "#ffffff",
+        "colorB": "#ffffff",
+        "brightness": 1,
+        "axis": "y"
+      },
+      "gauges": {
+        "mode": "original",
+        "colorA": "#ffcc06",
+        "colorB": "#ffcc06",
+        "brightness": 1,
+        "axis": "y"
+      }
+    }
+  }
+}

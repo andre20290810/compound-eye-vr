@@ -13,11 +13,13 @@ replaceBetween('/* Artificial compound-eye v54: pure, deterministic OFFLINE kine
 replaceBetween('// v54 single-motion reproducible CSV v2.',"// v47 motion-analysis workbench, resident in the app's existing IIFE.",'motion-csv-v54.js');
 replaceBetween("// v47 motion-analysis workbench, resident in the app's existing IIFE.",'// v54: opt-in, offline kinematic exploration.','motion-workbench-v48.js');
 replaceBetween('// v54: opt-in, offline kinematic exploration.','// v55 UI organization:','kinematic-view-v54.js');
-replaceBetween('// v55 UI organization:','window.__sensorTest={','ui-v55.js');
+replaceBetween('// v55 UI organization:','// v58 appearance editor:','ui-v55.js');
+replaceBetween('// v58 appearance editor:','window.__sensorTest={','appearance-ui-v58.js');
 replaceBetween('/* AEGIS v55:','/* AEGIS v56 motion:','aegis-geometry-v55.js');
-replaceBetween('/* AEGIS v56 motion:','/* AEGIS v57 details:','aegis-motion-v56.js');
-replaceBetween('/* AEGIS v57 details:','// AEGIS v57 runtime:','aegis-details-v57.js');
-replaceBetween('// AEGIS v57 runtime:','function parseGLB','aegis-runtime-v57.js');
+replaceBetween('/* AEGIS v56 motion:','/* AEGIS v58 appearance:','aegis-motion-v56.js');
+replaceBetween('/* AEGIS v58 appearance:','/* AEGIS v58 details:','appearance-v58.js');
+replaceBetween('/* AEGIS v58 details:','// AEGIS v58 runtime:','aegis-details-v58.js');
+replaceBetween('// AEGIS v58 runtime:','function parseGLB','aegis-runtime-v58.js');
 if(process.argv.includes('--check')){if(html!==read(file))throw Error('Embedded sources differ: run npm run build');console.log('PASS embedded/source equality');}
 else{fs.writeFileSync(file,html);console.log('Bundled current modules into self-contained index.html');}
 const scripts=[...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g)].map(m=>m[1]);
