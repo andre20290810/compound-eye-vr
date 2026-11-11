@@ -3,8 +3,8 @@
 const K54=window.__Kinematics54;
 const V54_ASSET_META={
  xbot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'xbot-original-glb'},
- aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'},
- aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'}
+ aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-visor-triangle-shoulder-v59-001'},
+ aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-visor-triangle-shoulder-v59-001'}
 };
 const V54_V1_HEADERS=[
  'data_schema','source_type','avatar_id','motion_id','source_asset_id','skeleton_id',
@@ -55,7 +55,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v58'?experimentBuildManifest.source_commit:'unverified_build_v58';
+ const runtime=experimentBuildManifest?.app_version==='v59'?experimentBuildManifest.source_commit:'unverified_build_v59';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -133,7 +133,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v58',runtime,JSON.stringify(config),
+    'v59',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -173,10 +173,10 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v58',
+   motion_revision_id:asset.motion_revision_id,app_version:'v59',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
-   cosmetic_animation:{schema:'aegis-accessory-v58',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
+   cosmetic_animation:{schema:'aegis-accessory-v59',visor_triangle:'upright; fixed head-bound white marker',shoulder_armor:'left/right upper-arm rigid shells; no extra joints',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
     'evidence_metrics','correction_direction','expected_result','exceptions','defer_conditions','version'],

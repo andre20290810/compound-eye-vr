@@ -7,9 +7,9 @@ const palette={grey:[.47,.47,.47,1],silver:[.68,.68,.68,1],dark:[.20,.20,.20,1],
 const greyMaterials=new Set(['visor','vest hardware','backpack','Aegis_Ceramic_Plate','Aegis_Luminous_Trim','Aegis_Dark_Outline','leg_articulation_covers']);
 function finish(material,model){
  if(model==='aegisSoldier'&&(material==='cables'||material==='jet_exhaust'))return 'preserve_soldier_heat';
- if(material.startsWith('visor_white_bar')||material==='Aegis_Ceramic_Plate'||material==='Aegis_Luminous_Trim')return 'white';
+ if((material.startsWith('visor_white_bar')||material==='visor_white_triangle')||material==='Aegis_Ceramic_Plate'||material==='Aegis_Luminous_Trim')return 'white';
  if(material.startsWith('tachometer_needle'))return 'yellow';
- if(greyMaterials.has(material)||material==='cables'||/^(jet_|temple_|tachometer_|camera_)/.test(material))return 'grey';
+ if(greyMaterials.has(material)||material==='cables'||/^(jet_|temple_|tachometer_|camera_|shoulder_armor)/.test(material))return 'grey';
  return 'body_navy';
 }
 function recolor(material,col){

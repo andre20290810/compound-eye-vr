@@ -805,7 +805,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v58',
+  app_version:'v59',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,

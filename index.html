@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/11 23:32（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/12 00:24（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -1321,21 +1321,21 @@ return {fitPeriodic,evaluate,range,fitToRange,fitBounded,unwrap,axisQuaternion,a
 'use strict';
 const schema='compound-eye-appearance-v1';
 const models=['aegisEmber','aegisSoldier'];
-const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'装飾・金具・アンテナ',body:'本体・服・手足',heat:'発光パーツ（SOLDIERの赤〜黄）',visorBars:'バイザーの2本線',chestMarks:'胸の棒線・三角マーク',gauges:'タコメーターの針'};
+const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'装飾・肩装甲・金具・アンテナ',body:'本体・服・手足',heat:'発光パーツ（SOLDIERの赤〜黄）',visorBars:'バイザーの2本線・▲',chestMarks:'胸の棒線・三角マーク',gauges:'タコメーターの針'};
 const groups=Object.keys(labels),clone=x=>JSON.parse(JSON.stringify(x));
 const setting=(mode,colorA,colorB=colorA,brightness=1,axis='y')=>({mode,colorA,colorB,brightness,axis});
 const baseGroups={mask:setting('solid','#b8b8b8'),jet:setting('original','#999999'),decor:setting('original','#999999'),body:setting('original','#16325c'),heat:setting('original','#ffe000','#ff250c'),visorBars:setting('solid','#ffffff'),chestMarks:setting('solid','#ffffff'),gauges:setting('original','#ffcc06')};
 const defaults={schema,revision:'v58-20261111T2332',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
 const ranges={mask:{x:[-.10,.10],y:[1.07,1.26],z:[-.12,.15]},jet:{x:[-.15,.15],y:[.69,1.14],z:[-.28,-.08]},decor:{x:[-.36,.36],y:[0,1.29],z:[-.28,.28]},body:{x:[-.36,.36],y:[0,1.25],z:[-.20,.30]},heat:{x:[-.36,.36],y:[.17,1.19],z:[-.28,.28]},visorBars:{x:[-.065,.065],y:[1.173,1.180],z:[.134,.14]},chestMarks:{x:[-.095,.095],y:[.975,1.055],z:[.19,.215]},gauges:{x:[-.12,.12],y:[.89,.96],z:[-.27,-.25]}};
 function groupFor(material,model){
- if(material.startsWith('visor_white_bar'))return 'visorBars';
+ if(material.startsWith('visor_white_bar')||material==='visor_white_triangle')return 'visorBars';
  if(material==='Aegis_Ceramic_Plate'||material==='Aegis_Luminous_Trim')return 'chestMarks';
  if(material.startsWith('tachometer_needle'))return 'gauges';
  if(material.startsWith('tachometer_')||material.includes('camera_lenses')||material.includes('camera_reflections'))return null;
  if(model==='aegisSoldier'&&(material==='cables'||material==='jet_exhaust'))return 'heat';
  if(material==='visor'||material.startsWith('temple_camera_housing')||material.startsWith('temple_camera_rims'))return 'mask';
  if(material.startsWith('jet_')||material==='backpack')return 'jet';
- if(material==='cables'||material==='vest hardware'||material==='Aegis_Dark_Outline'||material==='leg_articulation_covers'||material.startsWith('temple_'))return 'decor';
+ if(material==='cables'||material==='vest hardware'||material==='Aegis_Dark_Outline'||material==='leg_articulation_covers'||material.startsWith('temple_')||material.startsWith('shoulder_armor'))return 'decor';
  return 'body';
 }
 function validate(input){
@@ -1377,9 +1377,9 @@ const palette={grey:[.47,.47,.47,1],silver:[.68,.68,.68,1],dark:[.20,.20,.20,1],
 const greyMaterials=new Set(['visor','vest hardware','backpack','Aegis_Ceramic_Plate','Aegis_Luminous_Trim','Aegis_Dark_Outline','leg_articulation_covers']);
 function finish(material,model){
  if(model==='aegisSoldier'&&(material==='cables'||material==='jet_exhaust'))return 'preserve_soldier_heat';
- if(material.startsWith('visor_white_bar')||material==='Aegis_Ceramic_Plate'||material==='Aegis_Luminous_Trim')return 'white';
+ if((material.startsWith('visor_white_bar')||material==='visor_white_triangle')||material==='Aegis_Ceramic_Plate'||material==='Aegis_Luminous_Trim')return 'white';
  if(material.startsWith('tachometer_needle'))return 'yellow';
- if(greyMaterials.has(material)||material==='cables'||/^(jet_|temple_|tachometer_|camera_)/.test(material))return 'grey';
+ if(greyMaterials.has(material)||material==='cables'||/^(jet_|temple_|tachometer_|camera_|shoulder_armor)/.test(material))return 'grey';
  return 'body_navy';
 }
 function recolor(material,col){
@@ -1471,6 +1471,73 @@ function geometry(){
 function isOriginalVisorBar(material,p,joints){return material==='Aegis_Luminous_Trim'&&p.length===12&&joints&&Math.round(joints[0])===2&&p[1]>1.17;}
 return{geometry,finish,recolor,palette,antennaElevation,gaugeLevel,accessoryAngle,isOriginalVisorBar,revision:'aegis-v58-forward-cameras-single-antenna-white-marks',cosmeticMetadata:{clock:'original_animation_seconds',antenna_count:1,antenna_side:'avatar_left',antenna_elevation_deg:[35,55],antenna_baseline_deg:45,antenna_angle_reference:'from horizontal in head-local sagittal plane',tachometer:'illustrative oscillating pointer; not measured engine RPM',exclude_from_motion_score:true,exclude_from_marker_selection:true,exclude_from_skeleton_csv:true,cameras_per_temple:3,camera_zone:'front_visor_temple'}};
 });
+/* AEGIS v59 armor: chest-matched visor strokes, upright center triangle, articulated pauldrons. */
+(function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisArmor59=api;})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const add=(a,b)=>a.map((x,i)=>x+b[i]),sub=(a,b)=>a.map((x,i)=>x-b[i]),mul=(a,s)=>a.map(x=>x*s),dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0),norm=a=>{const n=Math.hypot(...a);if(n<1e-10)throw Error('degenerate_vector');return mul(a,1/n);};
+function chestThickness(p){
+ if(!p||p.length!==12||!Array.from(p).every(Number.isFinite))throw Error('invalid_chest_bar_quad');
+ const v=Array.from({length:4},(_,i)=>Array.from(p.slice(i*3,i*3+3))),axis=norm(add(sub(v[1],v[0]),sub(v[2],v[3]))),separation=mul(sub(add(v[0],v[1]),add(v[3],v[2])),.5);
+ const thickness=Math.hypot(...sub(separation,mul(axis,dot(separation,axis))));
+ if(thickness<.002||thickness>.03)throw Error('unexpected_chest_bar_thickness');return thickness;
+}
+function mesh(name,bone,color){return{name,bone,p:[],tri:[],col:[],joints:[],weights:[],color};}
+function face(m,points){const first=m.p.length/3;for(const p of points){m.p.push(...p);m.col.push(...m.color);m.joints.push(m.bone,0,0,0);m.weights.push(1,0,0,0);}for(let i=1;i<points.length-1;i++)m.tri.push(first,first+i,first+i+1);}
+function typed(m){return{...m,p:Float32Array.from(m.p),tri:Uint32Array.from(m.tri),col:Float32Array.from(m.col),joints:Float32Array.from(m.joints),weights:Float32Array.from(m.weights)};}
+function shoulders(){
+ const out=[];
+ for(const side of [-1,1]){
+  const name=side<0?'left':'right',bone=side<0?3:6,center=[side*.198,1.010,.018],axis=norm([side*.067,-.176,.037]),outward=[side,0,0];
+  const u=norm(sub(outward,mul(axis,dot(axis,outward))));let v=norm([axis[1]*u[2]-axis[2]*u[1],axis[2]*u[0]-axis[0]*u[2],axis[0]*u[1]-axis[1]*u[0]]);if(v[2]<0)v=mul(v,-1);
+  const p=(length,radius,angle)=>add(center,add(mul(axis,length),add(mul(u,radius*Math.cos(angle)),mul(v,radius*Math.sin(angle)))));
+  const shell=mesh('shoulder_armor_'+name,bone,[.53,.53,.53,1]),edge=mesh('shoulder_armor_trim_'+name,bone,[.71,.71,.71,1]);
+  // Open toward the front/inside: the cap does not replace or recolor SOLDIER's cable geometry.
+  // The crown and overlapping outer skirt are separate rigid panels on the same upper-arm joint.
+  for(const sections of [[[-.020,.045],[.001,.073],[.035,.080],[.065,.073]],[[.061,.076],[.082,.072],[.103,.059]]]){
+   const N=11,angles=Array.from({length:N+1},(_,k)=>(-145+205*k/N)*Math.PI/180),wall=.005;
+   for(let row=0;row<sections.length-1;row++)for(let k=0;k<N;k++){
+    const [a,ra]=sections[row],[b,rb]=sections[row+1],t=angles[k],n=angles[k+1];
+    face(shell,[p(a,ra,t),p(b,rb,t),p(b,rb,n),p(a,ra,n)]);
+    face(shell,[p(a,ra-wall,n),p(b,rb-wall,n),p(b,rb-wall,t),p(a,ra-wall,t)]);
+   }
+   for(const index of [0,sections.length-1]){const [s,r]=sections[index];for(let k=0;k<N;k++)face(edge,[p(s,r,angles[k]),p(s,r-wall,angles[k]),p(s,r-wall,angles[k+1]),p(s,r,angles[k+1])]);}
+   for(const t of [angles[0],angles[N]])for(let row=0;row<sections.length-1;row++){const [a,ra]=sections[row],[b,rb]=sections[row+1];face(edge,[p(a,ra,t),p(a,ra-wall,t),p(b,rb-wall,t),p(b,rb,t)]);}
+  }
+  // A chamfer-like raised ridge and four compact fasteners provide readable hard-surface detail.
+  for(const angle of [-.8,.30]){
+   const a=p(.010,.075,angle),b=p(.054,.077,angle),n=mul(v,.0018);face(edge,[sub(a,n),sub(b,n),add(b,n),add(a,n)]);
+  }
+  shell.shoulder_side=name;shell.rigid_bone_slot=bone;shell.rigid_pivot_model=center;edge.shoulder_side=name;edge.rigid_bone_slot=bone;edge.rigid_pivot_model=center;out.push(typed(shell),typed(edge));
+ }
+ return out;
+}
+function enhance(existing,chestQuads){
+ if(!Array.isArray(chestQuads)||chestQuads.length!==2)throw Error('expected_two_chest_bars');
+ const measured=chestQuads.map(chestThickness),width=measured.reduce((s,x)=>s+x,0)/measured.length;
+ const result=existing.map(m=>{if(!m.name.startsWith('visor_white_bar_'))return m;const p=new Float32Array(m.p);let low=Infinity,high=-Infinity;for(let i=1;i<p.length;i+=3){low=Math.min(low,p[i]);high=Math.max(high,p[i]);}const center=(low+high)/2;for(let i=1;i<p.length;i+=3)p[i]=center+(p[i]-center)*width/(high-low);return{...m,p,stroke_width_model_units:width,chest_reference_widths:measured};});
+ const triangle=mesh('visor_white_triangle',2,[1,1,1,1]),cy=1.1765,h=.023,w=.025,front=.139,back=.137;
+ const a=[-w/2,cy-h/3,front],b=[w/2,cy-h/3,front],c=[0,cy+2*h/3,front],rear=x=>[x[0],x[1],back];
+ face(triangle,[a,b,c]);face(triangle,[rear(c),rear(b),rear(a)]);for(const [v,n] of [[a,b],[b,c],[c,a]])face(triangle,[v,rear(v),rear(n),n]);triangle.upright=true;
+ return [...result,typed(triangle),...shoulders()];
+}
+// Remove inherited scale/shear for hard shoulder shells, preserving the moving joint anchor.
+// Only per-mesh draw matrices are updated; measured skeleton matrices remain untouched.
+function rigidMatrix(m,pivot){
+ if(m.length!==16||pivot.length!==3||![...m,...pivot].every(Number.isFinite))throw Error('invalid_rigid_matrix');
+ const x=norm([m[0],m[1],m[2]]),columnY=[m[4],m[5],m[6]],y=norm(sub(columnY,mul(x,dot(columnY,x))));
+ const z=[x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]];
+ const anchor=[0,1,2].map(k=>m[k]*pivot[0]+m[4+k]*pivot[1]+m[8+k]*pivot[2]+m[12+k]);
+ const t=anchor.map((v,k)=>v-x[k]*pivot[0]-y[k]*pivot[1]-z[k]*pivot[2]);
+ return new Float32Array([...x,0,...y,0,...z,0,...t,1]);
+}
+function updateRigidMeshes(md){
+ for(const mesh of md.geo){if(!mesh.v59RigidPivot)continue;const slot=mesh.v57Bone;
+  mesh.v59Bones??=new Float32Array(md.bones.length);mesh.v59Bones.set(md.bones);
+  mesh.v59Bones.set(rigidMatrix(md.bones.slice(slot*16,slot*16+16),mesh.v59RigidPivot),slot*16);
+ }
+}
+return{chestThickness,shoulders,enhance,rigidMatrix,updateRigidMeshes,revision:'aegis-v59-visor-triangle-chest-matched-strokes-shoulder-armor'};
+});
 // AEGIS v58 runtime: original-time animation, source-run curve fitting and rigid accessories.
 let v56RunCache=null;
 function v56BuildRunProfile(nodes){
@@ -1517,7 +1584,7 @@ function v58UpdateAccessories(md,motion,time){
 function parseGLB(b64,modelId){const input=b64 instanceof ArrayBuffer?b64:decode64(b64),v=new DataView(input);if(v.getUint32(0,true)!==0x46546c67)throw Error('GLB signature');let j=null,bin=null,off=12;while(off<input.byteLength){let size=v.getUint32(off,true),type=v.getUint32(off+4,true);off+=8;if(type===0x4e4f534a)j=JSON.parse(new TextDecoder().decode(new Uint8Array(input,off,size)));if(type===0x004e4942)bin=input.slice(off,off+size);off+=size;}if(!j||!bin)throw Error('GLB chunks missing');
 let nodes=(j.nodes||[]).map(n=>({name:n.name||'',translation:n.translation||[0,0,0],rotation:n.rotation||[0,0,0,1],scale:n.scale||[1,1,1],children:n.children||[],mesh:n.mesh,skin:n.skin,matrix:n.matrix,parent:-1}));nodes.forEach((n,i)=>n.children.forEach(c=>nodes[c].parent=i));
 let meshNodeIndices=[];nodes.forEach((n,i)=>{if(n.mesh!==undefined)meshNodeIndices.push(i);});
-let geometryAudit=[],geo=[],min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
+let geometryAudit=[],chestBarQuads=[],geo=[],min=[Infinity,Infinity,Infinity],max=[-Infinity,-Infinity,-Infinity];
 for(const nodeIndex of meshNodeIndices){let nd=nodes[nodeIndex],mm=j.meshes[nd.mesh];for(const pr of mm.primitives){if(pr.mode!==undefined&&pr.mode!==4)continue;let p=accessor(j,bin,pr.attributes.POSITION);let tri=pr.indices!==undefined?accessor(j,bin,pr.indices):Uint32Array.from({length:p.length/3},(_,i)=>i);
 let n=pr.attributes.NORMAL!==undefined?accessor(j,bin,pr.attributes.NORMAL):null;
 let col=pr.attributes.COLOR_0!==undefined?accessor(j,bin,pr.attributes.COLOR_0):null;
@@ -1526,6 +1593,7 @@ let mat=j.materials?.[pr.material];let mcol=mat?.pbrMetallicRoughness?.baseColor
 if(!col){col=new Float32Array(p.length/3*4);for(let i=0;i<p.length/3;i++)col.set(mcol,i*4);}else if(mcol){for(let i=0;i<col.length;i+=4){for(let k=0;k<3;k++)col[i+k]*=mcol[k];}}
 let joints=pr.attributes.JOINTS_0!==undefined?accessor(j,bin,pr.attributes.JOINTS_0):null,weights=pr.attributes.WEIGHTS_0!==undefined?accessor(j,bin,pr.attributes.WEIGHTS_0):null;
 let skinned=nd.skin!==undefined;
+if(modelId==='aegisEmber'&&mat?.name==='Aegis_Luminous_Trim'&&p.length===12&&joints&&Math.round(joints[0])===1&&p[1]<1.01)chestBarQuads.push(Array.from(p));
 if(skinned){const fixed=window.__AegisGeometry55.prepare({modelId,materialName:mat?.name,p,n,col,tri,joints,weights});tri=fixed.tri;if(fixed.p){p=fixed.p;n=fixed.n;col=fixed.col;joints=fixed.joints;weights=fixed.weights;}geometryAudit.push(fixed.report);}
 if(modelId==='aegisEmber')window.__AegisDetails58.recolor(mat?.name||'',col);
 let gpu=makeGpuMesh(p,n,col,tri,joints,weights,nodeIndex,skinned);
@@ -1533,15 +1601,15 @@ gpu.materialName=mat?.name||'';
 if(modelId==='aegisEmber'){gpu.v57Equipment=true;gpu.v57OriginalVisor=window.__AegisDetails58.isOriginalVisorBar(gpu.materialName,p,joints);}
 geo.push(gpu);
 for(let i=0;i<p.length;i+=3){for(let k=0;k<3;k++){min[k]=Math.min(min[k],p[i+k]);max[k]=Math.max(max[k],p[i+k]);}}}}
-if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers(),...window.__AegisDetails58.geometry()]){
+if(modelId==='aegisEmber')for(const jet of [...window.__AegisGeometry55.jetGeometry(),window.__AegisGeometry55.jointCovers(),...window.__AegisArmor59.enhance(window.__AegisDetails58.geometry(),chestBarQuads)]){
  if(jet.name.startsWith('jet_')&&!jet.animation&&!jet.name.includes('tachometer'))window.__AegisDetails58.recolor(jet.name,jet.col);
  const gpu=makeGpuMesh(jet.p,null,jet.col,jet.tri,jet.joints,jet.weights,meshNodeIndices[0],true);
- gpu.materialName=jet.name;gpu.v57Equipment=true;gpu.v57Animation=jet.animation||null;gpu.v57Bone=jet.bone??1;gpu.v57CameraCount=jet.camera_count||0;geo.push(gpu);
+ gpu.materialName=jet.name;gpu.v57Equipment=true;gpu.v57Animation=jet.animation||null;gpu.v57Bone=jet.bone??1;gpu.v57CameraCount=jet.camera_count||0;gpu.v59StrokeWidth=jet.stroke_width_model_units||null;gpu.v59ChestReference=jet.chest_reference_widths||null;gpu.v59ShoulderSide=jet.shoulder_side||null;gpu.v59RigidPivot=jet.rigid_pivot_model||null;geo.push(gpu);
 }
 if(!geo.length)throw Error('no mesh primitives');
 let skin=j.skins?.[0],invBind=skin?accessor(j,bin,skin.inverseBindMatrices):null;
 let animations=(j.animations||[]).map(a=>({name:a.name||'',channels:a.channels.map(ch=>{let sm=a.samplers[ch.sampler],input=accessor(j,bin,sm.input),output=accessor(j,bin,sm.output);return{node:ch.target.node,path:ch.target.path,input,output,size:ch.target.path==='rotation'?4:3};}),duration:Math.max(0,...a.samplers.map(s=>j.accessors[s.input].max?.[0]||0))}));
-return{geo,geometryAudit,geometryRevision:modelId==='aegisEmber'?window.__AegisDetails58.revision:null,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
+return{geo,geometryAudit,geometryRevision:modelId==='aegisEmber'?window.__AegisArmor59.revision:null,nodes,skin,invBind,animations,min,max,bones:new Float32Array(48*16),world:new Array(nodes.length).fill(null)};}
 const XBOT_CLIPS={xbot_idle:'Boxer_Idle',xbot_fight_idle:'Boxer_FightIdle',xbot_hook:'Boxer_Hook',xbot_punch1:'Boxer_Punching1',xbot_punch2:'Boxer_Punching2',xbot_walk:'Boxer_Walk',xbot_walk2:'Boxer_Walk2',xbot_run:'Boxer_Run'};
 function xbotClip(motion){return modelData?.animations.find(a=>a.name===XBOT_CLIPS[motion]||(motion==='xbot_punch'&&a.name==='XBot_Punching_Original52'));}
 function motionDuration(){let a=(state.model==='xbot')?xbotClip(state.motion):null;return a?Math.max(a.duration,0.05):1.64;}
@@ -1944,6 +2012,7 @@ world.fill(null);nodes.forEach((n,i)=>calc(i));
 let bones=md.bones;bones.fill(0);for(let i=0;i<48;i++)for(let k=0;k<16;k++)bones[i*16+k]=(k%5===0)?1:0;
 if(md.skin){md.skin.joints.forEach((joint,i)=>{const bind=md.invBind.slice(i*16,i*16+16);bones.set(mul(world[joint],bind),i*16);});}
 v58UpdateAccessories(md,motion,t);
+window.__AegisArmor59.updateRigidMeshes(md);
 }
 let partMaskCache={};
 function partMask(idx){
@@ -2004,7 +2073,7 @@ for(const mesh of md.geo){
  if(md.nodes[mesh.modelNode]?.name?.startsWith('SwordProp_')&&state.model!=='sword')continue;
  gl.uniform1f(shaderProg.uSoldierTube,state.model==='aegisSoldier'&&(mesh.materialName==='cables'||mesh.materialName==='jet_exhaust')?1:0);
  v58ApplyUniforms(mesh,modelOverride?'__reference__':state.model,ghostAlpha>0);
- gl.uniform1f(shaderProg.uTime,state.renderTime||0);gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,mesh.v57Bones||md.bones);
+ gl.uniform1f(shaderProg.uTime,state.renderTime||0);gl.uniform1i(shaderProg.uSkin,mesh.skinned?1:0);gl.uniformMatrix4fv(shaderProg.uBones,false,mesh.v59Bones||mesh.v57Bones||md.bones);
 let nodeWorld=md.world[mesh.modelNode]||ID();gl.uniformMatrix4fv(shaderProg.uWorld,false,mesh.skinned?fit:mul(fit,nodeWorld));
 for(const [attr,buffer,components] of [['aP',mesh.p,3],['aN',mesh.n,3],['aColor',mesh.col,4],['aJoints',mesh.joint,4],['aWeights',mesh.weight,4]]){let loc=shaderProg[attr];if(loc<0)continue;gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.enableVertexAttribArray(loc);gl.vertexAttribPointer(loc,components,gl.FLOAT,false,0,0);}
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,mesh.ib);gl.drawElements(gl.TRIANGLES,mesh.count,gl.UNSIGNED_INT,0);}}
@@ -5326,7 +5395,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   renderUI();v47Init();showStatus('人工複眼シミュレーションシステム v54：AEGIS動作修正・再解析CSV・部位間の時間関係');
-  window.__compoundTest={version:"58",v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"59",v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -5338,8 +5407,8 @@ async function startApplication(){
 const K54=window.__Kinematics54;
 const V54_ASSET_META={
  xbot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'xbot-original-glb'},
- aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'},
- aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'}
+ aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-visor-triangle-shoulder-v59-001'},
+ aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-visor-triangle-shoulder-v59-001'}
 };
 const V54_V1_HEADERS=[
  'data_schema','source_type','avatar_id','motion_id','source_asset_id','skeleton_id',
@@ -5390,7 +5459,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
  const data=v47Sample(avatar,motion,settings);
  const timestamps=data.frames.map(f=>f.time);
  const asset=v54SourceMetadata(avatar,motion);
- const runtime=experimentBuildManifest?.app_version==='v58'?experimentBuildManifest.source_commit:'unverified_build_v58';
+ const runtime=experimentBuildManifest?.app_version==='v59'?experimentBuildManifest.source_commit:'unverified_build_v59';
  const datasetId=['synthetic',avatar,motion,asset.motion_revision_id,asset.source_sha256.slice(0,12)].join(':');
  const trialId=params.trialId||v54TrialIds.get(datasetId)||'trial_'+Date.now().toString(36)+'_'+v54TrialIds.size;
  v54TrialIds.set(datasetId,trialId);
@@ -5468,7 +5537,7 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
     rootM?JSON.stringify(rootM):'',modelToWorld?JSON.stringify(modelToWorld):'',
     'static_viewer_actor_transform_snapshot',
     datasetId,trialId,asset.motion_revision_id,asset.source_revision,asset.source_sha256,
-    'v58',runtime,JSON.stringify(config),
+    'v59',runtime,JSON.stringify(config),
     'moving_average',3,'truncated_window','central_secant_actual_time;one_sided_endpoints',
     'root_translation_only_rotation_not_removed',
     'absolute_derivative_of_scalar_angular_speed',
@@ -5508,10 +5577,10 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
   skeleton,config,asset,metadata:{
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
-   motion_revision_id:asset.motion_revision_id,app_version:'v58',
+   motion_revision_id:asset.motion_revision_id,app_version:'v59',
    visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
-   cosmetic_animation:{schema:'aegis-accessory-v58',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
+   cosmetic_animation:{schema:'aegis-accessory-v59',visor_triangle:'upright; fixed head-bound white marker',shoulder_armor:'left/right upper-arm rigid shells; no extra joints',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
     'evidence_metrics','correction_direction','expected_result','exceptions','defer_conditions','version'],
@@ -6370,7 +6439,7 @@ function v47ExportJSON(){
  const config=v47Config(),pair=v47.comparison;
  const results={
   schema:V47_SCHEMA,kind:'processed_motion_analytics',
-  app_version:'v58',
+  app_version:'v59',
   git_source_commit:experimentBuildManifest.source_commit,
   data_type:'synthetic_animation',
   is_human_measurement:false,

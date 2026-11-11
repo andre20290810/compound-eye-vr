@@ -1,0 +1,374 @@
+{
+  "tested_at": "2026-11-11T15:25:07.863Z",
+  "environment": {
+    "platform": "win32",
+    "node": "v24.21.0",
+    "real_HMD": false,
+    "real_GameSir": false,
+    "Safari": false,
+    "inputs": "desktop headless Edge; mocked Gamepad API",
+    "browser": "Edg/157.0.4341.46"
+  },
+  "tests": [
+    {
+      "name": "v59 boot and opt-in defaults",
+      "status": "PASS",
+      "details": {
+        "version": "59",
+        "title": "人工複眼シミュレーションシステム",
+        "panel": false,
+        "markers": 0
+      }
+    },
+    {
+      "name": "86-column CSV: every joint, signed rates, raw pose, revision and quaternion",
+      "status": "PASS",
+      "details": {
+        "columns": 86,
+        "rows": 1088,
+        "joints": 32,
+        "trial": "trial_mwc9t182_0"
+      }
+    },
+    {
+      "name": "preserve all v53 X Bot numeric fields and raw positions",
+      "status": "PASS",
+      "details": {
+        "rows": 1088,
+        "numeric_fields": 8,
+        "max_absolute_error": 0
+      }
+    },
+    {
+      "name": "skeleton JSON and CSV identify same trial and full local poses",
+      "status": "PASS",
+      "details": {
+        "nodes": 36,
+        "frames": 34,
+        "trial": "trial_mwc9t182_0"
+      }
+    },
+    {
+      "name": "A/B original-time synchronization, signed state and phase-bounded overlap",
+      "status": "PASS",
+      "details": {
+        "lag": 0.06666666666666668,
+        "text": "X 骨盤 減Y 右手 増",
+        "rendered": 0.2,
+        "events": 6,
+        "quality": "品質：元GLBを約30Hzで補間サンプリングしたオフライン計算。閾値 0.15、継続 3サンプル、ピーク検出割合 0.15。空値、平坦なピーク、静止は候補・評価不可を明示します。"
+      }
+    },
+    {
+      "name": "seek source time is invariant to punch playback rate",
+      "status": "PASS",
+      "details": [
+        {
+          "rate": 0.5,
+          "time": 0.2333333333333
+        },
+        {
+          "rate": 1,
+          "time": 0.2333333333333
+        },
+        {
+          "rate": 1.7,
+          "time": 0.23333333333329997
+        },
+        {
+          "rate": 2.4,
+          "time": 0.23333333333329997
+        }
+      ]
+    },
+    {
+      "name": "identical X/Y zero, unverified cross-skeleton comparison refused",
+      "status": "PASS",
+      "details": {
+        "identical": {
+          "ok": true,
+          "peakTimeDelta": 0,
+          "peakValueDelta": 0,
+          "intervalDelta": 0,
+          "rangeDelta": 0,
+          "status": "kinematic_difference_not_skill_score"
+        },
+        "cross_reason": "骨格・関節IDの一致を確認できません。異なる骨格には対応付けと検証が必要です。"
+      }
+    },
+    {
+      "name": "v2 and legacy CSV reload: no second smoothing, no invented raw pose, graph usable",
+      "status": "PASS",
+      "details": {
+        "trial": "import_mwc9t41t",
+        "rows": 1088,
+        "raw": [
+          null,
+          null,
+          null
+        ],
+        "xyDisabled": true,
+        "overlay": 0,
+        "lag": 0.066666,
+        "v2_raw_preserved": [
+          -0.162226250395179,
+          0.266710758209229,
+          0.282274924684316
+        ]
+      }
+    },
+    {
+      "name": "CSV pose equals renderer at original timestamps for all three avatars",
+      "status": "PASS",
+      "details": [
+        {
+          "avatar": "xbot",
+          "motion": "xbot_punch",
+          "maxPosition": 0,
+          "maxQuaternion": 6.661338147750939e-16,
+          "rows": 1088,
+          "columns": 86
+        },
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_power_punch",
+          "maxPosition": 0,
+          "maxQuaternion": 4.440892098500626e-16,
+          "rows": 663,
+          "columns": 86
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_run",
+          "maxPosition": 0,
+          "maxQuaternion": 4.440892098500626e-16,
+          "rows": 260,
+          "columns": 86
+        }
+      ]
+    },
+    {
+      "name": "AEGIS punches/gait preserve limb length; original breathing scale remains bounded",
+      "status": "PASS",
+      "details": [
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_power_punch",
+          "maxRelative": 4.227327149441962e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_punch",
+          "maxRelative": 1.1127633836593986e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_walk",
+          "maxRelative": 3.9966798148771687e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_run",
+          "maxRelative": 8.718112167738212e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisEmber",
+          "motion": "armor_breathe",
+          "maxRelative": 0.03497530921021785,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_power_punch",
+          "maxRelative": 4.227327149441962e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_punch",
+          "maxRelative": 1.1127633836593986e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_walk",
+          "maxRelative": 3.9966798148771687e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_run",
+          "maxRelative": 8.718112167738212e-7,
+          "allFinite": true
+        },
+        {
+          "avatar": "aegisSoldier",
+          "motion": "armor_breathe",
+          "maxRelative": 0.03497530921021785,
+          "allFinite": true
+        }
+      ]
+    },
+    {
+      "name": "1–6 facets and mono/stereo rendering preserve targets and WebGL validity",
+      "status": "PASS",
+      "details": [
+        {
+          "count": 1,
+          "stereo": false,
+          "targets": 2,
+          "expected": 2,
+          "glError": 0
+        },
+        {
+          "count": 2,
+          "stereo": false,
+          "targets": 4,
+          "expected": 4,
+          "glError": 0
+        },
+        {
+          "count": 3,
+          "stereo": false,
+          "targets": 5,
+          "expected": 5,
+          "glError": 0
+        },
+        {
+          "count": 4,
+          "stereo": false,
+          "targets": 6,
+          "expected": 6,
+          "glError": 0
+        },
+        {
+          "count": 5,
+          "stereo": false,
+          "targets": 7,
+          "expected": 7,
+          "glError": 0
+        },
+        {
+          "count": 6,
+          "stereo": false,
+          "targets": 8,
+          "expected": 8,
+          "glError": 0
+        },
+        {
+          "count": 1,
+          "stereo": true,
+          "targets": 4,
+          "expected": 4,
+          "glError": 0
+        },
+        {
+          "count": 2,
+          "stereo": true,
+          "targets": 8,
+          "expected": 8,
+          "glError": 0
+        },
+        {
+          "count": 3,
+          "stereo": true,
+          "targets": 10,
+          "expected": 10,
+          "glError": 0
+        },
+        {
+          "count": 4,
+          "stereo": true,
+          "targets": 12,
+          "expected": 12,
+          "glError": 0
+        },
+        {
+          "count": 5,
+          "stereo": true,
+          "targets": 14,
+          "expected": 14,
+          "glError": 0
+        },
+        {
+          "count": 6,
+          "stereo": true,
+          "targets": 16,
+          "expected": 16,
+          "glError": 0
+        }
+      ]
+    },
+    {
+      "name": "saved camera presets and symmetric alignment survive save/reload",
+      "status": "PASS",
+      "details": {
+        "yaw": -42,
+        "gap": 0.19,
+        "scale": 1.12,
+        "alignment": {
+          "inward": 0.125,
+          "left": 0.125,
+          "right": 0.125,
+          "saved": true
+        }
+      }
+    },
+    {
+      "name": "mock GameSir standard pad: walk/run/stop/punch and VR LT/RT",
+      "status": "PASS",
+      "details": {
+        "walk": "walk",
+        "run": "run",
+        "stop": "idle",
+        "punch": "punch",
+        "before": {
+          "inward": 0.125,
+          "left": 0.125,
+          "right": 0.125,
+          "saved": false
+        },
+        "lt": {
+          "inward": 0.1366,
+          "left": 0.1366,
+          "right": 0.1366,
+          "saved": false
+        },
+        "rt": {
+          "inward": 0.125,
+          "left": 0.125,
+          "right": 0.125,
+          "saved": false
+        }
+      }
+    },
+    {
+      "name": "no JavaScript page errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "page_errors": [],
+  "performance": {
+    "baseline_v53": {
+      "samples": 50,
+      "median_ms": 1.1000000014901161,
+      "p95_ms": 2.100000001490116,
+      "method": "CPU draw dispatch time; not GPU/HMD frame latency"
+    },
+    "v54_normal": {
+      "samples": 50,
+      "median_ms": 0.6000000014901161,
+      "p95_ms": 1.1000000014901161,
+      "method": "CPU draw dispatch time; not GPU/HMD frame latency"
+    }
+  },
+  "summary": {
+    "passed": 14,
+    "failed": 0
+  }
+}

@@ -1,0 +1,439 @@
+{
+  "tested_at": "2026-11-11T15:25:32.234Z",
+  "environment": "Windows Edge WebGL2; no physical iPhone/HMD/GameSir",
+  "checks": [
+    {
+      "name": "v59 boots one-eye with real WebGL2 and preserved public title",
+      "status": "PASS",
+      "details": {
+        "version": "59",
+        "eyes": 1,
+        "title": "人工複眼シミュレーションシステム",
+        "gl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "error": 0
+      }
+    },
+    {
+      "name": "both visor strokes match measured chest width; central upright triangle is white",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "chestWidths": [
+            0.009708204943248805,
+            0.009708204943248805
+          ],
+          "bars": [
+            {
+              "name": "visor_white_bar_left",
+              "width": 0.009708285331726074,
+              "metadata": 0.009708204943248805,
+              "reference": [
+                0.009708204943248805,
+                0.009708204943248805
+              ]
+            },
+            {
+              "name": "visor_white_bar_right",
+              "width": 0.009708285331726074,
+              "metadata": 0.009708204943248805,
+              "reference": [
+                0.009708204943248805,
+                0.009708204943248805
+              ]
+            }
+          ],
+          "triangle": {
+            "minX": -0.012500000186264515,
+            "maxX": 0.012500000186264515,
+            "tipXs": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "bone": [
+              2
+            ],
+            "appearance": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          },
+          "joints": 13,
+          "error": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "chestWidths": [
+            0.009708204943248805,
+            0.009708204943248805
+          ],
+          "bars": [
+            {
+              "name": "visor_white_bar_left",
+              "width": 0.009708285331726074,
+              "metadata": 0.009708204943248805,
+              "reference": [
+                0.009708204943248805,
+                0.009708204943248805
+              ]
+            },
+            {
+              "name": "visor_white_bar_right",
+              "width": 0.009708285331726074,
+              "metadata": 0.009708204943248805,
+              "reference": [
+                0.009708204943248805,
+                0.009708204943248805
+              ]
+            }
+          ],
+          "triangle": {
+            "minX": -0.012500000186264515,
+            "maxX": 0.012500000186264515,
+            "tipXs": [
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "bone": [
+              2
+            ],
+            "appearance": {
+              "group": "visorBars",
+              "mode": 1,
+              "a": [
+                1,
+                1,
+                1
+              ],
+              "b": [
+                1,
+                1,
+                1
+              ],
+              "axis": 1,
+              "range": [
+                1.173,
+                1.18
+              ],
+              "brightness": 1,
+              "unlit": 1
+            }
+          },
+          "joints": 13,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "left/right shoulder shells follow their own upper arm rigidly across all body motions",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "name": "shoulder_armor_left",
+          "slot": 3,
+          "boneName": "L_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.623451555994194e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisEmber",
+          "name": "shoulder_armor_trim_left",
+          "slot": 3,
+          "boneName": "L_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.1361864610547343e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisEmber",
+          "name": "shoulder_armor_right",
+          "slot": 6,
+          "boneName": "R_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.623451555994194e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisEmber",
+          "name": "shoulder_armor_trim_right",
+          "slot": 6,
+          "boneName": "R_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 3.460756059503467e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisSoldier",
+          "name": "shoulder_armor_left",
+          "slot": 3,
+          "boneName": "L_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.623451555994194e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisSoldier",
+          "name": "shoulder_armor_trim_left",
+          "slot": 3,
+          "boneName": "L_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.1361864610547343e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisSoldier",
+          "name": "shoulder_armor_right",
+          "slot": 6,
+          "boneName": "R_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 2.623451555994194e-8,
+          "moved": true
+        },
+        {
+          "model": "aegisSoldier",
+          "name": "shoulder_armor_trim_right",
+          "slot": 6,
+          "boneName": "R_UpperArm",
+          "validWeights": true,
+          "validJoints": true,
+          "maxLengthRelativeError": 3.460756059503467e-8,
+          "moved": true
+        }
+      ]
+    },
+    {
+      "name": "new pieces use existing appearance groups without changing public palette bytes",
+      "status": "PASS",
+      "details": {
+        "revision": "appearance-2026-11-11T14:56:59.106Z",
+        "mask": {
+          "mode": "solid",
+          "colorA": "#b8b8b8",
+          "colorB": "#b8b8b8",
+          "brightness": 0.86,
+          "axis": "y"
+        },
+        "decor": {
+          "mode": "original",
+          "colorA": "#999999",
+          "colorB": "#999999",
+          "brightness": 1.2,
+          "axis": "y"
+        },
+        "groups": [
+          [
+            "shoulder_armor_left",
+            "decor"
+          ],
+          [
+            "shoulder_armor_trim_right",
+            "decor"
+          ],
+          [
+            "visor_white_triangle",
+            "visorBars"
+          ]
+        ],
+        "styles": [
+          {
+            "group": "decor",
+            "mode": 0,
+            "a": [
+              0.6,
+              0.6,
+              0.6
+            ],
+            "b": [
+              0.6,
+              0.6,
+              0.6
+            ],
+            "axis": 1,
+            "range": [
+              0,
+              1.29
+            ],
+            "brightness": 1.2,
+            "unlit": 0
+          },
+          {
+            "group": "visorBars",
+            "mode": 1,
+            "a": [
+              1,
+              1,
+              1
+            ],
+            "b": [
+              1,
+              1,
+              1
+            ],
+            "axis": 1,
+            "range": [
+              1.173,
+              1.18
+            ],
+            "brightness": 1,
+            "unlit": 1
+          }
+        ]
+      }
+    },
+    {
+      "name": "10 body motions and score columns remain identical to latest v58",
+      "status": "PASS",
+      "details": {
+        "motions": 10,
+        "rows": 7214
+      }
+    },
+    {
+      "name": "SOLDIER red-yellow source geometry/color/weights remain byte-identical",
+      "status": "PASS",
+      "details": {
+        "materials": [
+          "cables",
+          "jet_exhaust"
+        ]
+      }
+    },
+    {
+      "name": "all 1–6 facets and mono/stereo combinations render shoulder armor",
+      "status": "PASS",
+      "details": [
+        {
+          "n": 1,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": false,
+          "error": 0
+        },
+        {
+          "n": 1,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 2,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 3,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 4,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 5,
+          "stereo": true,
+          "error": 0
+        },
+        {
+          "n": 6,
+          "stereo": true,
+          "error": 0
+        }
+      ]
+    },
+    {
+      "name": "mobile portrait: new parts render with one-eye default and no overflow",
+      "status": "PASS",
+      "details": {
+        "width": 390,
+        "scroll": 390,
+        "error": 0
+      }
+    },
+    {
+      "name": "no runtime page errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "navy-visor-front.png",
+    "navy-shoulders-front.png",
+    "navy-shoulders-angle.png",
+    "navy-punch-extension.png",
+    "navy-arm-raised.png",
+    "navy-run.png",
+    "navy-rear.png",
+    "soldier-visor-front.png",
+    "soldier-shoulders-front.png",
+    "soldier-shoulders-angle.png",
+    "soldier-punch-extension.png",
+    "soldier-arm-raised.png",
+    "soldier-run.png",
+    "soldier-rear.png",
+    "mobile-soldier.png"
+  ],
+  "browser": "Edg/157.0.4341.46",
+  "summary": {
+    "passed": 9,
+    "failed": 0
+  }
+}
