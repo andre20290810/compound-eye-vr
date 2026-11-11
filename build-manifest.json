@@ -1,16 +1,16 @@
 {
-  "app_version": "v63",
-  "source_commit": "fe88c89a6da5449e4082d66c8847163ec5ccc3ec",
+  "app_version": "v64",
+  "source_commit": "95856933286d5e6e2244ed818b0610dc56935728",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
-  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62-with-v63-readable-view",
+  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v62-with-v64-live-dynamics",
   "motion_revision": "aegis-retarget-xbot-punchC-fist-v63-001",
   "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
-    "index.html": "2136ad8f2e3855e39e9c3ac09cf8ac670f5e2e265d808568bf9855791f0a33c8",
+    "index.html": "03d5942f5d8fa667f0f4c428446c20215057a5de948009c81af756d58316b5bb",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "c2f70a63c4774633283cbcb9e6662b6fe3c62f7cadf47104195c31f8f1f1438a",
+    "motion-csv-v54.js": "7b508a775e012c83a0eed6fad61f6e3f5683edd006754a73335ac3da2b237489",
     "kinematic-view-v54.js": "4fa28f9937b2e0d156b00fe3edf49e3b06e2dd398e8f0e28a11f45bb66796358",
     "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
@@ -23,10 +23,11 @@
     "punch-sequences-v61.js": "706e74ced9780c8aa5ca77fc49594370e1febca450cf8048197fbeff3bb4dc05",
     "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
     "ybot-runtime-v62.js": "029f01926c23027e2b2488959fe79c96dd316a20b050690964d02d2e41c21639",
-    "motion-timeline-v62.js": "1749076dedfaff66026b51fc921a17347c16d3b29179f5f679bf6cb9f394a280",
-    "timeline-ui-v62.js": "bf47bab76b28bec028bd0efd978fe4457c268fc8e7dfac4d72e9f123008f128b",
+    "motion-timeline-v62.js": "4707c4d80cec6be3c36c3fae11e00a2029428f48a2de8292f415a8712b6bb062",
+    "timeline-ui-v62.js": "421c1cde1025d42ef1aba7512467cb84bf89b3500c13b9ccc80386020bd3a5be",
     "timeline-clear-v63.js": "16f9756ba7816ea0733f56ae196607959beeefb96f80e2bd5a5081468fdcfd1d",
-    "aegis-fists-v62.js": "b69b168179f24e1fafdc98c100976038157ff8e3668b48d19c9e54b8363675f8"
+    "aegis-fists-v62.js": "b69b168179f24e1fafdc98c100976038157ff8e3668b48d19c9e54b8363675f8",
+    "timeline-live-v64.js": "7b8eee425f11fc5c8735ab2f612cf3522ad1a2d993c8542607fc0ec431353c83"
   },
   "public_appearance": {
     "path": "public-appearance.json",
@@ -82,24 +83,31 @@
         "passed": 16,
         "failed": 0
       }
+    },
+    "live-dynamics-regression": {
+      "sha256": "3a5cd909573a44cf5cd73a58b224c791af05a93be1e393f3c5dfbbc539e82a3d",
+      "summary": {
+        "passed": 8,
+        "failed": 0
+      }
     }
   },
   "unit_tests": {
-    "passed": 48,
+    "passed": 49,
     "failed": 0
   },
   "browser_tests": {
-    "passed": 79,
+    "passed": 81,
     "failed": 0
   },
-  "backup_tag": "backup-v62-before-v63-20261112",
-  "backup_commit": "01c131baa6f63f66adc14c6d062c7de1cb262c42",
+  "backup_tag": "backup-v63-before-v64-dynamic-timeline-20261112",
+  "backup_commit": "f4b1dfb5245cbdfd1b352532084d1312752cb167",
   "untested": [
     "physical iPhone/Safari",
     "physical HMD and GameSir",
     "physical joint contact/collision",
     "human motor-learning efficacy"
   ],
-  "note": "This is a visual/readability repair. Real source motion data and XBot/YBot rig hierarchy remain; altered AEGIS B body and fist require new revision. The published appearance JSON remains byte-identical. A later metadata-only main commit is possible.",
-  "generated_at_utc": "2026-11-11T20:08:41.581897+00:00"
+  "note": "This release adds a synchronized live kinematic-dynamics timeline and X/Y comparison overlays. Existing model motions and public appearance/YBot configuration are preserved; no AEGIS motion or geometry revision is included in this release.",
+  "generated_at_utc": "2026-11-11T22:18:01.134Z"
 }
