@@ -26,6 +26,7 @@ function v58SyncAppearanceControls(){
  $('appearanceColorBWrap58').hidden=spec.mode!=='gradient';$('appearanceAxisWrap58').hidden=spec.mode!=='gradient';
  $('appearanceColorAText58').textContent=spec.mode==='original'?'変更色':'色1';
  v58AppearanceNotice(v58AppearanceSource+(locked?' ／ 発光色は保護中':''));
+ v60SyncVisorControls();
 }
 function v58EditAppearance(event){
  const {model,group}=v58Selected();if(model==='aegisSoldier'&&group==='heat'&&!$('appearanceUnlockHeat58').checked)return;
@@ -74,6 +75,43 @@ function v58InitAppearanceUI(){
  panel.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();v58CloseAppearance(true);}});
  const notes=document.createElement('div');notes.innerHTML='<h3>配色の保存と公開</h3><p>「この端末に保存」はこのブラウザだけの設定です。「公開用JSONを出力」で public-appearance.json を保存できます。「コピーしてGitHub編集」はGitHubの編集画面を開きます。GitHubにログインし、内容をコピーしたJSONへ置き換えてコミットすると、Pages更新後の訪問者の既定配色になります。認証情報をこのサイトに入力する必要はありません。公開設定のrevisionが更新されると、古い端末保存設定より新しい公開設定を優先します。</p><p>JSONの読込・出力だけではGitHubへ書き込みません。SOLDIERの赤〜黄は初期状態で保持し、変更する場合のみ保護を解除します。配色や装飾は関節の解析・運動量スコアとは別です。</p>';
  ($('supplementDetails')||document.querySelector('footer')||document.body).append(notes);
+ v60InitVisorControls();
  window.__AppearanceRuntime58={open:v58OpenAppearance,close:v58CloseAppearance,reset:v58ResetPublished,exportPreset:v58ExportAppearance,getPublished:()=>A58.clone(v58Published),getWorking:()=>A58.clone(v58Appearance),style:(model,material)=>A58.uniformSpec(v58Appearance,model,material),apply:input=>{v58Appearance=A58.validate(input);v58AppearanceSource='プレビュー（未保存・未公開）';v58Invalidate();if(!$('appearancePanel58').hidden)v58SyncAppearanceControls();}};
 }
+
+// v60: shape-only visor controls share the existing preset/save/export workflow.
+const V60_FIELDS=[
+ ['triangleScale','▲の大きさ',25,300,100,'%'],['barThickness','白線の太さ',20,150,100,'%'],
+ ['leftAngle','左の線の傾き',-60,60,1,'°'],['rightAngle','右の線の傾き',-60,60,1,'°'],
+ ['barLength','白線の長さ',50,150,100,'%'],['barSpacing','白線の左右間隔',60,150,100,'%'],
+ ['triangleOffset','▲の上下位置',-100,100,100/.023,'%']
+];
+function v60ShapeRow(f){const [key,label,min,max,,unit]=f;return `<div class="v60Row"><label for="visor60-${key}">${label}</label><span><input id="visor60-${key}-number" data-visor-key="${key}" type="number" min="${min}" max="${max}" step="1" aria-label="${label}の数値">${unit}</span><input id="visor60-${key}" data-visor-key="${key}" type="range" min="${min}" max="${max}" step="1" aria-label="${label}"></div>`;}
+function v60SyncVisorControls(){
+ const box=$('visorControls60');if(!box)return;const model=$('appearanceModel58').value;box.hidden=$('appearanceGroup58').value!=='visorBars';
+ const s=v58Appearance.visor[model];for(const [key,,,,factor] of V60_FIELDS){const value=Math.round(s[key]*factor);$('visor60-'+key).value=value;$('visor60-'+key+'-number').value=value;}
+}
+function v60SetVisor(model,input){
+ if(!A58.models.includes(model))throw Error('未対応のモデルです');const draft=A58.clone(v58Appearance);
+ draft.visor[model]=window.__AegisVisor60.validateSettings(input);v58Appearance=A58.validate(draft);v58AppearanceSource='形状プレビュー（未保存・未公開）';v58Invalidate();v58SyncAppearanceControls();
+}
+function v60EditVisor(event){
+ const key=event.target.dataset.visorKey,field=V60_FIELDS.find(f=>f[0]===key);if(!field)return;
+ if(event.target.value===''||!event.target.validity.valid)return;
+ const s={...v58Appearance.visor[$('appearanceModel58').value],[key]:Number(event.target.value)/field[4]};
+ try{v60SetVisor($('appearanceModel58').value,s);}catch(e){v58AppearanceNotice(e.message);}
+}
+async function v60OpenVisor(){await v58OpenAppearance();if($('appearancePanel58').hidden)return;$('appearanceGroup58').value='visorBars';v58SyncAppearanceControls();$('appearancePanel58').scrollTop=0;}
+function v60InitVisorControls(){
+ const panel=$('appearancePanel58'),box=document.createElement('section');box.id='visorControls60';box.className='apFull';box.hidden=true;
+ box.innerHTML='<h3>バイザー形状</h3>'+V60_FIELDS.slice(0,4).map(v60ShapeRow).join('')+'<details><summary>長さ・間隔・上下位置</summary>'+V60_FIELDS.slice(4).map(v60ShapeRow).join('')+'</details><button type="button" id="visorReset60">形状だけ初期値へ</button>';
+ panel.querySelector('.apGrid').children[1].after(box);
+ const style=document.createElement('style');style.textContent='#visorControls60{border-top:1px solid #426275;border-bottom:1px solid #426275;padding:6px 0 10px}#visorControls60 h3{font-size:13px;margin:4px 0 8px}#visorControls60 .v60Row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:3px 8px;margin:7px 0}#visorControls60 input[type=range]{grid-column:1/-1;margin:0}#visorControls60 input[type=number]{width:64px;padding:3px 5px;color:inherit;background:#1c3a4f;border:1px solid #64889b;border-radius:5px;text-align:right;font-size:13px}#visorControls60 summary{font-size:12px;cursor:pointer;padding:5px 0}#visorReset60{margin-top:5px}';document.head.append(style);
+ box.querySelectorAll('input').forEach(e=>e.addEventListener('input',v60EditVisor));$('visorReset60').onclick=()=>v60SetVisor($('appearanceModel58').value,window.__AegisVisor60.defaults);
+ const button=document.createElement('button');button.id='visorOpen60';button.type='button';button.textContent='バイザー調整';button.onclick=v60OpenVisor;$('appearanceOpen58').after(button);
+ panel.querySelector('.apHead strong').textContent='AEGIS 配色・バイザー';panel.setAttribute('aria-label','AEGIS 配色・バイザー調整');
+ const notes=document.createElement('p');notes.textContent='バイザー調整：左／右はアバターを正面から見た配置です。角度の正の値は時計回り。▲サイズと白線の太さはv59形状に対する比率、上下位置は元の▲高さに対する比率です。肩装甲は削除済み。モデル別の形状も「この端末に保存」・JSON入出力に含まれます。公開用JSONをGitHubでコミットすると公開既定になります。大きさ・傾き・間隔の組合せで印同士が重なる場合はプレビューを見ながら調整してください。形状の変更は骨格・運動量スコア・マーカー判定に入りません。';($('supplementDetails')||document.body).append(notes);
+ window.__VisorRuntime60={open:v60OpenVisor,get:model=>({...v58Appearance.visor[model]}),apply:v60SetVisor,reset:model=>v60SetVisor(model,window.__AegisVisor60.defaults)};
+}
+
 v58InitAppearanceUI();

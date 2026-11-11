@@ -1,13 +1,14 @@
 /* AEGIS v58 appearance: validated public presets and per-avatar material groups. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__Appearance58=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
+const V60=typeof module==='object'&&module.exports?require('./aegis-visor-v60.js'):globalThis.__AegisVisor60;
 const schema='compound-eye-appearance-v1';
 const models=['aegisEmber','aegisSoldier'];
-const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'装飾・肩装甲・金具・アンテナ',body:'本体・服・手足',heat:'発光パーツ（SOLDIERの赤〜黄）',visorBars:'バイザーの2本線・▲',chestMarks:'胸の棒線・三角マーク',gauges:'タコメーターの針'};
+const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'装飾・金具・アンテナ',body:'本体・服・手足',heat:'発光パーツ（SOLDIERの赤〜黄）',visorBars:'バイザーの2本線・▲',chestMarks:'胸の棒線・三角マーク',gauges:'タコメーターの針'};
 const groups=Object.keys(labels),clone=x=>JSON.parse(JSON.stringify(x));
 const setting=(mode,colorA,colorB=colorA,brightness=1,axis='y')=>({mode,colorA,colorB,brightness,axis});
 const baseGroups={mask:setting('solid','#b8b8b8'),jet:setting('original','#999999'),decor:setting('original','#999999'),body:setting('original','#16325c'),heat:setting('original','#ffe000','#ff250c'),visorBars:setting('solid','#ffffff'),chestMarks:setting('solid','#ffffff'),gauges:setting('original','#ffcc06')};
-const defaults={schema,revision:'v58-20261111T2332',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
+const defaults={schema,revision:'v58-20261111T2332',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)},visor:V60.validateCollection()};
 const ranges={mask:{x:[-.10,.10],y:[1.07,1.26],z:[-.12,.15]},jet:{x:[-.15,.15],y:[.69,1.14],z:[-.28,-.08]},decor:{x:[-.36,.36],y:[0,1.29],z:[-.28,.28]},body:{x:[-.36,.36],y:[0,1.25],z:[-.20,.30]},heat:{x:[-.36,.36],y:[.17,1.19],z:[-.28,.28]},visorBars:{x:[-.065,.065],y:[1.173,1.180],z:[.134,.14]},chestMarks:{x:[-.095,.095],y:[.975,1.055],z:[.19,.215]},gauges:{x:[-.12,.12],y:[.89,.96],z:[-.27,-.25]}};
 function groupFor(material,model){
  if(material.startsWith('visor_white_bar')||material==='visor_white_triangle')return 'visorBars';
@@ -22,7 +23,7 @@ function groupFor(material,model){
 }
 function validate(input){
  if(!input||typeof input!=='object'||Array.isArray(input)||input.schema!==schema)throw Error('配色JSONの形式が違います');
- const allowed=new Set(['schema','revision','models']);for(const key of Object.keys(input))if(!allowed.has(key))throw Error('未対応の項目: '+key);
+ const allowed=new Set(['schema','revision','models','visor']);for(const key of Object.keys(input))if(!allowed.has(key))throw Error('未対応の項目: '+key);
  if(!input.models||typeof input.models!=='object'||Array.isArray(input.models))throw Error('モデルの配色設定がありません');
  if(Object.keys(input.models).some(x=>!models.includes(x)))throw Error('未対応のモデルです');
  const out=clone(defaults);out.revision=typeof input.revision==='string'?input.revision.slice(0,80):'imported';
@@ -40,6 +41,7 @@ function validate(input){
    out.models[model][group]=v;
   }
  }
+ out.visor=V60.validateCollection(input.visor);
  return out;
 }
 const rgb=hex=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)/255);
