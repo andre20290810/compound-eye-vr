@@ -1,0 +1,149 @@
+{
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "checked_at": "2026-11-11T11:43:38.920Z",
+  "source_commit": "1cdbcc80d244b5fef6dd85e4c3b1441b4e076782",
+  "physical_hardware_test": false,
+  "manifest": {
+    "app_version": "v57",
+    "source_commit": "1cdbcc80d244b5fef6dd85e4c3b1441b4e076782",
+    "source_branch": "main",
+    "public_title": "人工複眼シミュレーションシステム",
+    "viewer_last_updated_label": "最終更新：2026/11/11 20:41（日本時間）",
+    "data_schema": "compound-eye-motion-comparison-v2",
+    "unified_csv_schema": "compound-eye-single-motion-v2",
+    "unified_csv_columns": 86,
+    "kinematic_event_schema": "compound-eye-v54-kinematic-events-v1",
+    "model_geometry_revision": "aegis-v57-grey-tachometers-camera-triples",
+    "body_motion_revision": "unchanged from v56",
+    "source_files_sha256": {
+      "index.html": "283be2463c27e3062f2099667b1a97e3e74c97e1a2f47fd783291979d435cafa",
+      "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
+      "motion-csv-v54.js": "bc1d3d597d4a55932836ef109c1d86f80834c8e231ebc46983443f1987e949c3",
+      "kinematic-view-v54.js": "862a8ece69877ae7aadbf03a82f0bae55c41b321e5192f7e5f7aff9ebf05079d",
+      "motion-workbench-v48.js": "884fee0563be135169190889a0bcdc366a48edf2677585ab5ebaad438f246178",
+      "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
+      "ui-v55.js": "1fc52747858d7af46fc13131a22f047ab00bc384da96ff228b5a34e94fa4ed09",
+      "aegis-motion-v56.js": "b5ba8ff4d087013d57fc4c6772b62ff0393a9975171699bfbb93a6594e98862b",
+      "aegis-details-v57.js": "f4acf284a2522bfb88d52177018781b610ccdb525a8d83266b256556a5a0c0b7",
+      "aegis-runtime-v57.js": "c9392ce914ca6695b339e0cf32c900bc7cfb1d7a035a6f8ec6cfe2277f326be4"
+    },
+    "test_reports": {
+      "browser-regression": {
+        "sha256": "709c3044bb32687547a22abf6c1697b1b437d14f3c91c0cc88d816c99d2ef0de",
+        "summary": {
+          "passed": 14,
+          "failed": 0
+        }
+      },
+      "ui-regression": {
+        "sha256": "a109e82828db4842aa1a26fa4ba45d6055ced99546053472e85d4cced413918d",
+        "summary": {
+          "passed": 8,
+          "failed": 0
+        }
+      },
+      "additions-regression": {
+        "sha256": "49001672f7ee05665a2b68e94ee3593d2103344402420774b1588bdea399da7d",
+        "summary": {
+          "passed": 11,
+          "failed": 0
+        }
+      }
+    },
+    "unit_tests": {
+      "passed": 23,
+      "failed": 0
+    },
+    "browser_tests": {
+      "passed": 33,
+      "failed": 0
+    },
+    "backup_tag": "backup-v56-before-v57-20261111",
+    "backup_commit": "e411b6a75fc27ebd900b8fa4e90082b6a7b80d89",
+    "untested": [
+      "physical iPhone/Safari",
+      "physical HMD",
+      "physical GameSir",
+      "physical foot contact/collision",
+      "human skill learning effect"
+    ],
+    "note": "Implementation source commit; main can be later metadata/evidence-only commit. Antenna/tachometer matrices are cosmetic and do not modify motion scores, marker decisions, or skeleton series. SOLDIER red-yellow geometry and heat shader preserved.",
+    "generated_at_utc": "2026-11-11T11:43:32.111987+00:00"
+  },
+  "html_sha256": "283be2463c27e3062f2099667b1a97e3e74c97e1a2f47fd783291979d435cafa",
+  "browser": "Edg/157.0.4341.46",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=57&build=1cdbcc8",
+  "boot": {
+    "eyeCount": 1,
+    "version": "57",
+    "title": "人工複眼シミュレーションシステム",
+    "updated": "最終更新：2026/11/11 20:41（日本時間）"
+  },
+  "models": [
+    {
+      "model": "aegisEmber",
+      "joints": 13,
+      "columns": 86,
+      "app": "v57",
+      "implementation_commit": "1cdbcc80d244b5fef6dd85e4c3b1441b4e076782",
+      "static2Present": false,
+      "fans": 0,
+      "antennae": [
+        78.5143761757026,
+        81.7556636956579
+      ],
+      "gauges": [
+        0.8027830380290059,
+        0.6670405526523799
+      ],
+      "cameras": [
+        3,
+        3
+      ],
+      "bars": [
+        "yellow",
+        "yellow"
+      ],
+      "greyFinish": "grey",
+      "soldierHeat": "grey",
+      "skeletonUnchanged": true,
+      "error": 0
+    },
+    {
+      "model": "aegisSoldier",
+      "joints": 13,
+      "columns": 86,
+      "app": "v57",
+      "implementation_commit": "1cdbcc80d244b5fef6dd85e4c3b1441b4e076782",
+      "static2Present": false,
+      "fans": 0,
+      "antennae": [
+        78.5143761757026,
+        81.7556636956579
+      ],
+      "gauges": [
+        0.8027830380290059,
+        0.6670405526523799
+      ],
+      "cameras": [
+        3,
+        3
+      ],
+      "bars": [
+        "yellow",
+        "yellow"
+      ],
+      "greyFinish": "grey",
+      "soldierHeat": "preserve_soldier_heat",
+      "skeletonUnchanged": true,
+      "error": 0
+    }
+  ],
+  "ui": {
+    "fishOnBinocularEntry": true,
+    "editorHidden": true,
+    "supplements": true
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
