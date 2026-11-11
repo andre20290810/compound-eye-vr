@@ -403,7 +403,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <option value="1.25">1.25×</option><option value="1.5">1.50×</option>
 <option value="2">2.00×</option>
 </select></label><div id="touchGame" aria-label="3D空間移動の画面操作"><div class="dpad"><button data-move="forward">▲</button><div><button data-move="left">◀</button><button data-move="back">▼</button><button data-move="right">▶</button></div></div><button id="gameHome" type="button" title="人物が見えなくなったときはここを押す" style="font-size:12px;max-width:92px;padding:6px">全身へ戻す</button><button id="touchPunch">パンチ</button></div><div id="screenBadge">3視点：半透明全身＋大型個眼</div><div id="cameraBadges"></div><div id="compactLensHandles" aria-label="選択した個眼の移動ハンドル"><div id="clDragL" class="compactHandle" title="ドラッグで位置調整"></div><div id="clDragR" class="compactHandle mirror"></div></div><div id="ghostNote" style="display:none;position:absolute;top:58px;right:12px;background:#073f4eeb;color:#9df6ff;border:1px solid #42acc4;padding:6px 9px;font-size:11px;border-radius:8px;pointer-events:none">水色＝X Bot ストレート参考残像（視覚比較）</div><div id="motionDebugOverlay" role="status" aria-live="off"></div><div id="status"><div class="statusLabel" id="statusText">3Dモデルを読み込んでいます…</div><div class="statusLabel" id="fpsLabel">-- fps</div></div></div>
-<div id="viewerUpdatedAt">最終更新：2026/11/11 20:41（日本時間）</div>
+<div id="viewerUpdatedAt">最終更新：2026/11/11 23:32（日本時間）</div>
 <aside id="compactLayoutControls" aria-label="個眼の配置と大きさを最小表示で調整">
  <div class="clTitle">個眼レイアウト｜<span id="clModeLabel">VR専用</span></div>
  <div class="clHelp">選択したパーツの位置・大きさを画面と並べて調整します。○をドラッグして位置も移動できます。</div>
@@ -1325,7 +1325,7 @@ const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'�
 const groups=Object.keys(labels),clone=x=>JSON.parse(JSON.stringify(x));
 const setting=(mode,colorA,colorB=colorA,brightness=1,axis='y')=>({mode,colorA,colorB,brightness,axis});
 const baseGroups={mask:setting('solid','#b8b8b8'),jet:setting('original','#999999'),decor:setting('original','#999999'),body:setting('original','#16325c'),heat:setting('original','#ffe000','#ff250c'),visorBars:setting('solid','#ffffff'),chestMarks:setting('solid','#ffffff'),gauges:setting('original','#ffcc06')};
-const defaults={schema,revision:'v58-defaults',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
+const defaults={schema,revision:'v58-20261111T2332',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
 const ranges={mask:{x:[-.10,.10],y:[1.07,1.26],z:[-.12,.15]},jet:{x:[-.15,.15],y:[.69,1.14],z:[-.28,-.08]},decor:{x:[-.36,.36],y:[0,1.29],z:[-.28,.28]},body:{x:[-.36,.36],y:[0,1.25],z:[-.20,.30]},heat:{x:[-.36,.36],y:[.17,1.19],z:[-.28,.28]},visorBars:{x:[-.065,.065],y:[1.173,1.180],z:[.134,.14]},chestMarks:{x:[-.095,.095],y:[.975,1.055],z:[.19,.215]},gauges:{x:[-.12,.12],y:[.89,.96],z:[-.27,-.25]}};
 function groupFor(material,model){
  if(material.startsWith('visor_white_bar'))return 'visorBars';
@@ -1419,10 +1419,10 @@ function accessoryAngle(animation,motion,time){
 }
 function geometry(){
  const all=[],mounts=builder('temple_mounts',2,palette.grey);all.push(mounts);
- // Only the avatar's right temple has an antenna, swept backwards along the annotated blue line.
- const start=[.078,1.186,-.010],L=.115,end=[start[0],start[1]+L*Math.sin(rad(45)),start[2]-L*Math.cos(rad(45))];
+ // Only the avatar's left temple (the visible side in the user's annotated screenshot) has an antenna, swept backwards along the annotated blue line.
+ const start=[-.078,1.186,-.010],L=.115,end=[start[0],start[1]+L*Math.sin(rad(45)),start[2]-L*Math.cos(rad(45))];
  box(mounts,start,[.012,.015,.018]);
- const antenna=builder('temple_antenna_right',2,palette.silver,{kind:'antenna',side:1,pivot:start,axis:[1,0,0],base_elevation_deg:45,min_elevation_deg:35,max_elevation_deg:55});
+ const antenna=builder('temple_antenna_left',2,palette.silver,{kind:'antenna',side:-1,pivot:start,axis:[1,0,0],base_elevation_deg:45,min_elevation_deg:35,max_elevation_deg:55});
  tube(antenna,start,end,.0038,.0016,10);all.push(antenna);
  // The lens cluster is recessed into the FORWARD visor corner, not into the rear ear box.
  for(const side of [-1,1]){
@@ -1469,7 +1469,7 @@ function geometry(){
  return all.map(typed);
 }
 function isOriginalVisorBar(material,p,joints){return material==='Aegis_Luminous_Trim'&&p.length===12&&joints&&Math.round(joints[0])===2&&p[1]>1.17;}
-return{geometry,finish,recolor,palette,antennaElevation,gaugeLevel,accessoryAngle,isOriginalVisorBar,revision:'aegis-v58-forward-cameras-single-antenna-white-marks',cosmeticMetadata:{clock:'original_animation_seconds',antenna_count:1,antenna_side:'avatar_right',antenna_elevation_deg:[35,55],antenna_baseline_deg:45,antenna_angle_reference:'from horizontal in head-local sagittal plane',tachometer:'illustrative oscillating pointer; not measured engine RPM',exclude_from_motion_score:true,exclude_from_marker_selection:true,exclude_from_skeleton_csv:true,cameras_per_temple:3,camera_zone:'front_visor_temple'}};
+return{geometry,finish,recolor,palette,antennaElevation,gaugeLevel,accessoryAngle,isOriginalVisorBar,revision:'aegis-v58-forward-cameras-single-antenna-white-marks',cosmeticMetadata:{clock:'original_animation_seconds',antenna_count:1,antenna_side:'avatar_left',antenna_elevation_deg:[35,55],antenna_baseline_deg:45,antenna_angle_reference:'from horizontal in head-local sagittal plane',tachometer:'illustrative oscillating pointer; not measured engine RPM',exclude_from_motion_score:true,exclude_from_marker_selection:true,exclude_from_skeleton_csv:true,cameras_per_temple:3,camera_zone:'front_visor_temple'}};
 });
 // AEGIS v58 runtime: original-time animation, source-run curve fitting and rigid accessories.
 let v56RunCache=null;
@@ -5338,8 +5338,8 @@ async function startApplication(){
 const K54=window.__Kinematics54;
 const V54_ASSET_META={
  xbot:{source_sha256:'422985d9c532b8afca4b0f8605d5dec3bd90eee996ff45dca3f24cfd1ee92161',source_revision:'xbot-original-glb'},
- aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-grey-tachometer-cameras-v57-001'},
- aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-grey-tachometer-cameras-v57-001'}
+ aegisEmber:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'},
+ aegisSoldier:{source_sha256:'5e4e3d77ce579fd9827a61586b65854cc1b23817ed23657728837040e4c085eb',source_revision:'AEGIS-forward-cameras-palette-v58-001'}
 };
 const V54_V1_HEADERS=[
  'data_schema','source_type','avatar_id','motion_id','source_asset_id','skeleton_id',
@@ -5509,8 +5509,9 @@ function v54ExportData(avatar=state.model,motion=state.motion,params={}){
    dataset_id:datasetId,trial_id:trialId,motion_id:motion,
    source_asset_id:data.sourceId,source_asset_sha256:asset.source_sha256,
    motion_revision_id:asset.motion_revision_id,app_version:'v58',
+   visual_appearance:{public_revision:v58Published.revision,settings:A58.clone(v58Appearance)},
    implementation_commit:runtime,original_time_axis:true,
-   cosmetic_animation:{schema:'aegis-accessory-v57',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
+   cosmetic_animation:{schema:'aegis-accessory-v58',...window.__AegisDetails58.cosmeticMetadata,note:'Cosmetic antenna and gauge matrices never modify joint series, motion score, or marker selection'},
    restrictions:['synthetic animation, not human measurement','no automatic skill judgment'],
    expert_rule_schema:{fields:['rule_id','technique','conditions','target_joint_id','phase',
     'evidence_metrics','correction_direction','expected_result','exceptions','defer_conditions','version'],
@@ -7271,10 +7272,11 @@ async function v58OpenAppearance(){
  try{
   if(!A58.models.includes(state.model)){await unpackAsset('aegisEmber');changeModel('aegisEmber');}
   v58EditBefore={preset:A58.clone(v58Appearance),source:v58AppearanceSource};
-  $('appearanceModel58').value=state.model;$('appearancePanel58').hidden=false;$('appearanceUnlockHeat58').checked=false;v58SyncAppearanceControls();$('appearanceClose58').focus();
+  $('appearanceModel58').value=state.model;$('appearancePanel58').hidden=false;$('appearanceUnlockHeat58').checked=false;v58SyncAppearanceControls();$('appearanceClose58').focus({preventScroll:true});
+  if(matchMedia('(max-width:700px)').matches)$('screen').scrollIntoView({block:'start',behavior:'auto'});
  }catch(e){toast('配色を開けません：'+e.message);}
 }
-function v58CloseAppearance(cancel=false){if(cancel&&v58EditBefore){v58Appearance=A58.clone(v58EditBefore.preset);v58AppearanceSource=v58EditBefore.source;v58Invalidate();}v58EditBefore=null;$('appearancePanel58').hidden=true;$('appearanceOpen58').focus();}
+function v58CloseAppearance(cancel=false){if(cancel&&v58EditBefore){v58Appearance=A58.clone(v58EditBefore.preset);v58AppearanceSource=v58EditBefore.source;v58Invalidate();}v58EditBefore=null;$('appearancePanel58').hidden=true;$('appearanceOpen58').focus({preventScroll:true});}
 function v58ExportAppearance(){const data=A58.validate(v58Appearance);data.revision='appearance-'+new Date().toISOString();return data;}
 function v58DownloadAppearance(){downloadExperimentFile('public-appearance.json',JSON.stringify(v58ExportAppearance(),null,2)+'\n','application/json;charset=utf-8');v58AppearanceNotice('公開用JSONを出力しました（まだ公開されていません）');}
 function v58SaveLocalAppearance(){try{localStorage.setItem(V58_APPEARANCE_KEY,JSON.stringify({base_revision:v58Published.revision,preset:A58.validate(v58Appearance)}));v58AppearanceSource='この端末の保存設定';v58EditBefore={preset:A58.clone(v58Appearance),source:v58AppearanceSource};v58AppearanceNotice('この端末に保存しました（公開版は変更していません）');}catch(e){v58AppearanceNotice('端末への保存に失敗：'+e.message);}}
@@ -7286,7 +7288,7 @@ function v58InitAppearanceUI(){
  @media(max-width:700px){#appearancePanel58{right:6px;left:6px;top:auto;bottom:max(5px,env(safe-area-inset-bottom));width:auto;max-height:45dvh;padding:11px}#appearancePanel58 .apHead{top:-11px}#appearancePanel58 .apGrid{gap:7px}}
  `;document.head.append(css);
  const button=document.createElement('button');button.type='button';button.id='appearanceOpen58';button.textContent='配色';button.onclick=v58OpenAppearance;
- const header=document.querySelector('header');const reference=$('markerMetricCycleV52');(reference?.parentElement||header).append(button);
+ const header=document.querySelector('header');const reference=[...header.querySelectorAll('button')].find(e=>e.textContent.trim().startsWith('判定'));(reference?.parentElement||header).append(button);
  const panel=document.createElement('section');panel.id='appearancePanel58';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','AEGIS 配色編集');panel.setAttribute('aria-modal','false');
  panel.innerHTML=`<div class="apHead"><strong>AEGIS 配色</strong><button type="button" id="appearanceClose58" aria-label="配色ウィンドウを閉じる">閉じる</button></div><div class="apGrid">
  <label>モデル<select id="appearanceModel58"><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><label>変更する部位<select id="appearanceGroup58"></select></label>

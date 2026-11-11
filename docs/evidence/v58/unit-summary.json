@@ -1,0 +1,11 @@
+{
+  "passed": 23,
+  "failed": 0,
+  "tests": [
+    "tests/v54-kinematics.test.cjs",
+    "tests/v54-uploaded-csv.test.cjs",
+    "tests/v54-edge-cases.test.cjs",
+    "tests/v55-geometry.test.cjs",
+    "tests/v58-details.test.cjs"
+  ]
+}

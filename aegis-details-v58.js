@@ -49,10 +49,10 @@ function accessoryAngle(animation,motion,time){
 }
 function geometry(){
  const all=[],mounts=builder('temple_mounts',2,palette.grey);all.push(mounts);
- // Only the avatar's right temple has an antenna, swept backwards along the annotated blue line.
- const start=[.078,1.186,-.010],L=.115,end=[start[0],start[1]+L*Math.sin(rad(45)),start[2]-L*Math.cos(rad(45))];
+ // Only the avatar's left temple (the visible side in the user's annotated screenshot) has an antenna, swept backwards along the annotated blue line.
+ const start=[-.078,1.186,-.010],L=.115,end=[start[0],start[1]+L*Math.sin(rad(45)),start[2]-L*Math.cos(rad(45))];
  box(mounts,start,[.012,.015,.018]);
- const antenna=builder('temple_antenna_right',2,palette.silver,{kind:'antenna',side:1,pivot:start,axis:[1,0,0],base_elevation_deg:45,min_elevation_deg:35,max_elevation_deg:55});
+ const antenna=builder('temple_antenna_left',2,palette.silver,{kind:'antenna',side:-1,pivot:start,axis:[1,0,0],base_elevation_deg:45,min_elevation_deg:35,max_elevation_deg:55});
  tube(antenna,start,end,.0038,.0016,10);all.push(antenna);
  // The lens cluster is recessed into the FORWARD visor corner, not into the rear ear box.
  for(const side of [-1,1]){
@@ -99,5 +99,5 @@ function geometry(){
  return all.map(typed);
 }
 function isOriginalVisorBar(material,p,joints){return material==='Aegis_Luminous_Trim'&&p.length===12&&joints&&Math.round(joints[0])===2&&p[1]>1.17;}
-return{geometry,finish,recolor,palette,antennaElevation,gaugeLevel,accessoryAngle,isOriginalVisorBar,revision:'aegis-v58-forward-cameras-single-antenna-white-marks',cosmeticMetadata:{clock:'original_animation_seconds',antenna_count:1,antenna_side:'avatar_right',antenna_elevation_deg:[35,55],antenna_baseline_deg:45,antenna_angle_reference:'from horizontal in head-local sagittal plane',tachometer:'illustrative oscillating pointer; not measured engine RPM',exclude_from_motion_score:true,exclude_from_marker_selection:true,exclude_from_skeleton_csv:true,cameras_per_temple:3,camera_zone:'front_visor_temple'}};
+return{geometry,finish,recolor,palette,antennaElevation,gaugeLevel,accessoryAngle,isOriginalVisorBar,revision:'aegis-v58-forward-cameras-single-antenna-white-marks',cosmeticMetadata:{clock:'original_animation_seconds',antenna_count:1,antenna_side:'avatar_left',antenna_elevation_deg:[35,55],antenna_baseline_deg:45,antenna_angle_reference:'from horizontal in head-local sagittal plane',tachometer:'illustrative oscillating pointer; not measured engine RPM',exclude_from_motion_score:true,exclude_from_marker_selection:true,exclude_from_skeleton_csv:true,cameras_per_temple:3,camera_zone:'front_visor_temple'}};
 });

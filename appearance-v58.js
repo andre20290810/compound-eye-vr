@@ -7,7 +7,7 @@ const labels={mask:'バイザー・マスク',jet:'ロケット装置',decor:'�
 const groups=Object.keys(labels),clone=x=>JSON.parse(JSON.stringify(x));
 const setting=(mode,colorA,colorB=colorA,brightness=1,axis='y')=>({mode,colorA,colorB,brightness,axis});
 const baseGroups={mask:setting('solid','#b8b8b8'),jet:setting('original','#999999'),decor:setting('original','#999999'),body:setting('original','#16325c'),heat:setting('original','#ffe000','#ff250c'),visorBars:setting('solid','#ffffff'),chestMarks:setting('solid','#ffffff'),gauges:setting('original','#ffcc06')};
-const defaults={schema,revision:'v58-defaults',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
+const defaults={schema,revision:'v58-20261111T2332',models:{aegisEmber:clone(baseGroups),aegisSoldier:clone(baseGroups)}};
 const ranges={mask:{x:[-.10,.10],y:[1.07,1.26],z:[-.12,.15]},jet:{x:[-.15,.15],y:[.69,1.14],z:[-.28,-.08]},decor:{x:[-.36,.36],y:[0,1.29],z:[-.28,.28]},body:{x:[-.36,.36],y:[0,1.25],z:[-.20,.30]},heat:{x:[-.36,.36],y:[.17,1.19],z:[-.28,.28]},visorBars:{x:[-.065,.065],y:[1.173,1.180],z:[.134,.14]},chestMarks:{x:[-.095,.095],y:[.975,1.055],z:[.19,.215]},gauges:{x:[-.12,.12],y:[.89,.96],z:[-.27,-.25]}};
 function groupFor(material,model){
  if(material.startsWith('visor_white_bar'))return 'visorBars';

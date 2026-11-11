@@ -38,10 +38,11 @@ async function v58OpenAppearance(){
  try{
   if(!A58.models.includes(state.model)){await unpackAsset('aegisEmber');changeModel('aegisEmber');}
   v58EditBefore={preset:A58.clone(v58Appearance),source:v58AppearanceSource};
-  $('appearanceModel58').value=state.model;$('appearancePanel58').hidden=false;$('appearanceUnlockHeat58').checked=false;v58SyncAppearanceControls();$('appearanceClose58').focus();
+  $('appearanceModel58').value=state.model;$('appearancePanel58').hidden=false;$('appearanceUnlockHeat58').checked=false;v58SyncAppearanceControls();$('appearanceClose58').focus({preventScroll:true});
+  if(matchMedia('(max-width:700px)').matches)$('screen').scrollIntoView({block:'start',behavior:'auto'});
  }catch(e){toast('配色を開けません：'+e.message);}
 }
-function v58CloseAppearance(cancel=false){if(cancel&&v58EditBefore){v58Appearance=A58.clone(v58EditBefore.preset);v58AppearanceSource=v58EditBefore.source;v58Invalidate();}v58EditBefore=null;$('appearancePanel58').hidden=true;$('appearanceOpen58').focus();}
+function v58CloseAppearance(cancel=false){if(cancel&&v58EditBefore){v58Appearance=A58.clone(v58EditBefore.preset);v58AppearanceSource=v58EditBefore.source;v58Invalidate();}v58EditBefore=null;$('appearancePanel58').hidden=true;$('appearanceOpen58').focus({preventScroll:true});}
 function v58ExportAppearance(){const data=A58.validate(v58Appearance);data.revision='appearance-'+new Date().toISOString();return data;}
 function v58DownloadAppearance(){downloadExperimentFile('public-appearance.json',JSON.stringify(v58ExportAppearance(),null,2)+'\n','application/json;charset=utf-8');v58AppearanceNotice('公開用JSONを出力しました（まだ公開されていません）');}
 function v58SaveLocalAppearance(){try{localStorage.setItem(V58_APPEARANCE_KEY,JSON.stringify({base_revision:v58Published.revision,preset:A58.validate(v58Appearance)}));v58AppearanceSource='この端末の保存設定';v58EditBefore={preset:A58.clone(v58Appearance),source:v58AppearanceSource};v58AppearanceNotice('この端末に保存しました（公開版は変更していません）');}catch(e){v58AppearanceNotice('端末への保存に失敗：'+e.message);}}
@@ -53,7 +54,7 @@ function v58InitAppearanceUI(){
  @media(max-width:700px){#appearancePanel58{right:6px;left:6px;top:auto;bottom:max(5px,env(safe-area-inset-bottom));width:auto;max-height:45dvh;padding:11px}#appearancePanel58 .apHead{top:-11px}#appearancePanel58 .apGrid{gap:7px}}
  `;document.head.append(css);
  const button=document.createElement('button');button.type='button';button.id='appearanceOpen58';button.textContent='配色';button.onclick=v58OpenAppearance;
- const header=document.querySelector('header');const reference=$('markerMetricCycleV52');(reference?.parentElement||header).append(button);
+ const header=document.querySelector('header');const reference=[...header.querySelectorAll('button')].find(e=>e.textContent.trim().startsWith('判定'));(reference?.parentElement||header).append(button);
  const panel=document.createElement('section');panel.id='appearancePanel58';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','AEGIS 配色編集');panel.setAttribute('aria-modal','false');
  panel.innerHTML=`<div class="apHead"><strong>AEGIS 配色</strong><button type="button" id="appearanceClose58" aria-label="配色ウィンドウを閉じる">閉じる</button></div><div class="apGrid">
  <label>モデル<select id="appearanceModel58"><option value="aegisEmber">AEGIS NAVY</option><option value="aegisSoldier">AEGIS SOLDIER</option></select></label><label>変更する部位<select id="appearanceGroup58"></select></label>
