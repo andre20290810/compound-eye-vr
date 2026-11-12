@@ -59,6 +59,14 @@
         "passed": 13,
         "failed": 0
       }
+    },
+    "public-site-verification": {
+      "path": "docs/evidence/v67/public-verification.json",
+      "sha256": "19296bb388919ad0cce815d5fc65ae62e125cfdd87301eb7bfd0c653e4f99073",
+      "summary": {
+        "passed": 1,
+        "failed": 0
+      }
     }
   },
   "unit_tests": {
@@ -78,7 +86,7 @@
     "human motor-learning efficacy"
   ],
   "note": "v67 provides a compact event timeline beside the viewer and above it in multiview, plus detailed numeric/waveform analysis below. XBot/YBot comparison shows sustained difference intervals and aligns motion starts while allowing a YBot playback-rate difference shared by timeline and 3D overlay. YBot full-body color is editable and saved locally. AEGIS Punch B restores the native crouch and weight-transfer profile, with non-crossing IK and stable wrists. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T10:28:30.617Z",
+  "generated_at_utc": "2026-11-12T10:35:27.946Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",
