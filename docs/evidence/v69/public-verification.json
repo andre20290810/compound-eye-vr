@@ -1,0 +1,70 @@
+{
+  "checked_at": "2026-11-12T22:34:33.541Z",
+  "url": "https://andre20290810.github.io/compound-eye-vr/",
+  "source_commit": "a78265af61e9db02999a862ebf10b9d4cd646187",
+  "physical_iPhone": false,
+  "physical_HMD": false,
+  "physical_GameSir": false,
+  "manifest": {
+    "app_version": "v69",
+    "source_commit": "a78265af61e9db02999a862ebf10b9d4cd646187"
+  },
+  "html_sha256": "d7eba99dcdd70af5447d9a5aef8ad74609a8bc9f1c57f0c18c1af69ce685975c",
+  "browser": "Chrome/155.0.8059.79",
+  "open_url": "https://andre20290810.github.io/compound-eye-vr/?v=69&build=a78265a",
+  "layout": {
+    "version": "69",
+    "implementationCommit": "a78265af61e9db02999a862ebf10b9d4cd646187",
+    "side": true,
+    "aligned": true,
+    "detailBelow": true,
+    "detailOpen": true,
+    "settingsFolded": true,
+    "plotDesign": "event-markers-no-per-row-playhead-dots",
+    "events": 22,
+    "rows": 6,
+    "playheads": 1,
+    "legacyDots": 0,
+    "gl": 0
+  },
+  "comparison": {
+    "compatible": true,
+    "source": [
+      "xbot",
+      "ybot"
+    ],
+    "options": [
+      "trajectory",
+      "timingTrajectory",
+      "configured"
+    ],
+    "timingMax": 0.3333333333333333,
+    "unverifiedAegisRefused": true
+  },
+  "dynamics": {
+    "aligned": true,
+    "rate": 1.5,
+    "mapped": 0.30000000000000004,
+    "overlayStart": 0.19999999999999996,
+    "overlayTimeY": 0.2999999999999998,
+    "bands": 7,
+    "gl": 0
+  },
+  "ybotColor": {
+    "value": "#ff16a8",
+    "stored": "#ff16a8",
+    "rgb": [
+      1,
+      0.08627450980392157,
+      0.6588235294117647
+    ]
+  },
+  "multiview": {
+    "mode": "true",
+    "timelineAbove": true,
+    "controlsBelow": true,
+    "gl": 0
+  },
+  "page_errors": [],
+  "status": "PASS"
+}
