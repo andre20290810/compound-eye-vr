@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-12T22:29:27.924Z",
+  "generated_at": "2026-11-12T22:33:54.343Z",
   "environment": "Edge WebGL2; mobile viewport emulation, no physical HMD",
   "suites": [
     {
@@ -47,7 +47,7 @@
         "eyeCount": 1,
         "title": "人工複眼シミュレーションシステム",
         "error": 0,
-        "public": "appearance-2026-11-11T17:02:32.300Z"
+        "public": "appearance-2026-11-12T11:44:35.408Z"
       },
       "suite": "docs/evidence/v63/additions-regression.json"
     },
@@ -548,7 +548,7 @@
         "columns": 86,
         "rows": 1088,
         "joints": 32,
-        "trial": "trial_mwe3w8ib_0"
+        "trial": "trial_mwe4ghxc_0"
       },
       "suite": "docs/evidence/v63/browser-regression.json"
     },
@@ -558,7 +558,7 @@
       "details": {
         "nodes": 36,
         "frames": 34,
-        "trial": "trial_mwe3w8ib_0"
+        "trial": "trial_mwe4ghxc_0"
       },
       "suite": "docs/evidence/v63/browser-regression.json"
     },
@@ -621,7 +621,7 @@
       "name": "v2 and legacy CSV reload: no second smoothing, no invented raw pose, graph usable",
       "status": "PASS",
       "details": {
-        "trial": "trial_mwe3w8ib_0",
+        "trial": "trial_mwe4ghxc_0",
         "rows": 1088,
         "raw": [
           -0.162226250395179,
@@ -1254,7 +1254,7 @@
       "name": "latest public colors and user visor dimensions are preserved",
       "status": "PASS",
       "details": {
-        "revision": "appearance-2026-11-11T17:02:32.300Z",
+        "revision": "appearance-2026-11-12T11:44:35.408Z",
         "settings": {
           "triangleScale": 1.11,
           "barThickness": 0.72,
@@ -1769,16 +1769,16 @@
           "visibleMarkers": 32,
           "score": 0,
           "overlay": true,
-          "joints": 16
+          "joints": 15
         },
         "paused": {
           "paused": true,
           "markers": 32,
           "visibleMarkers": 32,
-          "score": 760.7061581103454,
+          "score": 491.26070619100625,
           "overlay": true,
-          "time": 0.5991000000000013,
-          "rendered": 1.6991000000000014
+          "time": 0.8680000000238408,
+          "rendered": 0.8680000000238408
         },
         "scrub": {
           "paused": true,

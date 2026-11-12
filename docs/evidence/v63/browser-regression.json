@@ -1,5 +1,5 @@
 {
-  "tested_at": "2026-11-12T22:15:07.606Z",
+  "tested_at": "2026-11-12T22:30:48.340Z",
   "environment": {
     "platform": "win32",
     "node": "v24.21.0",
@@ -27,7 +27,7 @@
         "columns": 86,
         "rows": 1088,
         "joints": 32,
-        "trial": "trial_mwe3w8ib_0"
+        "trial": "trial_mwe4ghxc_0"
       }
     },
     {
@@ -36,7 +36,7 @@
       "details": {
         "nodes": 36,
         "frames": 34,
-        "trial": "trial_mwe3w8ib_0"
+        "trial": "trial_mwe4ghxc_0"
       }
     },
     {
@@ -95,7 +95,7 @@
       "name": "v2 and legacy CSV reload: no second smoothing, no invented raw pose, graph usable",
       "status": "PASS",
       "details": {
-        "trial": "trial_mwe3w8ib_0",
+        "trial": "trial_mwe4ghxc_0",
         "rows": 1088,
         "raw": [
           -0.162226250395179,

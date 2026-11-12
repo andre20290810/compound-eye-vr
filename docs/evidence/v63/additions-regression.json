@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T22:15:49.892Z",
+  "date": "2026-11-12T22:31:48.950Z",
   "renderer": "desktop Edge WebGL2; mobile viewport emulation, not real iPhone",
   "checks": [
     {
@@ -10,7 +10,7 @@
         "eyeCount": 1,
         "title": "人工複眼シミュレーションシステム",
         "error": 0,
-        "public": "appearance-2026-11-11T17:02:32.300Z"
+        "public": "appearance-2026-11-12T11:44:35.408Z"
       }
     },
     {

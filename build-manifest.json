@@ -1,6 +1,6 @@
 {
   "app_version": "v69",
-  "source_commit": "a3adeeba3b0642988bef2b48607ccb8ecaab9753",
+  "source_commit": "a78265af61e9db02999a862ebf10b9d4cd646187",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
@@ -34,7 +34,7 @@
   "public_appearance": {
     "path": "public-appearance.json",
     "revision_at_release": "appearance-2026-11-11T17:02:32.300Z",
-    "sha256": "47f856756274c77c3fc3edd5a66e76ed418a253c0740ca78de3d0b52e7af9365",
+    "sha256": "331a5d4375818243bf8db40a4ea8b22c64ffa26821e017da9491708a9478f9a5",
     "preserved_existing_user_settings": true
   },
   "ybot_config": {
@@ -46,7 +46,7 @@
   "test_reports": {
     "full-browser-regression": {
       "path": "docs/evidence/v69/full-browser-regression.json",
-      "sha256": "6b3040e342086806fc80543e9dc074c9acab28913f97f11735f26fbe1b1d32ad",
+      "sha256": "4a9ca24f68549899f01308d02dd028cc7e0b5641df7d409457f643a32beb8b83",
       "summary": {
         "passed": 61,
         "failed": 0
@@ -54,7 +54,7 @@
     },
     "v69-focused-regression": {
       "path": "docs/evidence/v69/workspace-regression.json",
-      "sha256": "8e6bf8f4f841a27957d9eb4741e867265d5c10aa2f636d639b99152ae46a405a",
+      "sha256": "f0a5bb521e280554a1fb3db06cd85fde03b12163bb619d1fa7bdfee7885d4d44",
       "summary": {
         "passed": 16,
         "failed": 0
@@ -78,7 +78,7 @@
     "human motor-learning efficacy"
   ],
   "note": "v69 changes both AEGIS models: the former Punch C is now Punch B (left straight based on A); Punch C alternates right Punch A and the new left Punch B at 1.1x. X/Y overlay and motion markers persist while paused, the dynamics timeline supports direct time scrubbing, and the bottom dock switches between selected-part X/Y velocity and experiment comparison waveforms. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T22:29:28.218Z",
+  "generated_at_utc": "2026-11-12T22:33:54.635Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",

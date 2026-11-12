@@ -1,5 +1,5 @@
 {
-  "tested_at": "2026-11-12T22:16:45.020Z",
+  "tested_at": "2026-11-12T22:32:32.948Z",
   "environment": "desktop Edge/WebGL2; mobile viewport emulation only",
   "checks": [
     {
@@ -120,7 +120,7 @@
       "name": "latest public colors and user visor dimensions are preserved",
       "status": "PASS",
       "details": {
-        "revision": "appearance-2026-11-11T17:02:32.300Z",
+        "revision": "appearance-2026-11-12T11:44:35.408Z",
         "settings": {
           "triangleScale": 1.11,
           "barThickness": 0.72,
