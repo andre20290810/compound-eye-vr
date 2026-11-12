@@ -1,6 +1,6 @@
 {
   "app_version": "v69",
-  "source_commit": "69a535b3d082528eeb304517374c5eedd9bcb059",
+  "source_commit": "a3adeeba3b0642988bef2b48607ccb8ecaab9753",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
@@ -46,7 +46,7 @@
   "test_reports": {
     "full-browser-regression": {
       "path": "docs/evidence/v69/full-browser-regression.json",
-      "sha256": "b5063abb46d9f4dd7f89e74127e9da5ccf1b218c7e453ec1f14ac7a0a0428edf",
+      "sha256": "6b3040e342086806fc80543e9dc074c9acab28913f97f11735f26fbe1b1d32ad",
       "summary": {
         "passed": 61,
         "failed": 0
@@ -78,7 +78,7 @@
     "human motor-learning efficacy"
   ],
   "note": "v69 changes both AEGIS models: the former Punch C is now Punch B (left straight based on A); Punch C alternates right Punch A and the new left Punch B at 1.1x. X/Y overlay and motion markers persist while paused, the dynamics timeline supports direct time scrubbing, and the bottom dock switches between selected-part X/Y velocity and experiment comparison waveforms. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T22:28:31.542Z",
+  "generated_at_utc": "2026-11-12T22:29:28.218Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",
