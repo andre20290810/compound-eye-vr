@@ -24,30 +24,20 @@ function v61FrameQuat(bindDirection,bindSecondary,direction,secondary){
  const na=norm(a),nb=norm(b),angle=Math.atan2(u.reduce((sum,v,i)=>sum+v*cross(na,nb)[i],0),clamp(na.reduce((sum,v,i)=>sum+v*nb[i],0),-1,1));return qmul(window.__AegisMotion56.axisQuaternion(u,angle),q);
 }
 let v61SourceBindCache=null;
-function v61RetargetCPose(md,time){
- const {c}=v61Source(),M=window.__Punch61,duration=Math.max(.1,c.duration),phase=M.cycle(time,duration);
- const p=v61Blank(md.nodes),ids=Object.fromEntries(md.nodes.map((n,i)=>[n.name,i]));
- // Keep the established AEGIS crouch, planted step, pelvis drive and trunk turn.
- // The source clip supplies B's duration; its crossed arm rotations are not
- // retargeted onto the shorter 13-joint AEGIS skeleton.
- aegisFullBodyPunch(md.nodes,p.T,p.R,(phase/duration)*1.65);
- const smoothRange=(a,b,x)=>M.smooth((x-a)/(b-a)),u=phase/duration;
- // Load -> straight strike -> controlled recovery; one continuous path without
- // a second arm sweeping across the torso.
- const extension=smoothRange(.10,.42,u)*(1-smoothRange(.68,.91,u));
- const pelvis=ids.Pelvis,chest=ids.Chest,head=ids.Head,shoulder=ids.R_UpperArm;
- const torsoQ=qmul(pelvis===undefined?[0,0,0,1]:p.R[pelvis],chest===undefined?[0,0,0,1]:p.R[chest]);
- const jawHeight=(head===undefined ? .12 :md.nodes[head].translation[1])-.14;
- const shoulderT=shoulder===undefined?[.198,-.005,.013]:p.T[shoulder];
- // Keep the impact just on the attack side of the centerline, slightly lower
- // than the original face punch. This avoids crossing the left guard arm.
- const worldHit=[.075,jawHeight-.10,.46];
- const targetHit=rotateQ(qInv(torsoQ),worldHit).map((v,i)=>v-shoulderT[i]);
- aegisSolveVisualFist(md.nodes,p.R,'R',[-.025,-.155,.165],targetHit,extension,4);
- aegisSolveArm(md.nodes,p.R,'L',[.020,-.14,.17],0,-.50);
+const V61_OPPOSITE_PUNCH_DURATION=1.50;
+function v61MirrorAPose(nodes,time){
+ const M=window.__Punch61,sourceDuration=1.65,phase=M.cycle(time,V61_OPPOSITE_PUNCH_DURATION);
+ const sourceTime=phase/V61_OPPOSITE_PUNCH_DURATION*sourceDuration,base=v61Blank(nodes);
+ aegisFullBodyPunch(nodes,base.T,base.R,sourceTime);
+ const p=M.mirrorPose(nodes,base),ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
+ const sm=(a,b,x)=>M.smooth((x-a)/(b-a));
+ const drive=sm(.25,.58,sourceTime)*(1-sm(.78,1.27,sourceTime));
+ const step=sm(.12,.43,sourceTime)*(1-sm(.95,1.43,sourceTime));
+ const pelvis=ids.Pelvis;
+ if(pelvis!==undefined){p.T[pelvis]=p.T[pelvis].slice();p.T[pelvis][1]-=.018*drive;p.T[pelvis][2]+=.030*step;}
  return p;
 }
-function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
-function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return v61Source().c.duration;if(motion==='armor_alternate_punch')return 3.54;return null;}
+function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61AlternatePose(md.nodes,time);else if(motion==='armor_alternate_punch')p=v61MirrorAPose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
+function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return 3.54;if(motion==='armor_alternate_punch')return V61_OPPOSITE_PUNCH_DURATION;return null;}
 function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
-function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'AEGIS crouch and weight-transfer profile plus non-crossing visual-fist IK; Boxer_Punching2 supplies duration only',source_duration_seconds:v61Source().c.duration,limitations:['source arm rotations are not retargeted onto AEGIS','AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}
+function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'armor_power_punch',source_motion:'former armor_alternate_punch',order:'right A then mirrored left A',transition_seconds:.12,duration_seconds:3.54,revision:'aegis-punchC-alternating-as-B-v68-001'};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',hand:'left',method:'mirrored full-body A with slightly lower pelvis, extra forward step, and 1.50-second duration',duration_seconds:V61_OPPOSITE_PUNCH_DURATION,revision:'aegis-punchA-mirrored-left-forward-low-fast-v68-001'};return null;}

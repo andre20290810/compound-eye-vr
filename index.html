@@ -1604,33 +1604,23 @@ function v61FrameQuat(bindDirection,bindSecondary,direction,secondary){
  const na=norm(a),nb=norm(b),angle=Math.atan2(u.reduce((sum,v,i)=>sum+v*cross(na,nb)[i],0),clamp(na.reduce((sum,v,i)=>sum+v*nb[i],0),-1,1));return qmul(window.__AegisMotion56.axisQuaternion(u,angle),q);
 }
 let v61SourceBindCache=null;
-function v61RetargetCPose(md,time){
- const {c}=v61Source(),M=window.__Punch61,duration=Math.max(.1,c.duration),phase=M.cycle(time,duration);
- const p=v61Blank(md.nodes),ids=Object.fromEntries(md.nodes.map((n,i)=>[n.name,i]));
- // Keep the established AEGIS crouch, planted step, pelvis drive and trunk turn.
- // The source clip supplies B's duration; its crossed arm rotations are not
- // retargeted onto the shorter 13-joint AEGIS skeleton.
- aegisFullBodyPunch(md.nodes,p.T,p.R,(phase/duration)*1.65);
- const smoothRange=(a,b,x)=>M.smooth((x-a)/(b-a)),u=phase/duration;
- // Load -> straight strike -> controlled recovery; one continuous path without
- // a second arm sweeping across the torso.
- const extension=smoothRange(.10,.42,u)*(1-smoothRange(.68,.91,u));
- const pelvis=ids.Pelvis,chest=ids.Chest,head=ids.Head,shoulder=ids.R_UpperArm;
- const torsoQ=qmul(pelvis===undefined?[0,0,0,1]:p.R[pelvis],chest===undefined?[0,0,0,1]:p.R[chest]);
- const jawHeight=(head===undefined ? .12 :md.nodes[head].translation[1])-.14;
- const shoulderT=shoulder===undefined?[.198,-.005,.013]:p.T[shoulder];
- // Keep the impact just on the attack side of the centerline, slightly lower
- // than the original face punch. This avoids crossing the left guard arm.
- const worldHit=[.075,jawHeight-.10,.46];
- const targetHit=rotateQ(qInv(torsoQ),worldHit).map((v,i)=>v-shoulderT[i]);
- aegisSolveVisualFist(md.nodes,p.R,'R',[-.025,-.155,.165],targetHit,extension,4);
- aegisSolveArm(md.nodes,p.R,'L',[.020,-.14,.17],0,-.50);
+const V61_OPPOSITE_PUNCH_DURATION=1.50;
+function v61MirrorAPose(nodes,time){
+ const M=window.__Punch61,sourceDuration=1.65,phase=M.cycle(time,V61_OPPOSITE_PUNCH_DURATION);
+ const sourceTime=phase/V61_OPPOSITE_PUNCH_DURATION*sourceDuration,base=v61Blank(nodes);
+ aegisFullBodyPunch(nodes,base.T,base.R,sourceTime);
+ const p=M.mirrorPose(nodes,base),ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));
+ const sm=(a,b,x)=>M.smooth((x-a)/(b-a));
+ const drive=sm(.25,.58,sourceTime)*(1-sm(.78,1.27,sourceTime));
+ const step=sm(.12,.43,sourceTime)*(1-sm(.95,1.43,sourceTime));
+ const pelvis=ids.Pelvis;
+ if(pelvis!==undefined){p.T[pelvis]=p.T[pelvis].slice();p.T[pelvis][1]-=.018*drive;p.T[pelvis][2]+=.030*step;}
  return p;
 }
-function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
-function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return v61Source().c.duration;if(motion==='armor_alternate_punch')return 3.54;return null;}
+function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61AlternatePose(md.nodes,time);else if(motion==='armor_alternate_punch')p=v61MirrorAPose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
+function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return 3.54;if(motion==='armor_alternate_punch')return V61_OPPOSITE_PUNCH_DURATION;return null;}
 function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
-function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'AEGIS crouch and weight-transfer profile plus non-crossing visual-fist IK; Boxer_Punching2 supplies duration only',source_duration_seconds:v61Source().c.duration,limitations:['source arm rotations are not retargeted onto AEGIS','AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}
+function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'armor_power_punch',source_motion:'former armor_alternate_punch',order:'right A then mirrored left A',transition_seconds:.12,duration_seconds:3.54,revision:'aegis-punchC-alternating-as-B-v68-001'};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',hand:'left',method:'mirrored full-body A with slightly lower pelvis, extra forward step, and 1.50-second duration',duration_seconds:V61_OPPOSITE_PUNCH_DURATION,revision:'aegis-punchA-mirrored-left-forward-low-fast-v68-001'};return null;}
 /* v62 YBot: one X Bot skeleton, known programmable motion perturbations. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__YBot62=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
@@ -6818,7 +6808,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();await v62LoadYBotConfig();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   v62RegisterYBot();renderUI();v47Init();tl62Init();showStatus('人工複眼シミュレーションシステム：運動連鎖タイムライン／YBot比較');
-  window.__compoundTest={version:"67",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61RetargetCPose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"68",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -6867,8 +6857,8 @@ let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){if(avatar==='ybot')return window.__TimelineLiveV65?.revision(motion)||window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-native-body-punchB-noncrossing-ik-wrist-stable-v67-004';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-alternating-v61-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-punchC-alternating-as-B-v68-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-mirrored-left-forward-low-fast-v68-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
    ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':

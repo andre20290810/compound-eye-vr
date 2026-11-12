@@ -1,10 +1,10 @@
 {
-  "app_version": "v67",
+  "app_version": "v68",
   "source_commit": "9319913a4576dcb2e1d759813eb03ac4160054c2",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
-  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v67-difference-intervals-speed-synchronized-ybot-body-color",
+  "kinematic_timeline_schema": "compound-eye-kinematic-chain-v68-difference-intervals-speed-synced-ybot-color-aegis-punch-remap",
   "motion_revision": "xbot-derived-ybot-punch-trajectory-and-timing-v66-001",
   "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
@@ -94,5 +94,5 @@
     "browser_tests": "70 passed, 0 failed"
   },
   "test_reports_scope": "Full browser suite ran in Edge WebGL2; includes mobile viewport emulation. Physical iPhone/Safari, HMD, GameSir and human motor-learning efficacy were not tested.",
-  "aegis_motion_revision": "aegis-native-body-punchB-noncrossing-ik-wrist-stable-v67-004"
+  "aegis_motion_revision": "aegis-punchC-alternating-as-B-and-mirrored-A-left-fast-crouch-step-v68-001"
 }

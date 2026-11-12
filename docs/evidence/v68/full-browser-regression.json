@@ -1,0 +1,41 @@
+{
+  "tested_at": "2026-11-12T11:35:40.473Z",
+  "environment": "Desktop Edge WebGL2 headless; mobile viewport emulation, no physical HMD/GameSir/iPhone",
+  "summary": {
+    "passed": 70,
+    "failed": 0
+  },
+  "suite_summaries": [
+    {
+      "name": "browser-regression.json",
+      "passed": 13,
+      "failed": 0
+    },
+    {
+      "name": "ui-regression.json",
+      "passed": 8,
+      "failed": 0
+    },
+    {
+      "name": "additions-regression.json",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "name": "visor-regression.json",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "name": "punch-regression.json",
+      "passed": 12,
+      "failed": 0
+    },
+    {
+      "name": "workspace-regression.json",
+      "passed": 13,
+      "failed": 0
+    }
+  ],
+  "focused_aegis_punch_report": "v68-regression.json"
+}

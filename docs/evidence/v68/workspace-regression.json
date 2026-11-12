@@ -1,0 +1,437 @@
+{
+  "date": "2026-11-12T11:31:54.778Z",
+  "environment": "Edge WebGL2 headless; no physical HMD",
+  "checks": [
+    {
+      "name": "side-by-side, resizable single-view and a detailed panel below the viewer",
+      "status": "PASS",
+      "details": {
+        "side": true,
+        "aligned": true,
+        "viewerWidth": 778,
+        "timelineWidth": 370,
+        "resizeGrip": true,
+        "viewerHeightGrip": true,
+        "detailBelow": true,
+        "detailOpen": true,
+        "title": "運動ダイナミクスタイムライン — 詳細解析",
+        "duplicateGraphicHidden": true,
+        "duplicateOrderHidden": true
+      }
+    },
+    {
+      "name": "foldable settings group contains eye count and AEGIS appearance controls",
+      "status": "PASS",
+      "details": {
+        "panel": "DETAILS",
+        "initiallyFolded": true,
+        "eyeCountBesideControls": true,
+        "appearanceBesideEyes": true,
+        "visorBesideEyes": true,
+        "aegisSettingsNested": true
+      }
+    },
+    {
+      "name": "event markers show onset and peak timing without a dot at every playhead row",
+      "status": "PASS",
+      "details": {
+        "design": "event-markers-no-per-row-playhead-dots",
+        "events": [
+          {
+            "type": "onset",
+            "side": "X",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.13333333333333333,
+            "radius": "6.4"
+          },
+          {
+            "type": "onset",
+            "side": "Y",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.13333333333333333,
+            "radius": "6.4"
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.23333333333333334,
+            "radius": "6.4"
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.23333333333333334,
+            "radius": "6.4"
+          },
+          {
+            "type": "onset",
+            "side": "X",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.16666666666666666,
+            "radius": "6.323674943451788"
+          },
+          {
+            "type": "onset",
+            "side": "Y",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.16666666666666666,
+            "radius": "6.4"
+          },
+          {
+            "type": "onset",
+            "side": "X",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.2,
+            "radius": "6.3853559506149145"
+          },
+          {
+            "type": "onset",
+            "side": "Y",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.2,
+            "radius": "6.4"
+          },
+          {
+            "type": "onset",
+            "side": "X",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.23333333333333334,
+            "radius": "6.4"
+          },
+          {
+            "type": "onset",
+            "side": "Y",
+            "time": 0.06666666666666667,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.23333333333333334,
+            "radius": "6.3861567186932815"
+          },
+          {
+            "type": "onset",
+            "side": "X",
+            "time": 0.03333333333333333,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "X",
+            "time": 0.23333333333333334,
+            "radius": "6.397826733054396"
+          },
+          {
+            "type": "onset",
+            "side": "Y",
+            "time": 0.03333333333333333,
+            "radius": null
+          },
+          {
+            "type": "peak",
+            "side": "Y",
+            "time": 0.23333333333333334,
+            "radius": "6.4"
+          }
+        ],
+        "playheads": 1,
+        "legacyDots": 0,
+        "tooManyColors": 2
+      }
+    },
+    {
+      "name": "XBot↔YBot timeline keeps shared elapsed time, two restrained series colors, and editable YBot difference tint",
+      "status": "PASS",
+      "details": {
+        "compatible": true,
+        "source": [
+          "xbot",
+          "ybot"
+        ],
+        "hasY": true,
+        "colors": [
+          "rgb(85, 214, 190)",
+          "rgb(255, 93, 183)"
+        ],
+        "customColor": "color",
+        "variantVisible": true,
+        "strictAegis": false
+      }
+    },
+    {
+      "name": "YBot offers trajectory-only and timing-plus-trajectory punch variants",
+      "status": "PASS",
+      "details": {
+        "opts": [
+          "軌道のみ",
+          "タイミング＋軌道",
+          "現行設定JSON"
+        ],
+        "before": [
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg"
+        ],
+        "trajectory": [
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg"
+        ],
+        "timing": [
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "rotation_delta_deg",
+          "local_time_shift"
+        ],
+        "revision": "ybot-xbot_punch-5bb638d9-ybot-known-shifts-v62-001-v66-timingTrajectory",
+        "alignment": "raw",
+        "maxPeakDelta": 0.3333333333333333,
+        "peakDeltas": [
+          0,
+          0,
+          0,
+          -0.033333333333333354,
+          0.3333333333333333,
+          0
+        ]
+      }
+    },
+    {
+      "name": "difference intervals show sustained X/Y speed gaps; start sync applies the same Y rate to timeline and 3D",
+      "status": "PASS",
+      "details": {
+        "compatible": true,
+        "startChecked": true,
+        "rateEnabled": true,
+        "beforeRate": 1,
+        "beforeTime": 0.19999999999999996,
+        "overlayStart": 0.19999999999999996,
+        "rate": 1.5,
+        "mappedY": 0.30000000000000004,
+        "mappedDisplay": 0.19999999999999998,
+        "overlayTimeY": 0.2999999999999998,
+        "bandsBefore": 11,
+        "bandsAfter": 7,
+        "beforePeak": 92.06060606060606,
+        "afterPeak": 80.7070707070707,
+        "peakMoved": 11.353535353535364,
+        "alignment": "raw"
+      }
+    },
+    {
+      "name": "YBot full-body color editor changes the rendered model and persists its color",
+      "status": "PASS",
+      "details": {
+        "value": "#ff16a8",
+        "stored": "#ff16a8",
+        "rgb": [
+          1,
+          0.08627450980392157,
+          0.6588235294117647
+        ],
+        "label": "YBot全身色"
+      }
+    },
+    {
+      "name": "drag handles change and persist viewer/timeline dimensions",
+      "status": "PASS",
+      "details": {
+        "before": 778,
+        "after": 718,
+        "saved": "430",
+        "beforeHeight": 610,
+        "afterHeight": 655,
+        "savedHeight": "655"
+      }
+    },
+    {
+      "name": "compound-eye mode puts the mini timeline above the viewer and all controls below",
+      "status": "PASS",
+      "details": {
+        "mode": "true",
+        "dockAbove": true,
+        "controlsBelow": true,
+        "dividerHidden": true,
+        "controlsParent": "viewerControlShelf",
+        "rows": 1,
+        "gl": 0
+      }
+    },
+    {
+      "name": "detailed analysis includes A-D summaries, signed speed-change waveform, and raw X/Y export",
+      "status": "PASS",
+      "details": {
+        "tableRows": 7,
+        "waveMode": "change",
+        "wavePaths": 2,
+        "smoothness": true,
+        "quality": "同一骨格・同一関節IDを検証済み／運動特徴のピーク時刻順"
+      }
+    },
+    {
+      "name": "AEGIS A/B/C and gait motions keep finite joint chains and expected revisions",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "motion": "armor_punch",
+          "duration": 3.54,
+          "finite": true,
+          "maxBoneError": 4.956384931364965e-7,
+          "columns": 86,
+          "revision": "aegis-punchC-alternating-as-B-v68-001"
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_alternate_punch",
+          "duration": 1.5,
+          "finite": true,
+          "maxBoneError": 4.916205168514765e-7,
+          "columns": 86,
+          "revision": "aegis-punchA-mirrored-left-forward-low-fast-v68-001"
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_power_punch",
+          "duration": 1.65,
+          "finite": true,
+          "maxBoneError": 4.916205168514765e-7,
+          "columns": 86,
+          "revision": "aegis-punchA-ik-skin-v56-001"
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_walk",
+          "duration": 1.0166666507720947,
+          "finite": true,
+          "maxBoneError": 4.969001468069223e-7,
+          "columns": 86,
+          "revision": "aegis-gait-periodic-v56-001"
+        },
+        {
+          "model": "aegisEmber",
+          "motion": "armor_run",
+          "duration": 0.6333333253860474,
+          "finite": true,
+          "maxBoneError": 4.784115419376178e-7,
+          "columns": 86,
+          "revision": "aegis-gait-periodic-v56-001"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_punch",
+          "duration": 3.54,
+          "finite": true,
+          "maxBoneError": 4.956384931364965e-7,
+          "columns": 86,
+          "revision": "aegis-punchC-alternating-as-B-v68-001"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_alternate_punch",
+          "duration": 1.5,
+          "finite": true,
+          "maxBoneError": 4.916205168514765e-7,
+          "columns": 86,
+          "revision": "aegis-punchA-mirrored-left-forward-low-fast-v68-001"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_power_punch",
+          "duration": 1.65,
+          "finite": true,
+          "maxBoneError": 4.916205168514765e-7,
+          "columns": 86,
+          "revision": "aegis-punchA-ik-skin-v56-001"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_walk",
+          "duration": 1.0166666507720947,
+          "finite": true,
+          "maxBoneError": 4.969001468069223e-7,
+          "columns": 86,
+          "revision": "aegis-gait-periodic-v56-001"
+        },
+        {
+          "model": "aegisSoldier",
+          "motion": "armor_run",
+          "duration": 0.6333333253860474,
+          "finite": true,
+          "maxBoneError": 4.784115419376178e-7,
+          "columns": 86,
+          "revision": "aegis-gait-periodic-v56-001"
+        }
+      ]
+    },
+    {
+      "name": "mobile layout stays within viewport and retains detail access",
+      "status": "PASS",
+      "details": {
+        "width": 390,
+        "scrollWidth": 390,
+        "timelineAbove": true,
+        "detailOpen": true,
+        "gl": 0
+      }
+    },
+    {
+      "name": "no JavaScript runtime failures",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "passed": 13,
+    "failed": 0
+  }
+}
