@@ -20,13 +20,13 @@ function v65GetYBotModifiers(motion,configured){
  const retained=source.filter(m=>!String(m.modification_type).includes('shift'));
  const path=v65Trajectory.map(m=>({...m}));
  if(variant==='trajectory')return retained.concat(path);
- if(variant==='timingTrajectory')return retained.concat(path,{joint_id:8,modification_type:'local_time_shift',requested_change:.04,start_time:.05,end_time:.96,axis:'x'});
+ if(variant==='timingTrajectory')return retained.concat(path,{joint_id:6,modification_type:'local_time_shift',requested_change:.12,start_time:.05,end_time:.96,axis:'x'});
  return source;
 }
 function v65Revision(motion){
  if(motion!=='xbot_punch')return null;
  const variant=v65CurrentVariant(),copy=window.__YBot62.clone(v62YConfig);
- copy.revision=String(copy.revision)+'-v65-'+variant;
+ copy.revision=String(copy.revision)+'-v66-'+variant;
  copy.motions[motion]=v65GetYBotModifiers(motion,copy.motions[motion]||[]);
  return window.__YBot62.revise(copy,motion);
 }
@@ -100,7 +100,7 @@ function v65InstallWideUi(){
   const range=document.createElement('input');range.id='tl65SlowRate';range.type='range';range.min='.25';range.max='1';range.step='.05';range.setAttribute('aria-label','X/Y共通再生速度');
   const value=document.createElement('span');value.id='tl65SlowValue';speed.append(range,value);
   if(compare)compare.append(variant,sync,speed);
-  const note=document.createElement('p');note.id='tl65CompareNote';note.textContent='XBotを基準にYBotを重ねます。両方を同じ0秒から再生し、元の動作時間の差を残します。全体のスロー倍率は両方に同じ値を掛けます。軌道のみは関節回転を変え、タイミング＋軌道はさらに前腕の局所タイミングを40 msずらします。AEGIS比較は関節対応確認後に追加します。';
+  const note=document.createElement('p');note.id='tl65CompareNote';note.textContent='XBotを基準にYBotを重ねます。両方を同じ0秒から再生し、元の動作時間の差を残します。全体のスロー倍率は両方に同じ値を掛けます。軌道のみは関節回転を変え、タイミング＋軌道はさらに右肩の局所タイミングを120 msずらします。AEGIS比較は関節対応確認後に追加します。';
   v64Live.dock.append(note);
   range.value='0.50';
   const originalSpeed=v65$('motionSpeed');

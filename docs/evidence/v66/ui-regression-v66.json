@@ -1,0 +1,261 @@
+{
+  "tested_at": "2026-11-12T01:21:53.650Z",
+  "physical_HMD": false,
+  "physical_GameSir": false,
+  "Safari": false,
+  "checks": [
+    {
+      "name": "title has no version; white small last-update stamp below viewer workspace",
+      "status": "PASS",
+      "details": {
+        "title": "人工複眼シミュレーションシステム",
+        "h1": "人工複眼シミュレーションシステム",
+        "stamp": "最終更新：2026/11/12 06:42（日本時間）",
+        "immediateSibling": false,
+        "color": "rgb(255, 255, 255)",
+        "fontSize": 11,
+        "workspaceBottom": 918,
+        "stampTop": 934
+      }
+    },
+    {
+      "name": "unused layout editor hidden while settings controls and functions are retained",
+      "status": "PASS",
+      "details": {
+        "display": "none",
+        "hidden": true,
+        "controls": 12,
+        "saveFunction": "function"
+      }
+    },
+    {
+      "name": "supplemental notices moved to page end and stale version notice removed",
+      "status": "PASS",
+      "details": {
+        "closed": true,
+        "lastChild": true,
+        "gamepadStatusInside": true,
+        "markerNoticeInside": true,
+        "longScoreNoticeInside": true,
+        "outside": 0,
+        "stale": false
+      }
+    },
+    {
+      "name": "entering binocular mode defaults fisheye ON without forcing manual OFF back on",
+      "status": "PASS",
+      "details": {
+        "first": {
+          "vr": true,
+          "fish": true,
+          "checked": true
+        },
+        "manualOffPreserved": true,
+        "reenterStereo": true
+      }
+    },
+    {
+      "name": "both AEGIS variants remove actual shoulder blade, retain cables, and include rocket nozzles",
+      "status": "PASS",
+      "details": [
+        {
+          "model": "aegisEmber",
+          "joints": 13,
+          "revision": "aegis-v60-adjustable-visor-no-shoulder-armor",
+          "knifeComponents": 3,
+          "removedCableTriangles": 0,
+          "parts": [
+            "cables",
+            "gloves",
+            "backpack",
+            "vest hardware",
+            "boots",
+            "pants",
+            "visor",
+            "armor fabric",
+            "Aegis_Ceramic_Plate",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "jet_body",
+            "jet_trim",
+            "jet_nozzle",
+            "jet_exhaust",
+            "leg_articulation_covers",
+            "temple_mounts",
+            "temple_antenna_left",
+            "temple_camera_housing_left",
+            "temple_camera_rims_left",
+            "temple_camera_lenses_left",
+            "temple_camera_reflections_left",
+            "temple_camera_housing_right",
+            "temple_camera_rims_right",
+            "temple_camera_lenses_right",
+            "temple_camera_reflections_right",
+            "jet_mechanical_rings",
+            "jet_service_panels",
+            "jet_intake_housings",
+            "tachometer_face_left",
+            "tachometer_ticks_left",
+            "tachometer_needle_left",
+            "tachometer_face_right",
+            "tachometer_ticks_right",
+            "tachometer_needle_right",
+            "visor_white_bar_left",
+            "visor_white_bar_right",
+            "visor_white_triangle",
+            "fist_closed_left",
+            "fist_closed_right"
+          ],
+          "glError": 0
+        },
+        {
+          "model": "aegisSoldier",
+          "joints": 13,
+          "revision": "aegis-v60-adjustable-visor-no-shoulder-armor",
+          "knifeComponents": 3,
+          "removedCableTriangles": 0,
+          "parts": [
+            "cables",
+            "gloves",
+            "backpack",
+            "vest hardware",
+            "boots",
+            "pants",
+            "visor",
+            "armor fabric",
+            "Aegis_Ceramic_Plate",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "Aegis_Luminous_Trim",
+            "jet_body",
+            "jet_trim",
+            "jet_nozzle",
+            "jet_exhaust",
+            "leg_articulation_covers",
+            "temple_mounts",
+            "temple_antenna_left",
+            "temple_camera_housing_left",
+            "temple_camera_rims_left",
+            "temple_camera_lenses_left",
+            "temple_camera_reflections_left",
+            "temple_camera_housing_right",
+            "temple_camera_rims_right",
+            "temple_camera_lenses_right",
+            "temple_camera_reflections_right",
+            "jet_mechanical_rings",
+            "jet_service_panels",
+            "jet_intake_housings",
+            "tachometer_face_left",
+            "tachometer_ticks_left",
+            "tachometer_needle_left",
+            "tachometer_face_right",
+            "tachometer_ticks_right",
+            "tachometer_needle_right",
+            "visor_white_bar_left",
+            "visor_white_bar_right",
+            "visor_white_triangle",
+            "fist_closed_left",
+            "fist_closed_right"
+          ],
+          "glError": 0
+        }
+      ]
+    },
+    {
+      "name": "leg armor triangles attach rigidly to exactly one joint",
+      "status": "PASS",
+      "details": [
+        {
+          "material": "boots",
+          "triangles": 3216,
+          "mixedJointTriangles": 0
+        },
+        {
+          "material": "pants",
+          "triangles": 6372,
+          "mixedJointTriangles": 0
+        }
+      ]
+    },
+    {
+      "name": "gait distortion report: no doubled edges and rigid leg plates retain dimensions",
+      "status": "PASS",
+      "details": [
+        {
+          "material": "cables",
+          "motion": "armor_walk",
+          "p99": 1.1870438907108702,
+          "max": 1.4524169537205003
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_walk",
+          "p99": 1.0000000690092468,
+          "max": 1.00000009357888
+        },
+        {
+          "material": "boots",
+          "motion": "armor_walk",
+          "p99": 1.0000000749123263,
+          "max": 1.0000000935717692
+        },
+        {
+          "material": "pants",
+          "motion": "armor_walk",
+          "p99": 1.0000000593792835,
+          "max": 1.0000000935955438
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_walk",
+          "p99": 1.0476938491909225,
+          "max": 1.4679327062257017
+        },
+        {
+          "material": "cables",
+          "motion": "armor_run",
+          "p99": 1.2468176554368333,
+          "max": 1.5872430703284457
+        },
+        {
+          "material": "vest hardware",
+          "motion": "armor_run",
+          "p99": 1.0000000684451682,
+          "max": 1.000000093017097
+        },
+        {
+          "material": "boots",
+          "motion": "armor_run",
+          "p99": 1.0000000771406652,
+          "max": 1.0000000930985178
+        },
+        {
+          "material": "pants",
+          "motion": "armor_run",
+          "p99": 1.0000000572290964,
+          "max": 1.0000000930587127
+        },
+        {
+          "material": "armor fabric",
+          "motion": "armor_run",
+          "p99": 1.2071851465934933,
+          "max": 1.888767771758707
+        }
+      ]
+    },
+    {
+      "name": "no page runtime errors",
+      "status": "PASS",
+      "details": []
+    }
+  ],
+  "errors": [],
+  "browser": "Chrome/155.0.8059.79",
+  "summary": {
+    "passed": 8,
+    "failed": 0
+  }
+}

@@ -50,19 +50,32 @@ function v61RetargetCPose(md,time){
  for(const [name,weight] of [['Head',.35],['Pelvis',.75],['L_UpperLeg',.65],['R_UpperLeg',.65],['L_LowerLeg',.45],['R_LowerLeg',.45]]){
   const i=target[name];if(i!==undefined)p.R[i]=qSlerp(md.nodes[i].rotation,p.R[i],weight);
  }
- // Re-use the proven native AEGIS punch-A lower body rather than bending
- // the 13-bone armored helmet/legs around the X Bot's 32-bone hierarchy.
- // Keep the RIGHT/LEFT source-C arm directions in world space exactly.
+ // Re-use the native AEGIS punch-A lower body while retaining the source-C
+ // arm chain as a rigidly connected world-space pose. Capture every segment:
+ // restoring only the upper arm bends both wrists because punch-A's IK hands
+ // would otherwise be mixed with punch-C forearms.
  const oldTorso=targetQ.Chest,armWorld={};
- for(const side of ['L','R'])armWorld[side]=qmul(oldTorso,p.R[target[side+'_UpperArm']]);
+ for(const side of ['L','R']){
+  const u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'];
+  const upper=qmul(oldTorso,p.R[u]),fore=qmul(upper,p.R[f]),hand=qmul(fore,p.R[h]);
+  armWorld[side]={upper,fore,hand};
+ }
  const safeT=md.nodes.map(n=>n.translation.slice()),safeR=md.nodes.map(n=>n.rotation.slice());
- aegisFullBodyPunch(md.nodes,safeT,safeR,time/Math.max(.1,v61Source().c.duration)*1.65);
+ // Source C and the AEGIS trunk share elapsed seconds; scale-normalizing the
+ // entire source clip to the 1.65s procedural cycle delayed trunk/leg drive
+ // past the arm strike. Keep the drive onset aligned to the source timeline.
+ aegisFullBodyPunch(md.nodes,safeT,safeR,time);
  for(const name of ['Pelvis','Chest','Head','L_UpperLeg','L_LowerLeg','R_UpperLeg','R_LowerLeg']){
   const i=target[name];if(i!==undefined)p.R[i]=safeR[i];
  }
  p.T[target.Pelvis]=safeT[target.Pelvis].slice();
  const safeTorso=qmul(p.R[target.Pelvis],p.R[target.Chest]);
- for(const side of ['L','R'])p.R[target[side+'_UpperArm']]=qmul(qInv(safeTorso),armWorld[side]);
+ for(const side of ['L','R']){
+  const {upper,fore,hand}=armWorld[side],u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'];
+  p.R[u]=qmul(qInv(safeTorso),upper);
+  p.R[f]=qmul(qInv(upper),fore);
+  p.R[h]=qmul(qInv(fore),hand);
+ }
  return p;
 }
 function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
