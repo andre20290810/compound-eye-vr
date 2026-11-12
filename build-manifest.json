@@ -1,6 +1,6 @@
 {
   "app_version": "v66",
-  "source_commit": "3dda6072ade8b1bc4dd6e0c06b221966fdf11e3d",
+  "source_commit": "881d8107d6efc1045a3b7fc3fa5484907145f962",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
@@ -8,9 +8,9 @@
   "motion_revision": "xbot-derived-ybot-punch-trajectory-and-timing-v66-001",
   "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
-    "index.html": "486dc09d48378307e86db6d09c96df63c215e5be7b99ff174598272bb9c02962",
+    "index.html": "052d209087beece99a34f26f477a1948f8ef667626af5b7b82e2bc9f8893c59f",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "8e5370da0a214615738f22e7b90d6f93be570da8e772c877a7893effd6c6d6a3",
+    "motion-csv-v54.js": "546374e9c0b78602c763cb830854449b71480facda118aa8e0f5c4b3233ffb57",
     "kinematic-view-v54.js": "4fa28f9937b2e0d156b00fe3edf49e3b06e2dd398e8f0e28a11f45bb66796358",
     "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
@@ -20,7 +20,7 @@
     "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
     "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
     "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
-    "punch-sequences-v61.js": "fd3835d8ab6a423dedf076fa0d44210eb655a75fb8af1a7f81b9c5587ce7a83a",
+    "punch-sequences-v61.js": "e4808a71b2a9531a71bb2b573dd30cfcb78def9cacc26ed312e2d9b6ccdcaa16",
     "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
     "ybot-runtime-v62.js": "623e55121f357e2559fe1c2d1b17de55d402bbc1bf7bf2269da3b50facf30177",
     "motion-timeline-v62.js": "e7bd92170011add5e03a3f2ae0bd4bdf676716dc1401225cdcec07d61bec6903",
@@ -86,7 +86,7 @@
     },
     "v66-regression": {
       "path": "docs/evidence/v66/v66-regression.json",
-      "sha256": "9ed7ff88f1e9d77b1c2376ac8fe67bda60939dbc998f0fa5179c6e302ec3240c",
+      "sha256": "aea1cbc4da31122bbc6883e06fe2629eab97fab59f8823f90a37bc4cbd5b85ab",
       "summary": {
         "passed": 11,
         "failed": 0
@@ -109,8 +109,8 @@
     "physical joint contact/collision",
     "human motor-learning efficacy"
   ],
-  "note": "v66 places a compact onset/peak dynamics timeline beside the single viewer and above the multiview viewer, with the detailed numeric/waveform analysis below. Viewer and timeline dimensions are resizable. The event display uses elapsed-time positions, one X/Y series color per model, and one shared playhead; existing body markers remain the only model-side markers and scale with timeline dynamics. XBot/YBot comparison starts from a common zero without phase warping and supports trajectory-only or timing-plus-trajectory YBot punches. YBot difference color is editable. AEGIS B wrist orientation and full-body drive timing were corrected; AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T01:32:05.456Z",
+  "note": "v66 places a compact onset/peak dynamics timeline beside the single viewer and above the multiview viewer, with the detailed numeric/waveform analysis below. Viewer and timeline dimensions are resizable. The event display uses elapsed-time positions, one X/Y series color per model, and one shared playhead; existing body markers remain the only model-side markers and scale with timeline dynamics. XBot/YBot comparison starts from a common zero without phase warping and supports trajectory-only or timing-plus-trajectory YBot punches. YBot difference color is editable. AEGIS B wrist continuity was corrected while restoring its earlier crouch and weight-transfer profile; AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
+  "generated_at_utc": "2026-11-12T02:10:33.324Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",
@@ -118,5 +118,5 @@
     "browser_tests": "68 passed, 0 failed"
   },
   "test_reports_scope": "Current v66 release verification; browser tests ran in Edge WebGL2 with mobile viewport emulation only.",
-  "aegis_motion_revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-and-drive-sync-v66-002"
+  "aegis_motion_revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-preserved-lowerbody-v67-003"
 }
