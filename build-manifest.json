@@ -59,6 +59,14 @@
         "passed": 12,
         "failed": 0
       }
+    },
+    "public-site-verification": {
+      "path": "docs/evidence/v68/public-verification.json",
+      "sha256": "3e21fd06b3789ea1812814d15bbbcbadcd3eaa051b5eeee78609f4edc70104d6",
+      "summary": {
+        "passed": 1,
+        "failed": 0
+      }
     }
   },
   "unit_tests": {
@@ -78,12 +86,13 @@
     "human motor-learning efficacy"
   ],
   "note": "v68 keeps the XBot/YBot difference timeline, shared start alignment, playback-rate comparison and editable YBot full-body color. AEGIS Punch B now uses the former C sequence: complete A punches right then mirrored left. Punch C is a single mirrored left straight based on A, with a slightly lower pelvis, a small forward step and a 1.50-second duration versus the 1.65-second A duration. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T11:38:10.914Z",
+  "generated_at_utc": "2026-11-12T11:40:06.457Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",
     "unit_tests": "49 passed, 0 failed",
-    "browser_tests": "70 passed, 0 failed"
+    "browser_tests": "70 passed, 0 failed",
+    "public_site": "passed"
   },
   "test_reports_scope": "Full browser suite ran in Edge WebGL2; includes mobile viewport emulation. Physical iPhone/Safari, HMD, GameSir and human motor-learning efficacy were not tested.",
   "aegis_motion_revision": "aegis-punchC-alternating-as-B-and-mirrored-A-left-fast-crouch-step-v68-001"
