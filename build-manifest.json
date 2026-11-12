@@ -46,7 +46,7 @@
   "test_reports": {
     "full-browser-regression": {
       "path": "docs/evidence/v69/full-browser-regression.json",
-      "sha256": "c7b8f1a2c98bc35aa461d8e493c4d22c754546148bce8cafdc9f80e20f52d0da",
+      "sha256": "2ee5a17399422ca045a64bb169ae342486f6ba259bc878e3594d2c087eef1749",
       "summary": {
         "passed": 61,
         "failed": 0
@@ -86,7 +86,7 @@
     "human motor-learning efficacy"
   ],
   "note": "v69 changes both AEGIS models: the former Punch C is now Punch B (left straight based on A); Punch C alternates right Punch A and the new left Punch B at 1.1x. X/Y overlay and motion markers persist while paused, the dynamics timeline supports direct time scrubbing, and the bottom dock switches between selected-part X/Y velocity and experiment comparison waveforms. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T22:35:33.852Z",
+  "generated_at_utc": "2026-11-12T22:37:39.338Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",

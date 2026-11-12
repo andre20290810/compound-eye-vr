@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T22:23:46.821Z",
+  "date": "2026-11-12T22:33:10.160Z",
   "environment": "Edge WebGL2 headless; no physical HMD",
   "checks": [
     {
@@ -275,16 +275,16 @@
           "visibleMarkers": 32,
           "score": 0,
           "overlay": true,
-          "joints": 16
+          "joints": 15
         },
         "paused": {
           "paused": true,
           "markers": 32,
           "visibleMarkers": 32,
-          "score": 760.7061581103454,
+          "score": 491.26070619100625,
           "overlay": true,
-          "time": 0.5991000000000013,
-          "rendered": 1.6991000000000014
+          "time": 0.8680000000238408,
+          "rendered": 0.8680000000238408
         },
         "scrub": {
           "paused": true,
