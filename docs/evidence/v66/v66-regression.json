@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-12T01:24:21.094Z",
+  "date": "2026-11-12T02:08:53.396Z",
   "environment": "Edge WebGL2 headless; no physical HMD",
   "checks": [
     {
@@ -289,9 +289,9 @@
           "motion": "armor_punch",
           "duration": 0.9833333492279053,
           "finite": true,
-          "maxBoneError": 4.959020897254973e-7,
+          "maxBoneError": 4.916205168514765e-7,
           "columns": 86,
-          "revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-and-drive-sync-v66-002"
+          "revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-preserved-lowerbody-v67-003"
         },
         {
           "model": "aegisEmber",
@@ -325,9 +325,9 @@
           "motion": "armor_punch",
           "duration": 0.9833333492279053,
           "finite": true,
-          "maxBoneError": 4.959020897254973e-7,
+          "maxBoneError": 4.916205168514765e-7,
           "columns": 86,
-          "revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-and-drive-sync-v66-002"
+          "revision": "aegis-retarget-xbot-punchC-fist-wrist-continuity-preserved-lowerbody-v67-003"
         },
         {
           "model": "aegisSoldier",

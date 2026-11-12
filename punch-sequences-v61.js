@@ -61,10 +61,12 @@ function v61RetargetCPose(md,time){
   armWorld[side]={upper,fore,hand};
  }
  const safeT=md.nodes.map(n=>n.translation.slice()),safeR=md.nodes.map(n=>n.rotation.slice());
- // Source C and the AEGIS trunk share elapsed seconds; scale-normalizing the
- // entire source clip to the 1.65s procedural cycle delayed trunk/leg drive
- // past the arm strike. Keep the drive onset aligned to the source timeline.
- aegisFullBodyPunch(md.nodes,safeT,safeR,time);
+ // Preserve the native AEGIS punch-A lower-body phase that gives punch B its
+ // crouch and weight transfer. Retiming that profile to punch C's full duration
+ // had changed the earlier motion; keep the C arm chain in source seconds and
+ // restore it below as connected world-space segments.
+ const sourceDuration=Math.max(.1,v61Source().c.duration);
+ aegisFullBodyPunch(md.nodes,safeT,safeR,time/sourceDuration*1.65);
  for(const name of ['Pelvis','Chest','Head','L_UpperLeg','L_LowerLeg','R_UpperLeg','R_LowerLeg']){
   const i=target[name];if(i!==undefined)p.R[i]=safeR[i];
  }
