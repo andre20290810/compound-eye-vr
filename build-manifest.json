@@ -1,6 +1,6 @@
 {
   "app_version": "v68",
-  "source_commit": "9319913a4576dcb2e1d759813eb03ac4160054c2",
+  "source_commit": "69a535b3d082528eeb304517374c5eedd9bcb059",
   "source_branch": "main",
   "public_title": "人工複眼シミュレーションシステム",
   "unified_csv_columns": 86,
@@ -8,9 +8,9 @@
   "motion_revision": "xbot-derived-ybot-punch-trajectory-and-timing-v66-001",
   "model_geometry_revision": "aegis-closed-fist-wrist-attach-v63-002",
   "source_files_sha256": {
-    "index.html": "b960816f498d5ebcf6fd455c5d3ff742eb47906a8079785fe8dc5972c5f3c577",
+    "index.html": "603aff1f2b8943f2c4488240f0b427a23485d1209ff36ae2ae9db8d6674cd0ac",
     "kinematics-v54.js": "557738e336eda6a73c21b117bc0f4a36b2152190638986633fcb1cbf9dec60b3",
-    "motion-csv-v54.js": "e45a8da0b8832b92644c1f9201768333651ae5df31ae6d1a6a80819e2508e38e",
+    "motion-csv-v54.js": "0fca902adaff538f735665652870e8c34a5f7cdf6158f1dd6535751fc3b68a84",
     "kinematic-view-v54.js": "4fa28f9937b2e0d156b00fe3edf49e3b06e2dd398e8f0e28a11f45bb66796358",
     "motion-workbench-v48.js": "3d6dff1caea9859c27a0eb510bb872ccb8ec42b7523ff1083227707eb13cd402",
     "aegis-geometry-v55.js": "550278ad7e7b68c2cc4771f8a28b24ac1734d26583e9e924234b4341604f43a7",
@@ -20,7 +20,7 @@
     "appearance-v58.js": "72a4c74b686b33b34fcb9efa2df654b73fbb0560bcc769f38cd9fc51c01aef9d",
     "appearance-ui-v58.js": "7697ab14d4561d486be7328db0e150970ea6eaa8d9242afebd3ffd2fa720d02b",
     "aegis-visor-v60.js": "13a1452c9797cf0c0823c6171e9b3ee53e202155419cbbf8f2f980e6521bd7bc",
-    "punch-sequences-v61.js": "a92ebe3314392348ad0a1cb6881f28adcf848793e2eff392e6aa06ad921459c4",
+    "punch-sequences-v61.js": "52e2607075ba1a2e16606915096ad10f8d757d9d84a8b27a41c3b83b442e9e94",
     "ybot-v62.js": "ecfed56d1f1c253f2f140082d70ab64e3c378f7693ad43ee56d0894811d53671",
     "ybot-runtime-v62.js": "623e55121f357e2559fe1c2d1b17de55d402bbc1bf7bf2269da3b50facf30177",
     "motion-timeline-v62.js": "e7bd92170011add5e03a3f2ae0bd4bdf676716dc1401225cdcec07d61bec6903",
@@ -45,26 +45,18 @@
   },
   "test_reports": {
     "full-browser-regression": {
-      "path": "docs/evidence/v67/full-browser-regression.json",
-      "sha256": "b7b5f1e1489e65be02a1e4e951559244b37b2c68a02ad38a7abd1b1c0ab98849",
+      "path": "docs/evidence/v68/full-browser-regression.json",
+      "sha256": "dba58e3b16fcf5cbdcb3f7ffe0371a105933cc3e0cf46ce99b24ee8b49cb52b9",
       "summary": {
         "passed": 70,
         "failed": 0
       }
     },
-    "v67-focused-regression": {
-      "path": "docs/evidence/v67/v67-regression.json",
-      "sha256": "d5dbb0d18eb127a7addd1800b7e77e9ad44acc841c42517d5ba3d33bc16a1efc",
+    "v68-focused-regression": {
+      "path": "docs/evidence/v68/v68-regression.json",
+      "sha256": "bb13c99acb18139ad179463f1a0b572e8fa2aad7e4a5d983fcb73d0ac55a8185",
       "summary": {
-        "passed": 13,
-        "failed": 0
-      }
-    },
-    "public-site-verification": {
-      "path": "docs/evidence/v67/public-verification.json",
-      "sha256": "19296bb388919ad0cce815d5fc65ae62e125cfdd87301eb7bfd0c653e4f99073",
-      "summary": {
-        "passed": 1,
+        "passed": 12,
         "failed": 0
       }
     }
@@ -85,8 +77,8 @@
     "physical joint contact/collision",
     "human motor-learning efficacy"
   ],
-  "note": "v67 provides a compact event timeline beside the viewer and above it in multiview, plus detailed numeric/waveform analysis below. XBot/YBot comparison shows sustained difference intervals and aligns motion starts while allowing a YBot playback-rate difference shared by timeline and 3D overlay. YBot full-body color is editable and saved locally. AEGIS Punch B restores the native crouch and weight-transfer profile, with non-crossing IK and stable wrists. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
-  "generated_at_utc": "2026-11-12T10:35:27.946Z",
+  "note": "v68 keeps the XBot/YBot difference timeline, shared start alignment, playback-rate comparison and editable YBot full-body color. AEGIS Punch B now uses the former C sequence: complete A punches right then mirrored left. Punch C is a single mirrored left straight based on A, with a slightly lower pelvis, a small forward step and a 1.50-second duration versus the 1.65-second A duration. AEGIS cross-skeleton comparison remains deferred pending joint mapping.",
+  "generated_at_utc": "2026-11-12T11:38:10.914Z",
   "release_validation": {
     "source_bundle": "passed",
     "inline_javascript_syntax": "passed (3 scripts)",
