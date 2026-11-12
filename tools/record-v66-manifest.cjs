@@ -1,10 +1,10 @@
 ﻿'use strict';
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),cp=require('node:child_process');
 const root=path.resolve(__dirname,'..'),file=path.join(root,'build-manifest.json'),m=JSON.parse(fs.readFileSync(file,'utf8'));
-const sha=p=>crypto.createHash('sha256').update(fs.readFileSync(path.join(root,p))).digest('hex');
+const sha=p=>{const bytes=fs.readFileSync(path.join(root,p)),text=/\.(html|js|json|css)$/i.test(p);return crypto.createHash('sha256').update(text?Buffer.from(bytes.toString('utf8').replace(/\r\n/g,'\n')):bytes).digest('hex');};
 const git=(...args)=>cp.execFileSync('git',args,{cwd:root,encoding:'utf8'}).trim();
 m.app_version='v66';
-m.source_commit=git('rev-parse','HEAD');
+m.source_commit=git('log','-1','--format=%H','--','index.html');
 m.source_branch='main';
 m.kinematic_timeline_schema='compound-eye-kinematic-chain-v62-with-v66-side-event-dynamics-and-ybot-variants';
 m.motion_revision='xbot-derived-ybot-punch-trajectory-and-timing-v66-001';
