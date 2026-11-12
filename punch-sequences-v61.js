@@ -25,62 +25,29 @@ function v61FrameQuat(bindDirection,bindSecondary,direction,secondary){
 }
 let v61SourceBindCache=null;
 function v61RetargetCPose(md,time){
- const{source,c}=v61Source(),M=window.__Punch61,phase=M.cycle(time,c.duration),sample=v61ClipPose(source,c,phase),world=v61World(source.nodes,sample),ids=Object.fromEntries(source.nodes.map((n,i)=>[n.name,i])),target=Object.fromEntries(md.nodes.map((n,i)=>[n.name,i])),p=v61Blank(md.nodes),targetQ={};
- if(v61SourceBindCache?.source!==source)v61SourceBindCache={source,world:v61World(source.nodes,v61Blank(source.nodes))};
- const bind=v61SourceBindCache.world,ref=M.mirrorVector,sub=(a,b)=>a.map((v,k)=>v-b[k]),point=name=>Array.from(world.matrices[ids[name]]).slice(12,15),direction=(a,b)=>ref(sub(point(b),point(a)));
- // X Bot's named right side is negative X; AEGIS's named right side is positive X.
- // Reflect model X while preserving both rigs' forward (+Z) direction and anatomical labels.
- const worldDelta=name=>M.mirrorQuaternion(qmul(world.quats[ids[name]],qInv(bind.quats[ids[name]])));
- targetQ.Pelvis=worldDelta('Hips');targetQ.Chest=worldDelta('Spine2');targetQ.Head=worldDelta('Head');
- p.R[target.Pelvis]=targetQ.Pelvis;p.R[target.Chest]=qmul(qInv(targetQ.Pelvis),targetQ.Chest);p.R[target.Head]=qmul(qInv(targetQ.Chest),targetQ.Head);
- const ratio=md.nodes[target.Pelvis].translation[1]/source.nodes[ids.Hips].translation[1],delta=ref(sub(sample.T[ids.Hips],source.nodes[ids.Hips].translation));p.T[target.Pelvis]=p.T[target.Pelvis].map((v,k)=>v+ratio*delta[k]);
- for(const [prefix,side] of [['Left','L'],['Right','R']]){
-  const u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'],du=direction(prefix+'Arm',prefix+'ForeArm'),df=direction(prefix+'ForeArm',prefix+'Hand');
-  const qu=v61FrameQuat(md.nodes[f].translation,md.nodes[h].translation,du,df),qf=qmul(quatBetween(rotateQ(qu,md.nodes[h].translation),df),qu);
-  p.R[u]=qmul(qInv(targetQ.Chest),qu);p.R[f]=qmul(qInv(qu),qf);
-  // The AEGIS glove bind is offset from the wrist. Preserve its neutral attachment;
-  // transfer only the source forearm-axis pronation instead of rotating the offset into a gap.
-  const sourceLocalHand=sample.R[ids[prefix+'Hand']],twist=-2*Math.atan2(sourceLocalHand[1],sourceLocalHand[3]);
-  p.R[h]=qmul(quatBetween([0,0,1],md.nodes[h].translation),window.__AegisMotion56.axisQuaternion([0,0,1],twist));
-  const thigh=target[side+'_UpperLeg'],shin=target[side+'_LowerLeg'],dt=direction(prefix+'UpLeg',prefix+'Leg'),ds=direction(prefix+'Leg',prefix+'Foot'),lowerBind=[0,-.317,.004];
-  const qt=v61FrameQuat(md.nodes[shin].translation,lowerBind,dt,ds),qs=qmul(quatBetween(rotateQ(qt,lowerBind),ds),qt);p.R[thigh]=qmul(qInv(targetQ.Pelvis),qt);p.R[shin]=qmul(qInv(qt),qs);
- }
- // Stabilize the helmet/hips/shanks within the existing 13-bone rig.
- // This deliberately preserves the source-driven arms, timing and torso direction.
- for(const [name,weight] of [['Head',.35],['Pelvis',.75],['L_UpperLeg',.65],['R_UpperLeg',.65],['L_LowerLeg',.45],['R_LowerLeg',.45]]){
-  const i=target[name];if(i!==undefined)p.R[i]=qSlerp(md.nodes[i].rotation,p.R[i],weight);
- }
- // Re-use the native AEGIS punch-A lower body while retaining the source-C
- // arm chain as a rigidly connected world-space pose. Capture every segment:
- // restoring only the upper arm bends both wrists because punch-A's IK hands
- // would otherwise be mixed with punch-C forearms.
- const oldTorso=targetQ.Chest,armWorld={};
- for(const side of ['L','R']){
-  const u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'];
-  const upper=qmul(oldTorso,p.R[u]),fore=qmul(upper,p.R[f]),hand=qmul(fore,p.R[h]);
-  armWorld[side]={upper,fore,hand};
- }
- const safeT=md.nodes.map(n=>n.translation.slice()),safeR=md.nodes.map(n=>n.rotation.slice());
- // Preserve the native AEGIS punch-A lower-body phase that gives punch B its
- // crouch and weight transfer. Retiming that profile to punch C's full duration
- // had changed the earlier motion; keep the C arm chain in source seconds and
- // restore it below as connected world-space segments.
- const sourceDuration=Math.max(.1,v61Source().c.duration);
- aegisFullBodyPunch(md.nodes,safeT,safeR,time/sourceDuration*1.65);
- for(const name of ['Pelvis','Chest','Head','L_UpperLeg','L_LowerLeg','R_UpperLeg','R_LowerLeg']){
-  const i=target[name];if(i!==undefined)p.R[i]=safeR[i];
- }
- p.T[target.Pelvis]=safeT[target.Pelvis].slice();
- const safeTorso=qmul(p.R[target.Pelvis],p.R[target.Chest]);
- for(const side of ['L','R']){
-  const {upper,fore,hand}=armWorld[side],u=target[side+'_UpperArm'],f=target[side+'_Forearm'],h=target[side+'_Hand'];
-  p.R[u]=qmul(qInv(safeTorso),upper);
-  p.R[f]=qmul(qInv(upper),fore);
-  p.R[h]=qmul(qInv(fore),hand);
- }
+ const {c}=v61Source(),M=window.__Punch61,duration=Math.max(.1,c.duration),phase=M.cycle(time,duration);
+ const p=v61Blank(md.nodes),ids=Object.fromEntries(md.nodes.map((n,i)=>[n.name,i]));
+ // Keep the established AEGIS crouch, planted step, pelvis drive and trunk turn.
+ // The source clip supplies B's duration; its crossed arm rotations are not
+ // retargeted onto the shorter 13-joint AEGIS skeleton.
+ aegisFullBodyPunch(md.nodes,p.T,p.R,(phase/duration)*1.65);
+ const smoothRange=(a,b,x)=>M.smooth((x-a)/(b-a)),u=phase/duration;
+ // Load -> straight strike -> controlled recovery; one continuous path without
+ // a second arm sweeping across the torso.
+ const extension=smoothRange(.10,.42,u)*(1-smoothRange(.68,.91,u));
+ const pelvis=ids.Pelvis,chest=ids.Chest,head=ids.Head,shoulder=ids.R_UpperArm;
+ const torsoQ=qmul(pelvis===undefined?[0,0,0,1]:p.R[pelvis],chest===undefined?[0,0,0,1]:p.R[chest]);
+ const jawHeight=(head===undefined ? .12 :md.nodes[head].translation[1])-.14;
+ const shoulderT=shoulder===undefined?[.198,-.005,.013]:p.T[shoulder];
+ // Keep the impact just on the attack side of the centerline, slightly lower
+ // than the original face punch. This avoids crossing the left guard arm.
+ const worldHit=[.075,jawHeight-.10,.46];
+ const targetHit=rotateQ(qInv(torsoQ),worldHit).map((v,i)=>v-shoulderT[i]);
+ aegisSolveVisualFist(md.nodes,p.R,'R',[-.025,-.155,.165],targetHit,extension,4);
+ aegisSolveArm(md.nodes,p.R,'L',[.020,-.14,.17],0,-.50);
  return p;
 }
 function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61RetargetCPose(md,time);else if(motion==='armor_alternate_punch')p=v61AlternatePose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
 function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return v61Source().c.duration;if(motion==='armor_alternate_punch')return 3.54;return null;}
 function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
-function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'world segment directions and torso rotations; X reflection for named sides; target bone lengths retained',source_duration_seconds:v61Source().c.duration,limitations:['AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}
+function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'xbot_punch2',source_clip:'Boxer_Punching2',method:'AEGIS crouch and weight-transfer profile plus non-crossing visual-fist IK; Boxer_Punching2 supplies duration only',source_duration_seconds:v61Source().c.duration,limitations:['source arm rotations are not retargeted onto AEGIS','AEGIS has no separate shoulder, ankle, toe or finger bones','not identical surface geometry or physical contact']};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',order:'right then left mirrored full-body A',transition_seconds:.12,duration_seconds:3.54};return null;}

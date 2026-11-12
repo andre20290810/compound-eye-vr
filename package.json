@@ -1,15 +1,15 @@
 {
   "name": "compound-eye-vr",
-  "version": "66.0.0",
+  "version": "67.0.0",
   "private": true,
   "description": "Self-contained compound-eye VR viewer and exploratory kinematics",
   "scripts": {
     "build": "node tools/bundle-v54.cjs",
     "check": "node tools/bundle-v54.cjs --check",
     "test": "node --test tests/v54-edge-cases.test.cjs tests/v54-kinematics.test.cjs tests/v54-uploaded-csv.test.cjs tests/v55-geometry.test.cjs tests/v58-details.test.cjs tests/v60-visor.test.cjs tests/v61-punches.test.cjs tests/v62-timeline.test.cjs",
-    "test:browser": "node tests/browser-v63.cjs && node tests/browser-v63-ui.cjs && node tests/browser-v63-additions.cjs && node tests/browser-v63-visor.cjs && node tests/browser-v63-punches.cjs && node tests/browser-v66.cjs",
+    "test:browser": "node tests/browser-v63.cjs && node tests/browser-v63-ui.cjs && node tests/browser-v63-additions.cjs && node tests/browser-v63-visor.cjs && node tests/browser-v63-punches.cjs && node tests/browser-v67.cjs",
     "test:visual": "node tools/inspect-v61-visual.cjs",
-    "verify:public": "node tools/verify-public-v66.cjs",
+    "verify:public": "node tools/verify-public-v67.cjs",
     "appearance:apply": "node tools/apply-appearance-preset.cjs"
   },
   "devDependencies": {

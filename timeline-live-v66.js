@@ -1,11 +1,31 @@
 /* v66: low-clutter event timeline, resizable viewer, detailed analysis below. */
 const V66_PREF_WIDTH='compoundeye.v66.timelineWidth';
 const V66_PREF_HEIGHT='compoundeye.v66.viewerHeight';
+const V67_YBOT_COLOR_KEY='compoundeye.v67.ybotBaseColor';
+const V67_Y_RATE_KEY='compoundeye.v67.yComparisonRate';
 let v66Installed=false,v66SvgState=null,v66WaveMode='speed';
 function v66$(id){return document.getElementById(id);}
 function v66Clamp(x,a,b){return Math.max(a,Math.min(b,x));}
 function v66Fmt(t){return Number.isFinite(t)?Number(t).toFixed(3)+' s':'—';}
 function v66Hex(hex){return /^#[0-9a-f]{6}$/i.test(hex||'')?hex:'#ff5db7';}
+function v66YBotColor(){try{return v66Hex(localStorage.getItem(V67_YBOT_COLOR_KEY)||'#ff7a45');}catch(e){return'#ff7a45';}}
+function v66YBotColorRgb(){return v64ColorRgb(v66YBotColor());}
+function v66StartSynced(){return v66$('tl66StartSync')?.checked!==false;}
+function v66Rate(){const n=Number(v66$('tl66YRate')?.value);return Number.isFinite(n)&&n>0?n:1;}
+function v66MapYTime(timeX,analysis=timeline62?.analysis){
+ const xDuration=timeline62?.sourceX?.data?.duration||1,yDuration=timeline62?.sourceY?.data?.duration||xDuration;
+ if(v66StartSynced()&&analysis?.config?.alignment==='raw'){const t=timeX*v66Rate();return((t%yDuration)+yDuration)%yDuration;}
+ return analysis?.config?.alignment==='phase'?(timeX/xDuration)*yDuration:timeX;
+}
+function v66DisplayAxis(time,side,analysis){
+ if(side==='Y'&&v66StartSynced()&&analysis?.config?.alignment==='raw')return v64TimelineAxis(time/v66Rate(),'X',analysis);
+ return v64TimelineAxis(time,side,analysis);
+}
+function v66UpdatePlaybackControls(){
+ const start=v66$('tl66StartSync'),rate=v66$('tl66YRate'),out=v66$('tl66YRateValue'),analysis=timeline62?.analysis;
+ if(rate)rate.disabled=!start?.checked||!analysis?.source_y||!analysis?.compatibility?.ok;
+ if(out)out.textContent=v66Rate().toFixed(2)+'×';
+}
 function v66Install(){
  if(v66Installed||!v64Live?.workspace)return;
  v66Installed=true;
@@ -21,20 +41,29 @@ function v66Install(){
  const title=document.createElement('strong');title.textContent='運動ダイナミクスタイムライン';
  if(play)head.append(title,play);else head.append(title);
  const legend=document.createElement('div');legend.id='tl66Legend';
- legend.innerHTML='<span><i class="x"></i>X:開始◆・ピーク●</span><span><i class="y"></i>Y:開始◆・ピーク●</span><span class="hint">点の横位置＝イベント時刻／円の大きさ＝ピーク速度</span>';
- const timing=document.createElement('label');timing.id='tl66ThresholdWrap';timing.textContent='時刻差を強調する幅';
- const threshold=document.createElement('input');threshold.id='tl66TimingThreshold';threshold.type='number';threshold.min='0';threshold.max='500';threshold.step='10';threshold.value='50';threshold.setAttribute('aria-label','色帯で示すピーク時刻差のしきい値（ミリ秒）');
- const ms=document.createElement('span');ms.textContent='ms';timing.append(threshold,ms);
+ legend.innerHTML='<span><i class="x"></i>X:開始◆・ピーク●</span><span><i class="y"></i>Y:開始◆・ピーク●</span><span class="diff"><i></i>色帯: X/Y速度差が設定基準以上</span><span class="hint">点の横位置＝開始同期後の時刻／円の大きさ＝再生速度補正後のピーク速度</span>';
+ const playback=document.createElement('div');playback.id='tl66PlaybackControls';
+ const syncLabel=document.createElement('label');syncLabel.className='tl66SyncLabel';
+ const sync=document.createElement('input');sync.id='tl66StartSync';sync.type='checkbox';sync.checked=true;sync.setAttribute('aria-label','X/Yの動作開始を0秒に同期する');
+ syncLabel.append(sync,document.createTextNode('X/Yの開始を同期'));
+ const rateLabel=document.createElement('label');rateLabel.className='tl66RateLabel';rateLabel.append(document.createTextNode('Y実行速度'));
+ const rate=document.createElement('input');rate.id='tl66YRate';rate.type='range';rate.min='.50';rate.max='2.00';rate.step='.05';rate.setAttribute('aria-label','開始時刻を揃えたY側モーションの再生速度');
+ try{rate.value=String(v66Clamp(Number(localStorage.getItem(V67_Y_RATE_KEY))||1,.5,2));}catch(e){rate.value='1';}
+ const rateValue=document.createElement('output');rateValue.id='tl66YRateValue';rateLabel.append(rate,rateValue);playback.append(syncLabel,rateLabel);
  const plotWrap=document.createElement('div');plotWrap.id='tl64PlotWrap';
  const plot=document.createElement('div');plot.id='tl64Plot';plotWrap.append(plot);
  const foot=document.createElement('div');foot.className='v66DockFoot';
  if(readout)foot.append(readout);
  if(status)foot.append(status);
- dock.append(head,timing,plotWrap,legend,foot);
+ dock.append(head,playback,plotWrap,legend,foot);
  const widthGrip=document.createElement('div');widthGrip.id='tl66WidthGrip';widthGrip.setAttribute('role','separator');widthGrip.setAttribute('aria-label','ビューワーとタイムラインの幅を調整');widthGrip.setAttribute('aria-orientation','vertical');widthGrip.tabIndex=0;
  const heightGrip=document.createElement('div');heightGrip.id='tl66HeightGrip';heightGrip.setAttribute('role','separator');heightGrip.setAttribute('aria-label','ビューワーの高さを調整');heightGrip.setAttribute('aria-orientation','horizontal');heightGrip.tabIndex=0;
  workspace.append(widthGrip,heightGrip);
  if(v64Live.controls||v66$('liveDynamicsControls'))shelf.append(v66$('liveDynamicsControls'));
+ const ybotColorLabel=document.createElement('label');ybotColorLabel.id='tl66YBotBaseColorWrap';ybotColorLabel.className='tl66ControlLabel';ybotColorLabel.append(document.createTextNode('YBot全身色 '));
+ const ybotColorInput=document.createElement('input');ybotColorInput.id='tl66YBotBaseColor';ybotColorInput.type='color';ybotColorInput.value=v66YBotColor();ybotColorInput.setAttribute('aria-label','YBot全身の色');
+ ybotColorInput.addEventListener('input',()=>{try{localStorage.setItem(V67_YBOT_COLOR_KEY,ybotColorInput.value);}catch(e){};requestAnimationFrame(()=>window.__compoundTest?.forceDraw?.());});
+ ybotColorLabel.append(ybotColorInput);shelf.append(ybotColorLabel);
  if(comparison)shelf.append(comparison);
  const compare=v66$('tl64Compare3d')?.parentElement;
  const colorLabel=compare?.querySelector('.v64ColorLabel');
@@ -84,8 +113,16 @@ function v66Install(){
   '#liveDynamicsControls{margin:0!important;max-width:100%;box-sizing:border-box}',
   '#liveDynamicsControls .tl62Tools{max-width:100%}',
   '.v66DockHead{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:13px;min-height:28px}',
-  '#tl66ThresholdWrap{display:flex;align-items:center;gap:5px;width:max-content;color:#b8d7e4;font-size:10px}',
-  '#tl66TimingThreshold{width:62px!important;padding:3px!important}',
+  '#tl66PlaybackControls{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:30px;padding:2px 5px;border:1px solid #29495d;border-radius:7px;background:#0b2232;color:#d9edf5;font-size:10px}',
+  '#tl66PlaybackControls label{display:flex;align-items:center;gap:5px;white-space:nowrap}',
+  '#tl66PlaybackControls input[type=checkbox]{accent-color:#55d6be}',
+  '#tl66YRate{width:95px;accent-color:#55d6be}',
+  '#tl66YRateValue{min-width:37px;color:#fff;font-variant-numeric:tabular-nums}',
+  '#tl66YRate:disabled{opacity:.4}',
+  '.tl66ControlLabel{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;color:#d8edf5;background:#132f42;border:1px solid #35566b;border-radius:7px;font-size:11px}',
+  '.tl66ControlLabel input{width:30px;height:22px;padding:0;border:0;background:transparent}',
+  '#tl66Legend .diff i{background:'+v66Hex(v64Live.color)+';height:8px;border-radius:2px}',
+  '#tl66Legend .diff{color:#f1c5de}',
   '#tl64PlotWrap{flex:1 1 auto!important;min-height:200px!important;overflow:auto!important;background:#081d2c;border:1px solid #29495d;border-radius:8px}',
   '#tl64Plot{width:100%;min-height:100%;overflow:visible}',
   '#tl64Plot svg{display:block;width:100%;height:auto;min-width:300px}',
@@ -118,8 +155,20 @@ function v66Install(){
   '#tl62Panel{margin-top:8px}#tl62Panel>summary{font-size:16px!important;padding:5px 0 10px}',
   '#tl62Wave{overflow-x:auto}',
  ].join('');document.head.append(style);
- const input=v66$('tl66TimingThreshold');
- if(input)input.addEventListener('input',v66Render);
+ const input=v66$('tl64DiffThreshold');if(input)input.addEventListener('input',v66Render);
+ const startSync=v66$('tl66StartSync'),rateControl=v66$('tl66YRate'),alignmentControl=v66$('tl62Alignment');
+ if(startSync)startSync.addEventListener('change',()=>{
+  if(startSync.checked&&alignmentControl&&alignmentControl.value!=='raw'){alignmentControl.value='raw';alignmentControl.dispatchEvent(new Event('change',{bubbles:true}));}
+  v66UpdatePlaybackControls();v66Render();v66DrawWave();
+ });
+ if(rateControl)rateControl.addEventListener('input',()=>{
+  try{localStorage.setItem(V67_Y_RATE_KEY,rateControl.value);}catch(e){}
+  v66UpdatePlaybackControls();v66Render();v66Tick();v66DrawWave();v66RenderDetail();
+ });
+ if(alignmentControl)alignmentControl.addEventListener('change',()=>{
+  if(alignmentControl.value==='phase'&&startSync)startSync.checked=false;
+  v66UpdatePlaybackControls();v66Render();v66DrawWave();
+ });
  const existingPlot=v66$('tl64Plot');
  if(existingPlot)existingPlot.setAttribute('data-timeline-design','onset-peak-events-only');
  const resizer=(grip,axis)=>{
@@ -136,33 +185,57 @@ function v66Install(){
  if(window.__LiveDynamicsV64){window.__LiveDynamicsV64.render=v66Render;window.__LiveDynamicsV64.refresh=v66Render;}
  if(typeof tl62Draw==='function'){const baseDraw=tl62Draw;tl62Draw=function(){const out=baseDraw.apply(this,arguments);v66RenderDetail();return out;};}
  tl62Wave=v66DrawWave;
- const waveJoint=v66$('tl62WaveJoint'),alignment=v66$('tl62Alignment');if(waveJoint)waveJoint.onchange=v66DrawWave;if(alignment)alignment.onchange=v66DrawWave;
+ const waveJoint=v66$('tl62WaveJoint'),alignmentView=v66$('tl62Alignment');if(waveJoint)waveJoint.onchange=v66DrawWave;if(alignmentView)alignmentView.onchange=v66DrawWave;
  const colorInput=v66$('tl64DiffColor');if(colorInput)colorInput.addEventListener('input',()=>{const y=v66$('tl66Legend')?.querySelector('.y');if(y)y.style.background=colorInput.value;v66Render();});
  window.addEventListener('resize',()=>{v64Layout();v66Render();v66DrawWave();});
  v66RenderDetail();v66DrawWave();v66Render();
 }
 function v66AddEvent(svg,ns,row,side,type,time,value,scaleX,y,unit){
  if(!Number.isFinite(time))return;
- const color=side==='X'?'#55d6be':v66Hex(v64Live.color),x=scaleX(v64TimelineAxis(time,side,timeline62.analysis));
+ const analysis=timeline62.analysis,color=side==='X'?'#55d6be':v66Hex(v64Live.color),x=scaleX(v66DisplayAxis(time,side,analysis));
  let marker;
  if(type==='peak'){
-  const finite=row.speed.filter(Number.isFinite),max=Math.max(.000001,...finite.map(Math.abs)),ratio=v66Clamp(Math.abs(value)/max,0,1),radius=3.2+2.8*ratio;
+  const related=timeline62.analysis?.rows.find(r=>r.jointId===row.jointId),xSpeeds=related?.X?.speed||row.speed,ySpeeds=(related?.Y?.speed||[]).map(v=>v*v66Rate());
+  const max=Math.max(.000001,...xSpeeds.filter(Number.isFinite).map(Math.abs),...ySpeeds.filter(Number.isFinite).map(Math.abs));
+  const effective=Math.abs(value)*(side==='Y'&&v66StartSynced()?v66Rate():1),ratio=v66Clamp(effective/max,0,1),radius=3.2+3.2*ratio;
   marker=document.createElementNS(ns,'circle');marker.setAttribute('cx',x);marker.setAttribute('cy',y);marker.setAttribute('r',radius);marker.setAttribute('fill',color);marker.setAttribute('stroke','#071b27');marker.setAttribute('stroke-width','1');
  }else{
   marker=document.createElementNS(ns,'path');marker.setAttribute('d','M '+x+' '+(y-3.4)+' l 3.4 3.4 -3.4 3.4 -3.4 -3.4 Z');marker.setAttribute('fill',color);
  }
  marker.setAttribute('class','tl66Event');marker.setAttribute('data-event',type);marker.setAttribute('data-side',side);marker.setAttribute('data-joint-id',row.jointId);marker.setAttribute('data-time',time);
- marker.style.color=color;marker.style.cursor='pointer';marker.addEventListener('click',()=>tl62Seek(time,side));
+ marker.style.color=color;marker.style.cursor='pointer';marker.addEventListener('click',()=>{
+  const synced=side==='Y'&&v66StartSynced()&&analysis?.config?.alignment==='raw';
+  tl62Seek(synced?time/v66Rate():time,synced?'X':side);
+ });
  const title=document.createElementNS(ns,'title');title.textContent=(row.joint?.name||'')+' '+side+' '+(type==='peak'?'ピーク ':'動き始め ')+v66Fmt(time)+(type==='peak'?' / '+Number(value).toFixed(3)+' '+unit:'');marker.append(title);svg.append(marker);
 }
+function v66Nearest(times,target){
+ let lo=0,hi=times.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(times[mid]<target)lo=mid+1;else hi=mid;}
+ return lo>0&&Math.abs(times[lo-1]-target)<Math.abs(times[lo]-target)?lo-1:lo;
+}
+function v66DifferenceRuns(entry,analysis){
+ const x=entry?.X,y=entry?.Y;if(!x||!y||!analysis.compatibility?.ok)return[];
+ const threshold=v66Clamp((Number(v66$('tl64DiffThreshold')?.value)||15)/100,.01,1);
+ const scale=Math.max(1e-9,...x.speed.filter(Number.isFinite).map(Math.abs),...y.speed.filter(Number.isFinite).map(v=>Math.abs(v*v66Rate())));
+ const from=analysis.config.from,to=analysis.config.to,runs=[];let begin=null,last=null;
+ for(let i=0;i<x.times.length;i++){
+  const t=x.times[i];if(t<from||t>to||!Number.isFinite(x.speed[i]))continue;
+  const sampleY=v66MapYTime(t,analysis);if(sampleY<y.times[0]||sampleY>y.times.at(-1))continue;
+  const j=v66Nearest(y.times,sampleY),speedY=y.speed[j]*((v66StartSynced()&&analysis.config.alignment==='raw')?v66Rate():1);
+  const axis=v64TimelineAxis(t,'X',analysis),changed=Number.isFinite(speedY)&&Math.abs(x.speed[i]-speedY)/scale>=threshold;
+  if(changed){if(begin===null)begin=axis;last=axis;}
+  else if(begin!==null){runs.push({start:begin,end:last});begin=null;last=null;}
+ }
+ if(begin!==null)runs.push({start:begin,end:last});
+ return runs;
+}
 function v66Render(){
- const analysis=timeline62?.analysis,plot=v66$('tl64Plot');if(!plot)return;if(!analysis){plot.replaceChildren();return;}
+ const analysis=timeline62?.analysis,plot=v66$('tl64Plot');if(!plot)return;v66UpdatePlaybackControls();if(!analysis){plot.replaceChildren();return;}
  const compatible=!!(analysis.source_y&&analysis.compatibility?.ok),rows=analysis.rows.filter(r=>r.X),width=Math.max(300,Math.floor(plot.clientWidth||340)),left=58,right=9,top=23,rowH=31,height=top+Math.max(1,rows.length)*rowH+8;
  const [from,to]=v64AxisRange(analysis,'X'),span=Math.max(.001,to-from),plotWidth=Math.max(150,width-left-right),scaleX=t=>left+(t-from)/span*plotWidth;
  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 '+width+' '+height);svg.setAttribute('width',width);svg.setAttribute('height',height);svg.setAttribute('role','img');svg.setAttribute('aria-label','部位ごとの動き始めと速度ピークを実時間上に比較するタイムライン');svg.setAttribute('data-row-count',rows.length);
  const add=(tag,attrs,text)=>{const el=document.createElementNS(ns,tag);for(const [k,v] of Object.entries(attrs||{}))el.setAttribute(k,String(v));if(text!==undefined)el.textContent=text;svg.append(el);return el;};
  for(let k=0;k<=4;k++){const t=from+span*k/4,x=scaleX(t);add('line',{x1:x,x2:x,y1:top-7,y2:height-4,stroke:'#385566','stroke-width':.7,opacity:.65});add('text',{x,y:12,fill:'#a9c5d1','font-size':9,'text-anchor':'middle'},v64TickLabel(t,analysis));}
- const threshold=Math.max(0,Number(v66$('tl66TimingThreshold')?.value)||50);
  rows.forEach((entry,index)=>{
   const y=top+index*rowH,xY=y+21,xX=y+10,label=tl63Name(entry.X.joint);
   add('text',{x:3,y:y+16,fill:'#e4f0f5','font-size':10},label.length>10?label.slice(0,9)+'…':label);
@@ -170,9 +243,9 @@ function v66Render(){
   add('text',{x:left-21,y:xY+3,fill:'#d6a6c4','font-size':8,'text-anchor':'middle'},compatible?'Y':'');
   add('line',{x1:left,x2:width-right,y1:xX,y2:xX,stroke:'#425b68','stroke-width':1});
   if(compatible)add('line',{x1:left,x2:width-right,y1:xY,y2:xY,stroke:'#425b68','stroke-width':1});
-  if(compatible&&entry.X.peak&&entry.Y?.peak){
-   const tx=v64TimelineAxis(entry.X.peak.time,'X',analysis),ty=v64TimelineAxis(entry.Y.peak.time,'Y',analysis),delta=Math.abs(tx-ty)*1000;
-   if(delta>=threshold){const band=add('rect',{x:scaleX(Math.min(tx,ty)),y:y+3,width:Math.max(2,Math.abs(scaleX(tx)-scaleX(ty))),height:26,rx:3,fill:v66Hex(v64Live.color),opacity:.14,'data-timing-difference-ms':delta.toFixed(1)});const title=document.createElementNS(ns,'title');title.textContent='X/Yピーク時刻差 '+delta.toFixed(1)+' ms';band.append(title);}
+  if(compatible)for(const run of v66DifferenceRuns(entry,analysis)){
+   const x=scaleX(run.start),end=scaleX(run.end),band=add('rect',{x,y:y+3,width:Math.max(2,end-x),height:4,rx:2,fill:v66Hex(v64Live.color),opacity:.84,stroke:'none','data-difference':'true','data-difference-start':run.start.toFixed(4),'data-difference-end':run.end.toFixed(4)});
+   const title=document.createElementNS(ns,'title');title.textContent='速度差基準を超えた区間 '+run.start.toFixed(3)+'–'+run.end.toFixed(3)+'秒（Y速度は再生倍率を反映）';band.append(title);
   }
   for(const [side,line,cy] of [['X',entry.X,xX],['Y',entry.Y,xY]])if(line){
    if(line.onset?.time!==null)v66AddEvent(svg,ns,line,side,'onset',line.onset.time,null,scaleX,cy,line.unit);
@@ -188,7 +261,7 @@ function v66Render(){
 function v66Tick(){
  const a=timeline62?.analysis,s=v66SvgState;if(!s||!a)return;
  const durationX=timeline62.sourceX?.data?.duration||1,durationY=timeline62.sourceY?.data?.duration||durationX;
- const raw=Number(state._renderedAnimationTime)||0,timeX=((raw%durationX)+durationX)%durationX,timeY=a.config.alignment==='phase'?(timeX/durationX)*durationY:timeX,axis=v64TimelineAxis(timeX,'X',a),x=s.scaleX(axis);
+ const raw=Number(state._renderedAnimationTime)||0,timeX=((raw%durationX)+durationX)%durationX,timeY=v66MapYTime(timeX,a),axis=v64TimelineAxis(timeX,'X',a),x=s.scaleX(axis);
  const cursor=s.svg.querySelector('#tl66Playhead');if(cursor){cursor.setAttribute('x1',x);cursor.setAttribute('x2',x);cursor.setAttribute('opacity',axis>=s.from&&axis<=s.to?'.8':'0');}
  for(const el of s.svg.querySelectorAll('.tl66Event')){const t=Number(el.getAttribute('data-time')),side=el.getAttribute('data-side'),now=side==='Y'?timeY:timeX,dt=.028;el.classList.toggle('is-current',Math.abs(t-now)<=dt);}
  const readout=v66$('tl64Readout');if(readout)readout.textContent='再生位置 '+v66Fmt(timeX)+(a.config.alignment==='phase'?' ／ 局面 '+(100*timeX/durationX).toFixed(0)+'%':'');
@@ -234,11 +307,14 @@ function v66DrawWave(){
  const id=Number(v66$('tl62WaveJoint')?.value)||timeline62.selected?.[0],r=a.rows.find(x=>x.jointId===id)||a.rows[0];if(!r)return;
  const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 640 150');svg.setAttribute('role','img');svg.setAttribute('aria-label',v66WaveMode==='speed'?'X/Y速度波形':'X/Y速度変化の波形');
  const start=a.config.alignment==='phase'?0:a.config.from,end=a.config.alignment==='phase'?1:a.config.to;
- const series=[['X',r.X],['Y',r.Y]].filter(x=>x[1]),all=series.flatMap(([_,row])=>v66WaveMode==='speed'?row.speed:row.changes).filter(Number.isFinite),max=Math.max(1e-8,...all.map(Math.abs));
- const x=time=>45+(a.config.alignment==='phase'?time/(r.X.source.data.duration||1):(time-start)/Math.max(.0001,end-start))*540,y=v=>v66WaveMode==='speed'?130-112*v/max:75-62*v/max;
+ const series=[['X',r.X],['Y',r.Y]].filter(x=>x[1]),value=(side,row,i)=>{const v=(v66WaveMode==='speed'?row.speed:row.changes)[i];return v*(side==='Y'&&v66StartSynced()&&a.config.alignment==='raw'?v66Rate()**(v66WaveMode==='speed'?1:2):1);};
+ const all=series.flatMap(([side,row])=>row.times.map((_,i)=>value(side,row,i))).filter(Number.isFinite),max=Math.max(1e-8,...all.map(Math.abs));
+ const rowForSide=side=>side==='X'?r.X:r.Y;
+ const x=(time,side)=>{const axis=side==='Y'&&v66StartSynced()&&a.config.alignment==='raw'?time/v66Rate():a.config.alignment==='phase'?time/(rowForSide(side)?.source?.data?.duration||1):time;return 45+(axis-start)/Math.max(.0001,end-start)*540;};
+ const y=v=>v66WaveMode==='speed'?130-112*v/max:75-62*v/max;
  for(let k=0;k<=4;k++){const ax=start+(end-start)*k/4,X=45+k*135;const line=document.createElementNS(ns,'line');line.setAttribute('x1',X);line.setAttribute('x2',X);line.setAttribute('y1',15);line.setAttribute('y2',140);line.setAttribute('stroke','#31516b');svg.append(line);const label=document.createElementNS(ns,'text');label.setAttribute('x',X);label.setAttribute('y',12);label.setAttribute('fill','#abcbd8');label.setAttribute('font-size',9);label.setAttribute('text-anchor','middle');label.textContent=a.config.alignment==='phase'?(ax*100).toFixed(0)+'%':ax.toFixed(2)+'s';svg.append(label);}
  if(v66WaveMode==='change'){const baseline=document.createElementNS(ns,'line');baseline.setAttribute('x1',45);baseline.setAttribute('x2',585);baseline.setAttribute('y1',75);baseline.setAttribute('y2',75);baseline.setAttribute('stroke','#7895a3');baseline.setAttribute('stroke-width',1);svg.append(baseline);}
- for(const [side,row] of series){const d=row.times.map((t,i)=>({t,v:(v66WaveMode==='speed'?row.speed:row.changes)[i]})).filter(q=>q.t>=start&&q.t<=end&&Number.isFinite(q.v)).map((q,i)=>(i?'L':'M')+x(q.t).toFixed(2)+','+y(q.v).toFixed(2)).join(' ');const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('fill','none');path.setAttribute('stroke',side==='X'?'#55d6be':v66Hex(v64Live.color));path.setAttribute('stroke-width',2);if(side==='Y')path.setAttribute('stroke-dasharray','7 5');svg.append(path);}
+ for(const [side,row] of series){const d=row.times.map((t,i)=>({t:x(t,side),v:value(side,row,i)})).filter(q=>q.t>=45&&q.t<=585&&Number.isFinite(q.v)).map((q,i)=>(i?'L':'M')+q.t.toFixed(2)+','+y(q.v).toFixed(2)).join(' ');const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('fill','none');path.setAttribute('stroke',side==='X'?'#55d6be':v66Hex(v64Live.color));path.setAttribute('stroke-width',2);if(side==='Y')path.setAttribute('stroke-dasharray','7 5');svg.append(path);}
  container.replaceChildren(svg);const legend=v66$('tl62WaveLegend');if(legend)legend.textContent=(v66WaveMode==='speed'?'速度（':'速度変化・符号付き（')+(v66WaveMode==='speed'?(r.X?.unit||''):(r.X?.metric==='angular'?'rad/s²':'model_units/s²'))+'。X＝実線、Y＝破線。Y系列との比較が可能なのは互換性確認済みの場合だけです。';
 }
 function v66ExportComparisonCsv(){
@@ -254,4 +330,4 @@ function v66ExportComparisonCsv(){
 }
 const v66BaseInstall=v64InstallLiveDynamics;
 v64InstallLiveDynamics=function(){const result=v66BaseInstall.apply(this,arguments);v66Install();return result;};
-window.__TimelineLiveV66={render:v66Render,tick:v66Tick,exportComparison:v66ExportComparisonCsv,smoothness:v66Share};
+window.__TimelineLiveV66={render:v66Render,tick:v66Tick,exportComparison:v66ExportComparisonCsv,smoothness:v66Share,ybotColorRgb:v66YBotColorRgb,getYBotColor:v66YBotColor,mapYTime:v66MapYTime,displayAxis:v66DisplayAxis,differenceRuns:v66DifferenceRuns,playbackRate:v66Rate};

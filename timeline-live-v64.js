@@ -231,9 +231,10 @@ function v64Render(){
  const yEvents=a.rows.filter(r=>r.Y?.peak).map(r=>({joint_id:r.jointId,joint_name:r.Y.joint.name,peak_time:r.Y.peak.time})).sort((x,y)=>x.peak_time-y.peak_time);
  const seqX=xEvents.map(e=>v64JointOrder({order:e.order})+tl63Name({name:e.joint_name})+' '+v64FormatPeakTime(e.peak_time,'X',a)).join(' → ');
  const seqY=yEvents.map((e,i)=>String.fromCharCode(9311+i+1)+tl63Name({name:e.joint_name})+' '+v64FormatPeakTime(e.peak_time,'Y',a)).join(' → ');
- sequence.innerHTML='';
- const xline=document.createElement('div');xline.innerHTML='<b>X</b> '+(seqX||'代表ピークなし');sequence.append(xline);
- if(compatible){const yline=document.createElement('div');yline.innerHTML='<b>Y</b> '+(seqY||'代表ピークなし');sequence.append(yline);}
+ if(sequence){sequence.innerHTML='';
+  const xline=document.createElement('div');xline.innerHTML='<b>X</b> '+(seqX||'代表ピークなし');sequence.append(xline);
+  if(compatible){const yline=document.createElement('div');yline.innerHTML='<b>Y</b> '+(seqY||'代表ピークなし');sequence.append(yline);}
+ }
  if(!a.compatibility.ok){v64$('tl64Status').textContent=a.compatibility.reason||'関節対応が検証されていないため比較不可';}
  else if(!a.source_y){v64$('tl64Status').textContent='X単独表示です。X/Y比較を有効にすると同じ時間軸で比較できます。';}
  else if(v64Live.overlay){v64$('tl64Status').textContent='3D重ね合わせ中：姿勢差のある関節を差分色で表示しています。';}
@@ -290,7 +291,7 @@ function v64PrepareComparisonPose(time){
  if(state.model!==xAvatar||state.motion!==xMotion){v64Live.frame=null;const status=v64$('tl64Status');if(status)status.textContent='表示中のモデル／動作がX設定と異なるため、3D差分を一時停止しました。';return;}
  const now=performance.now();if(now-v64Live.lastPoseAt<28&&v64Live.frame)return;v64Live.lastPoseAt=now;
  const ym=getModel(yAvatar),xDuration=timeline62.sourceX.data.duration||1,yDuration=timeline62.sourceY.data.duration||1;
- const phase=tl62$('tl62Alignment')?.value==='phase',xTime=((time%xDuration)+xDuration)%xDuration,yTime=phase?(xTime/xDuration)*yDuration:xTime;
+ const phase=tl62$('tl62Alignment')?.value==='phase',xTime=((time%xDuration)+xDuration)%xDuration,yTime=phase?(xTime/xDuration)*yDuration:(window.__TimelineLiveV66?.mapYTime?.(xTime,timeline62.analysis)??xTime);
  const previousModel=state.model,previousGame=state.gameMode;state.model=yAvatar;state.gameMode=false;
  try{animateModel(ym,yMotion,yTime);ym.currentMotion=yMotion;}finally{state.model=previousModel;state.gameMode=previousGame;}
  const mask=new Float32Array(48),xSkin=modelData.skin,ySkin=ym.skin;let count=0;

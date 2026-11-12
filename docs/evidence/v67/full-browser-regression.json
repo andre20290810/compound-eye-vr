@@ -1,0 +1,59 @@
+{
+  "app_version": "v67",
+  "run_at": "2026-11-12T10:25:53.745Z",
+  "environment": "Edge WebGL2 with mobile viewport emulation",
+  "summary": {
+    "passed": 70,
+    "failed": 0
+  },
+  "suites": [
+    {
+      "name": "browser-regression",
+      "source": "docs/evidence/v63/browser-regression.json",
+      "summary": {
+        "passed": 13,
+        "failed": 0
+      }
+    },
+    {
+      "name": "ui-regression",
+      "source": "docs/evidence/v63/ui-regression.json",
+      "summary": {
+        "passed": 8,
+        "failed": 0
+      }
+    },
+    {
+      "name": "additions-regression",
+      "source": "docs/evidence/v63/additions-regression.json",
+      "summary": {
+        "passed": 12,
+        "failed": 0
+      }
+    },
+    {
+      "name": "visor-regression",
+      "source": "docs/evidence/v63/visor-regression.json",
+      "summary": {
+        "passed": 12,
+        "failed": 0
+      }
+    },
+    {
+      "name": "punch-regression",
+      "source": "docs/evidence/v63/punch-regression.json",
+      "summary": {
+        "passed": 12,
+        "failed": 0
+      }
+    },
+    {
+      "name": "v67-regression",
+      "source": "docs/evidence/v67/v67-regression.json",
+      "summary": {
+        "passed": 13,
+        "failed": 0
+      }
+    }
+  ]
+}
