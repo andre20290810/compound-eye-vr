@@ -154,14 +154,13 @@ function v64SetOverlay(on){
   v64Live.overlay=true;
   if(state.model!==x.avatar)changeModel(x.avatar);
   if(state.motion!==x.motion)setMotion(x.motion);
-  else if(state.paused)setMotion(x.motion);
   v64$('tl64Status').textContent='X＝実モデル、Y＝差分部位を差分色で重ねています。差分色は編集できます。';
  }else{
   v64Live.overlay=false;v64Live.frame=null;
   v64$('tl64Status').textContent='3D差分表示を停止しました。運動連鎖タイムラインは再生に同期しています。';
  }
  if(button)button.setAttribute('aria-pressed',String(v64Live.overlay));
- v64Render();v64UpdatePlayLabel();
+ v64Live.frame=null;v64Render();v64UpdatePlayLabel();if(state.paused)draw(performance.now());
 }
 function v64TimelineAxis(time,side,analysis){
  if(analysis.config.alignment==='phase')return time/(timeline62['source'+side]?.data?.duration||1);

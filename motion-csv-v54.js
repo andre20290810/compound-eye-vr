@@ -40,8 +40,8 @@ let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){if(avatar==='ybot')return window.__TimelineLiveV65?.revision(motion)||window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-punchC-alternating-as-B-v68-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-mirrored-left-forward-low-fast-v68-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&['armor_punch','armor_alternate_punch'].includes(motion))return 'aegis-punchC-as-new-B-v69-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_combo_punch')return 'aegis-punchA-and-newB-alternating-1.1x-v69-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
    ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':

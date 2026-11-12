@@ -19,7 +19,7 @@ async function captureOutput(p,id){return p.evaluate(async id=>{const original=U
 (async()=>{
  const local=await serve(root);browser=await puppeteer.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE,args:['--no-sandbox','--enable-webgl','--use-gl=angle']});report.environment.browser=await browser.version();
  const page=await boot(local);let data,legacy,currentCSVText,legacyCSVText;
- await check('v61 boot and opt-in defaults',async()=>{const r=await page.evaluate(()=>({version:window.__compoundTest.version,title:document.title,panel:document.getElementById('v54AnalysisPanel').open,markers:document.getElementById('v54KinematicOverlay').childElementCount}));assert.equal(r.version,'68');assert.equal(r.title,'人工複眼シミュレーションシステム');assert.equal(r.panel,false);assert.equal(r.markers,0);return r;});
+ await check('v61 boot and opt-in defaults',async()=>{const r=await page.evaluate(()=>({version:window.__compoundTest.version,title:document.title,panel:document.getElementById('v54AnalysisPanel').open,markers:document.getElementById('v54KinematicOverlay').childElementCount}));assert.equal(r.version,'69');assert.equal(r.title,'人工複眼シミュレーションシステム');assert.equal(r.panel,false);assert.equal(r.markers,0);return r;});
  await setMotion(page,'xbot','xbot_punch');
  await check('86-column CSV: every joint, signed rates, raw pose, revision and quaternion',async()=>{
   const text=await captureOutput(page,'v53UnifiedCsv');currentCSVText=text;data=K.parseCSV(text);assert.equal(data.header.length,86);assert.equal(data.records.length,1088);assert.equal(new Set(data.records.map(r=>r.joint_id)).size,32);
@@ -27,7 +27,7 @@ async function captureOutput(p,id){return p.evaluate(async id=>{const original=U
   assert.ok(Math.abs(Number(row('RightHand',.2).linear_speed_change_rate_model_units_per_s2)-19.391639)<.003);
   assert.ok(Math.abs(Number(row('Hips',.2).angular_speed_change_rate_rad_per_s2)+36.212747)<.003);
   assert.ok(Math.abs(Number(row('RightHand',.266667).linear_speed_change_rate_model_units_per_s2)+20.929140)<.003);
-  for(const r of data.records){assert.equal(r.app_version,'v68');assert.equal(r.source_asset_sha256.length,64);assert.ok(Math.abs(Math.hypot(...['x','y','z','w'].map(k=>Number(r['quaternion_'+k])))-1)<1e-8);}
+  for(const r of data.records){assert.equal(r.app_version,'v69');assert.equal(r.source_asset_sha256.length,64);assert.ok(Math.abs(Math.hypot(...['x','y','z','w'].map(k=>Number(r['quaternion_'+k])))-1)<1e-8);}
   return {columns:data.header.length,rows:data.records.length,joints:32,trial:data.records[0].trial_id};
  });
  if(process.env.V53_BASELINE_DIR)await check('preserve all v53 X Bot numeric fields and raw positions',async()=>{

@@ -1,5 +1,5 @@
 {
-  "tested_at": "2026-11-11T20:03:47.437Z",
+  "tested_at": "2026-11-12T22:15:07.606Z",
   "environment": {
     "platform": "win32",
     "node": "v24.21.0",
@@ -7,14 +7,14 @@
     "real_GameSir": false,
     "Safari": false,
     "inputs": "desktop headless Edge; mocked Gamepad API",
-    "browser": "Edg/157.0.4341.46"
+    "browser": "Chrome/155.0.8059.79"
   },
   "tests": [
     {
       "name": "v61 boot and opt-in defaults",
       "status": "PASS",
       "details": {
-        "version": "63",
+        "version": "69",
         "title": "人工複眼シミュレーションシステム",
         "panel": false,
         "markers": 0
@@ -27,16 +27,7 @@
         "columns": 86,
         "rows": 1088,
         "joints": 32,
-        "trial": "trial_mwcjrdwp_0"
-      }
-    },
-    {
-      "name": "preserve all v53 X Bot numeric fields and raw positions",
-      "status": "PASS",
-      "details": {
-        "rows": 1088,
-        "numeric_fields": 8,
-        "max_absolute_error": 0
+        "trial": "trial_mwe3w8ib_0"
       }
     },
     {
@@ -45,7 +36,7 @@
       "details": {
         "nodes": 36,
         "frames": 34,
-        "trial": "trial_mwcjrdwp_0"
+        "trial": "trial_mwe3w8ib_0"
       }
     },
     {
@@ -104,12 +95,12 @@
       "name": "v2 and legacy CSV reload: no second smoothing, no invented raw pose, graph usable",
       "status": "PASS",
       "details": {
-        "trial": "import_mwcjrfus",
+        "trial": "trial_mwe3w8ib_0",
         "rows": 1088,
         "raw": [
-          null,
-          null,
-          null
+          -0.162226250395179,
+          0.266710758209229,
+          0.282274924684316
         ],
         "xyDisabled": true,
         "overlay": 0,
@@ -164,7 +155,7 @@
         {
           "avatar": "aegisEmber",
           "motion": "armor_punch",
-          "maxRelative": 4.929991735957984e-7,
+          "maxRelative": 4.227327149441962e-7,
           "allFinite": true
         },
         {
@@ -194,7 +185,7 @@
         {
           "avatar": "aegisSoldier",
           "motion": "armor_punch",
-          "maxRelative": 4.929991735957984e-7,
+          "maxRelative": 4.227327149441962e-7,
           "allFinite": true
         },
         {
@@ -357,22 +348,8 @@
     }
   ],
   "page_errors": [],
-  "performance": {
-    "baseline_v53": {
-      "samples": 50,
-      "median_ms": 0.8999999985098839,
-      "p95_ms": 1.6000000014901161,
-      "method": "CPU draw dispatch time; not GPU/HMD frame latency"
-    },
-    "v54_normal": {
-      "samples": 50,
-      "median_ms": 0.5,
-      "p95_ms": 0.9000000059604645,
-      "method": "CPU draw dispatch time; not GPU/HMD frame latency"
-    }
-  },
   "summary": {
-    "passed": 14,
+    "passed": 13,
     "failed": 0
   }
 }

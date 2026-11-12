@@ -60,8 +60,8 @@ test('phase alignment rescales the selected X time interval to Y source duration
  assert.ok(Math.abs(row.X.peak.time-.32)<.03);
  assert.ok(row.delta.phase_peak_position_pp!==null);
 });
-test('closed fist replaces open fingers in B only and retains hand-bone attachment',()=>{
+test('closed fists replace open fingers in new B and C while retaining hand-bone attachment',()=>{
  const meshes=F.geometry();assert.equal(meshes.length,2);
  assert.deepEqual(meshes.map(m=>m.bone),[5,8]);
- for(const m of meshes){assert.equal(m.onlyMotion,'armor_punch');assert.ok(m.p.every(Number.isFinite));assert.ok(m.weights.every((v,i)=>i%4===0?v===1:v===0));assert.ok(m.tri.length>300);}
+ for(const m of meshes){assert.deepEqual(m.onlyMotion,['armor_alternate_punch','armor_combo_punch','armor_punch']);assert.ok(m.p.every(Number.isFinite));assert.ok(m.weights.every((v,i)=>i%4===0?v===1:v===0));assert.ok(m.tri.length>300);}
 });

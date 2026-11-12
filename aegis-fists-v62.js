@@ -3,7 +3,7 @@
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisFists62=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
 const color=[.20,.36,.67,1],P=Math.PI;
-function mesh(name,bone){return{name,bone,onlyMotion:'armor_punch',p:[],n:[],col:[],tri:[],joints:[],weights:[]};}
+function mesh(name,bone){return{name,bone,onlyMotion:['armor_alternate_punch','armor_combo_punch','armor_punch'],p:[],n:[],col:[],tri:[],joints:[],weights:[]};}
 function v(m,p,n){const id=m.p.length/3;m.p.push(...p);m.n.push(...n);m.col.push(...color);m.joints.push(m.bone,0,0,0);m.weights.push(1,0,0,0);return id;}
 function quad(m,a,b,c,d,n){const ids=[a,b,c,d].map(p=>v(m,p,n));m.tri.push(ids[0],ids[1],ids[2],ids[0],ids[2],ids[3]);}
 function ellipsoid(m,c,r,lat=10,lon=16){

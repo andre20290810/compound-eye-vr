@@ -26,6 +26,35 @@ function v66UpdatePlaybackControls(){
  if(rate)rate.disabled=!start?.checked||!analysis?.source_y||!analysis?.compatibility?.ok;
  if(out)out.textContent=v66Rate().toFixed(2)+'×';
 }
+function v66InstallWaveDock(dock){
+ if(v66$('tl66WaveDock'))return v66$('tl66WaveDock');
+ const root=document.createElement('section');root.id='tl66WaveDock';root.setAttribute('aria-label','比較波形');
+ const tabs=document.createElement('div');tabs.id='tl66WaveTabs';tabs.setAttribute('role','tablist');
+ const pages=document.createElement('div');pages.id='tl66WavePages';
+ const xy=document.createElement('div');xy.id='tl66WaveXY';xy.setAttribute('role','tabpanel');
+ const compare=document.createElement('div');compare.id='tl66WaveCompare';compare.setAttribute('role','tabpanel');compare.hidden=true;
+ const button=(id,label,mode)=>{const b=document.createElement('button');b.id=id;b.type='button';b.textContent=label;b.setAttribute('role','tab');b.setAttribute('aria-pressed',String(mode==='xy'));return b;};
+ const xyButton=button('tl66WaveTabXY','詳細解析：選択部位X/Y速度波形','xy');
+ const compareButton=button('tl66WaveTabCompare','実験計測：時刻同期・2動作比較波形','compare');
+ tabs.append(xyButton,compareButton);
+ const joint=v66$('tl62WaveJoint'),mode=v66$('tl66WaveMode'),wave=v66$('tl62Wave'),legend=v66$('tl62WaveLegend'),oldWaveDetails=wave?.closest('details');
+ const xyTools=document.createElement('div');xyTools.id='tl66WaveXYTools';xyTools.append(document.createTextNode('対象部位 '));
+ if(joint)xyTools.append(joint);
+ if(mode)xyTools.append(document.createTextNode(' 波形 '),mode);
+ if(wave)xy.append(xyTools,wave);
+ if(legend)xy.append(legend);
+ const compareSettings=document.createElement('button');compareSettings.id='tl66OpenExperimentSettings';compareSettings.type='button';compareSettings.textContent='比較条件を開く';
+ compareSettings.title='実験計測の比較条件を設定します。';
+ compareSettings.onclick=()=>{const p=v66$('experimentPanel'),v=v66$('v47Panel');if(p)p.open=true;if(v)v.open=true;p?.scrollIntoView({block:'nearest',behavior:'smooth'});};
+ compare.append(compareSettings);
+ for(const id of ['v47Readout','v48GraphLegend','v47Chart','v47Timeline']){const el=v66$(id);if(el)compare.append(el);}
+ if(oldWaveDetails)oldWaveDetails.hidden=true;
+ const activate=modeName=>{const isXY=modeName==='xy';xy.hidden=!isXY;compare.hidden=isXY;xyButton.setAttribute('aria-pressed',String(isXY));compareButton.setAttribute('aria-pressed',String(!isXY));root.dataset.mode=modeName;if(isXY)v66DrawWave();else{if(typeof v47Render==='function')v47Render();if(typeof v47RenderTimeline==='function')v47RenderTimeline();}};
+ xyButton.onclick=()=>activate('xy');compareButton.onclick=()=>activate('compare');
+ pages.append(xy,compare);root.append(tabs,pages);
+ dock.insertBefore(root,v66$('tl66Legend'));
+ return root;
+}
 function v66Install(){
  if(v66Installed||!v64Live?.workspace)return;
  v66Installed=true;
@@ -95,6 +124,7 @@ function v66Install(){
    wave.parentElement.insertBefore(select,wave);
   }
  }
+ v66InstallWaveDock(dock);
  const style=document.createElement('style');style.id='v66DynamicsStyles';style.textContent=[
   '#viewerWorkspace{display:grid!important;grid-template-columns:minmax(400px,1fr) 8px minmax(300px,var(--v66TimelineWidth,370px))!important;grid-template-rows:minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;gap:0 7px!important;align-items:stretch!important;width:100%!important;min-width:0!important}',
   '#viewerWorkspace>#screen{grid-column:1!important;grid-row:1!important;width:100%!important;height:100%!important;min-height:360px!important;max-height:none!important;resize:none!important}',
@@ -103,8 +133,8 @@ function v66Install(){
   '#tl66WidthGrip:after{content:"";position:absolute;left:3px;top:45%;width:2px;height:10%;min-height:34px;border-left:1px solid #9dc2d2;border-right:1px solid #9dc2d2}',
   '#tl66HeightGrip{grid-column:1/-1;grid-row:2;cursor:row-resize;touch-action:none;position:relative;z-index:5;border-radius:6px;background:#31546b}',
   '#tl66HeightGrip:after{content:"";position:absolute;left:48%;top:3px;width:4%;height:2px;border-top:1px solid #9dc2d2;border-bottom:1px solid #9dc2d2}',
-  '#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(190px,230px) minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}',
-  '#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:190px!important;max-height:none!important}',
+  '#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(430px,460px) minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}',
+  '#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:420px!important;max-height:none!important}',
   '#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:360px!important}',
   '#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}',
   '#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}',
@@ -123,9 +153,26 @@ function v66Install(){
   '.tl66ControlLabel input{width:30px;height:22px;padding:0;border:0;background:transparent}',
   '#tl66Legend .diff i{background:'+v66Hex(v64Live.color)+';height:8px;border-radius:2px}',
   '#tl66Legend .diff{color:#f1c5de}',
-  '#tl64PlotWrap{flex:1 1 auto!important;min-height:200px!important;overflow:auto!important;background:#081d2c;border:1px solid #29495d;border-radius:8px}',
+  '#tl64PlotWrap{flex:0 1 43%!important;height:43%!important;min-height:145px!important;max-height:48%!important;overflow:auto!important;background:#081d2c;border:1px solid #29495d;border-radius:8px}',
   '#tl64Plot{width:100%;min-height:100%;overflow:visible}',
   '#tl64Plot svg{display:block;width:100%;height:auto;min-width:300px}',
+  '#tl66WaveDock{display:flex;flex:1 1 35%;flex-direction:column;gap:5px;min-height:155px;max-height:46%;padding:6px;border:1px solid #29495d;border-radius:8px;background:#081d2c;box-sizing:border-box;overflow:hidden}',
+  '#tl66WaveTabs{display:flex;gap:5px;flex-wrap:wrap;flex:0 0 auto}',
+  '#tl66WaveTabs button{flex:1 1 145px;padding:5px 7px;font-size:9px;line-height:1.25;background:#19364b;color:#d9edf5;border:1px solid #45677d;border-radius:6px}',
+  '#tl66WaveTabs button[aria-pressed="true"]{background:#24624f;border-color:#62c9a1;color:#fff}',
+  '#tl66WavePages{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}',
+  '#tl66WavePages>[hidden]{display:none!important}',
+  '#tl66WaveXY,#tl66WaveCompare{min-width:0}',
+  '#tl66WaveXYTools{display:flex;align-items:center;flex-wrap:wrap;gap:5px;color:#bbd7e2;font-size:9px;margin-bottom:3px}',
+  '#tl66WaveXYTools select{max-width:145px;padding:4px 6px;background:#19364b;color:#eff8fb;border:1px solid #527990;border-radius:5px;font-size:10px}',
+  '#tl66WaveXY #tl62Wave{overflow-x:auto}',
+  '#tl66WaveXY #tl62Wave svg{display:block;width:100%;height:auto;min-width:300px}',
+  '#tl66WaveXY #tl62WaveLegend{font-size:9px;color:#aac9d5;line-height:1.35;margin-top:3px}',
+  '#tl66OpenExperimentSettings{padding:4px 7px;font-size:9px;margin:0 0 4px}',
+  '#tl66WaveCompare #v47Readout{font-size:9px!important;margin:2px 0!important}',
+  '#tl66WaveCompare #v48GraphLegend{font-size:9px;max-height:34px;overflow:auto}',
+  '#tl66WaveCompare .v47Chart{width:100%;max-height:160px;overflow:auto;background:#061b2a;border:1px solid #28465a;border-radius:5px;margin:3px 0}',
+  '#tl66WaveCompare .v47Chart svg{display:block;width:100%;min-width:560px;height:auto}',
   '.v66DockFoot{display:flex;flex-direction:column;gap:2px;min-height:26px}',
   '#tl64Readout{font-size:10px;font-variant-numeric:tabular-nums;color:#f2f8fb;min-height:14px}',
   '#tl64Status{font-size:10px;color:#b7d9e5;min-height:14px;line-height:1.35}',
@@ -148,8 +195,8 @@ function v66Install(){
   '#tl66AnalysisSummary .limitations{border-top:1px solid #31566c;margin-top:8px;padding-top:6px}',
   '#tl62Graphic[hidden],#tl62Order[hidden]{display:none!important}',
   '#tl66WaveMode{margin:8px 0 0;background:#19364b;color:#eff8fb;border:1px solid #527990;border-radius:5px;padding:5px}',
-  '@media(max-width:900px){#viewerWorkspace,#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(210px,250px) minmax(320px,var(--v66ViewerHeight,500px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}#viewerWorkspace>#liveDynamicsDock,#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:210px!important}#viewerWorkspace>#screen,#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:320px!important}#tl66WidthGrip{display:none}#viewerWorkspace>#tl66HeightGrip,#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}#viewerWorkspace>#viewerControlShelf,#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}}',
-  '@media(max-width:500px){#viewerWorkspace{grid-template-rows:minmax(205px,235px) minmax(300px,var(--v66ViewerHeight,460px)) 8px auto!important}#viewerWorkspace>#liveDynamicsDock{padding:6px!important}.v66DockHead{font-size:12px}#tl66Legend{gap:4px 7px}#liveDynamicsControls{padding:7px!important;gap:5px!important}}',
+  '@media(max-width:900px){#viewerWorkspace,#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(390px,420px) minmax(320px,var(--v66ViewerHeight,500px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}#viewerWorkspace>#liveDynamicsDock,#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:380px!important}#viewerWorkspace>#screen,#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:320px!important}#tl66WidthGrip{display:none}#viewerWorkspace>#tl66HeightGrip,#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}#viewerWorkspace>#viewerControlShelf,#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}}',
+  '@media(max-width:500px){#viewerWorkspace{grid-template-rows:minmax(360px,390px) minmax(300px,var(--v66ViewerHeight,460px)) 8px auto!important}#viewerWorkspace>#liveDynamicsDock{padding:6px!important}.v66DockHead{font-size:12px}#tl66Legend{gap:4px 7px}#liveDynamicsControls{padding:7px!important;gap:5px!important}}',
   '@media(max-width:700px){#v65AegisSettings #appearancePanel58{max-height:45dvh!important;overflow:auto!important}}',
   'body.compact-layout #viewerWorkspace{display:block!important}body.compact-layout #liveDynamicsDock,body.compact-layout #viewerControlShelf,body.compact-layout #tl66WidthGrip,body.compact-layout #tl66HeightGrip{display:none!important}',
   '#tl62Panel{margin-top:8px}#tl62Panel>summary{font-size:16px!important;padding:5px 0 10px}',
@@ -187,7 +234,8 @@ function v66Install(){
  tl62Wave=v66DrawWave;
  const waveJoint=v66$('tl62WaveJoint'),alignmentView=v66$('tl62Alignment');if(waveJoint)waveJoint.onchange=v66DrawWave;if(alignmentView)alignmentView.onchange=v66DrawWave;
  const colorInput=v66$('tl64DiffColor');if(colorInput)colorInput.addEventListener('input',()=>{const y=v66$('tl66Legend')?.querySelector('.y');if(y)y.style.background=colorInput.value;v66Render();});
- window.addEventListener('resize',()=>{v64Layout();v66Render();v66DrawWave();});
+ const pause=v66$('togglePause');if(pause)pause.addEventListener('click',()=>{v64Live.frame=null;requestAnimationFrame(()=>{draw(performance.now());v64Tick();v66Tick();v64UpdatePlayLabel();});});
+ window.addEventListener('resize',()=>{v64Layout();v66Render();v66DrawWave();if(v66$('tl66WaveCompare')?.hidden===false){if(typeof v47Render==='function')v47Render();if(typeof v47RenderTimeline==='function')v47RenderTimeline();}});
  v66RenderDetail();v66DrawWave();v66Render();
 }
 function v66AddEvent(svg,ns,row,side,type,time,value,scaleX,y,unit){
@@ -251,9 +299,14 @@ function v66Render(){
    if(line.onset?.time!==null)v66AddEvent(svg,ns,line,side,'onset',line.onset.time,null,scaleX,cy,line.unit);
    if(line.peak)v66AddEvent(svg,ns,line,side,'peak',line.peak.time,line.peak.value,scaleX,cy,line.unit);
   }
-  const hit=add('rect',{x:left,y:y,width:plotWidth,height:rowH,fill:'transparent'});hit.style.cursor='crosshair';hit.addEventListener('click',e=>{const box=svg.getBoundingClientRect(),ax=from+(e.clientX-box.left)/Math.max(1,box.width)*span;tl62Seek(analysis.config.alignment==='phase'?ax*(timeline62.sourceX?.data?.duration||1):ax,'X');});
+  const hit=add('rect',{x:left,y:y,width:plotWidth,height:rowH,fill:'transparent'});hit.style.cursor='crosshair';
  });
  const cursor=add('line',{id:'tl66Playhead',x1:left,x2:left,y1:top-7,y2:height-4,stroke:'#edf9ff','stroke-width':1.3,opacity:.8,'pointer-events':'none'});
+ let scrubbing=false;
+ const seekPointer=e=>{const box=svg.getBoundingClientRect(),vx=(e.clientX-box.left)/Math.max(1,box.width)*width,axis=v66Clamp(from+(vx-left)/plotWidth*span,from,to);tl62Seek(v64AxisToXTime(axis,analysis),'X');v64Live.frame=null;draw(performance.now());v64Tick();v66Tick();};
+ svg.style.touchAction='none';svg.style.cursor='crosshair';svg.dataset.scrubbable='true';svg.setAttribute('aria-label','ドラッグまたはクリックして一時停止位置を選択する運動ダイナミクスタイムライン');
+ svg.addEventListener('pointerdown',e=>{if(e.target.closest?.('.tl66Event'))return;scrubbing=true;try{svg.setPointerCapture(e.pointerId);}catch(_){}seekPointer(e);e.preventDefault();});
+ svg.addEventListener('pointermove',e=>{if(scrubbing)seekPointer(e);});svg.addEventListener('pointerup',()=>{scrubbing=false;});svg.addEventListener('pointercancel',()=>{scrubbing=false;});
  plot.replaceChildren(svg);plot.setAttribute('data-row-count',String(rows.length));plot.setAttribute('data-design','event-markers-no-per-row-playhead-dots');
  v66SvgState={svg,scaleX,from,to,top,height,compatible,analysis};
  v66Tick();

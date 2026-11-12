@@ -1,21 +1,21 @@
 {
-  "tested_at": "2026-11-11T20:03:53.451Z",
+  "tested_at": "2026-11-12T22:15:34.227Z",
   "physical_HMD": false,
   "physical_GameSir": false,
   "Safari": false,
   "checks": [
     {
-      "name": "title has no version; white small last-update stamp directly below viewer",
+      "name": "title has no version; white small last-update stamp below viewer workspace",
       "status": "PASS",
       "details": {
         "title": "人工複眼シミュレーションシステム",
         "h1": "人工複眼シミュレーションシステム",
-        "stamp": "最終更新：2026/11/12 05:01（日本時間）",
-        "immediateSibling": true,
+        "stamp": "最終更新：2026/11/12 06:42（日本時間）",
+        "immediateSibling": false,
         "color": "rgb(255, 255, 255)",
         "fontSize": 11,
-        "screenBottom": 671,
-        "stampTop": 677
+        "workspaceBottom": 918,
+        "stampTop": 934
       }
     },
     {
@@ -253,7 +253,7 @@
     }
   ],
   "errors": [],
-  "browser": "Edg/157.0.4341.46",
+  "browser": "Chrome/155.0.8059.79",
   "summary": {
     "passed": 8,
     "failed": 0

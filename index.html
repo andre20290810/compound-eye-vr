@@ -461,7 +461,7 @@ body.vr #vrTapHint.on{top:auto!important;bottom:14vh!important;}
 <details id="experimentPanel" class="panel" style="margin-top:10px;padding:11px">
 <summary style="font-weight:700;cursor:pointer;padding:8px">実験計測｜3D動作の時系列・比較・差異表示</summary>
 <details id="v47Panel" open style="margin:8px 0;border:1px solid #417484;border-radius:12px;padding:12px;background:#0b283c">
- <summary style="font-weight:700;color:#b2f8fa;cursor:pointer;padding:6px">時刻同期・2動作比較・運動差分（v47）</summary>
+ <summary style="font-weight:700;color:#b2f8fa;cursor:pointer;padding:6px">時刻同期・2動作比較・運動差分</summary>
  <p style="color:#adcad6;font-size:11px">3Dアニメーションの仮想骨格。元データ時刻に同期し、実測人体の正解・技能評価とは区別します。</p>
  <p style="color:#b6d8e4;font-size:11px">「選択動作・全関節CSV」は、ビューアで選択中のアバター／1動作を約30Hzで数値化して1ファイルに出力します。録画開始は不要です。単位は3Dモデル単位です。</p>
  <div class="v47Grid">
@@ -985,7 +985,7 @@ const MOTION_NAMES={
  xbot_idle:'静止',xbot_fight_idle:'構え',xbot_walk:'歩行A',xbot_walk2:'歩行B',xbot_run:'走行',
  xbot_punch:'パンチA',xbot_punch1:'パンチB',xbot_punch2:'パンチC',xbot_hook:'パンチD',
  armor_breathe:'静止・呼吸',armor_walk:'歩行',armor_run:'走行',
- armor_power_punch:'パンチA',armor_punch:'パンチB',armor_alternate_punch:'パンチC',
+ armor_power_punch:'パンチA',armor_punch:'パンチB（旧）',armor_alternate_punch:'パンチB',armor_combo_punch:'パンチC',
  idle:'静止',spin:'回転',walk:'歩行',micro:'呼吸',guard:'構え',
  punch:'パンチA',block:'受け',kick:'前蹴り'
 };
@@ -1588,7 +1588,7 @@ function sequence(t,a,b,bridge=.12){if(![a,b,bridge].every(x=>Number.isFinite(x)
 const mirrorVector=v=>[-v[0],v[1],v[2]],mirrorQuaternion=q=>[q[0],-q[1],-q[2],q[3]];
 function mirrorPose(nodes,pose){const ids=Object.fromEntries(nodes.map((n,i)=>[n.name,i]));const pairs=nodes.map((n,i)=>/^L_/.test(n.name)?ids[n.name.replace(/^L_/,'R_')]:/^R_/.test(n.name)?ids[n.name.replace(/^R_/,'L_')]:i);return{T:pairs.map(i=>mirrorVector(pose.T[i])),R:pairs.map(i=>mirrorQuaternion(pose.R[i])),S:pairs.map(i=>pose.S[i].slice())};}
 function sampleChannel(ch,time,slerp){const inp=ch.input,out=ch.output,size=ch.size;if(!inp.length)throw Error('empty_animation_track');if(inp.length===1)return Array.from(out.slice(0,size));let lo=0,hi=inp.length-1;while(lo<hi){const mid=(lo+hi)>>1;if(inp[mid]<time)lo=mid+1;else hi=mid;}const next=Math.min(inp.length-1,Math.max(1,lo)),prev=next-1,f=clamp((time-inp[prev])/Math.max(inp[next]-inp[prev],1e-6),0,1),a=Array.from(out.slice(prev*size,(prev+1)*size)),b=Array.from(out.slice(next*size,(next+1)*size));return ch.path==='rotation'?slerp(a,b,f):a.map((v,k)=>v+(b[k]-v)*f);}
-return{cycle,smooth,sequence,mirrorVector,mirrorQuaternion,mirrorPose,sampleChannel,revision:'punch-sequences-v61-001'};
+return{cycle,smooth,sequence,mirrorVector,mirrorQuaternion,mirrorPose,sampleChannel,revision:'punch-sequences-v69-001'};
 });
 // v61 runtime: only the requested punch modes use these pose paths.
 function v61Source(){const source=getModel('xbot'),a=source.animations.find(c=>c.name==='XBot_Punching_Original52'),c=source.animations.find(c=>c.name==='Boxer_Punching2');if(!a||!c)throw Error('X Bot punch source missing');return{source,a,c};}
@@ -1617,10 +1617,11 @@ function v61MirrorAPose(nodes,time){
  if(pelvis!==undefined){p.T[pelvis]=p.T[pelvis].slice();p.T[pelvis][1]-=.018*drive;p.T[pelvis][2]+=.030*step;}
  return p;
 }
-function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch')p=v61AlternatePose(md.nodes,time);else if(motion==='armor_alternate_punch')p=v61MirrorAPose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
-function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch')return 3.54;if(motion==='armor_alternate_punch')return V61_OPPOSITE_PUNCH_DURATION;return null;}
+function v61AlternatingABPose(nodes,time){const rate=1.1,aDuration=1.65,bDuration=V61_OPPOSITE_PUNCH_DURATION,bridge=.12,M=window.__Punch61,s=M.sequence(time*rate,aDuration,bDuration,bridge);const a=t=>{const p=v61Blank(nodes);aegisFullBodyPunch(nodes,p.T,p.R,Math.min(t,aDuration-1e-6));return p;},b=t=>v61MirrorAPose(nodes,Math.min(t,bDuration-1e-6));if(s.kind==='a')return a(s.time);if(s.kind==='b')return b(s.time);return s.kind==='a_to_b'?v61Blend(a(aDuration-1e-6),b(0),s.mix):v61Blend(b(bDuration-1e-6),a(0),s.mix);}
+function v61ApplyPunch(md,motion,time,T,R,S){let p;if(motion==='xbot_hook')p=v61ComboPose(time);else if(motion==='armor_punch'||motion==='armor_alternate_punch')p=v61MirrorAPose(md.nodes,time);else if(motion==='armor_combo_punch')p=v61AlternatingABPose(md.nodes,time);else return;for(let i=0;i<T.length;i++){T[i]=p.T[i];R[i]=p.R[i];S[i]=p.S[i];}}
+function v61PunchDuration(motion){if(motion==='xbot_hook')return 1.10+v61Source().c.duration+.24;if(motion==='armor_punch'||motion==='armor_alternate_punch')return V61_OPPOSITE_PUNCH_DURATION;if(motion==='armor_combo_punch')return(1.65+V61_OPPOSITE_PUNCH_DURATION+.24)/1.1;return null;}
 function v61IsPunch(motion){return /punch/i.test(motion)||motion==='xbot_hook';}
-function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch')return{source:'armor_power_punch',source_motion:'former armor_alternate_punch',order:'right A then mirrored left A',transition_seconds:.12,duration_seconds:3.54,revision:'aegis-punchC-alternating-as-B-v68-001'};if(motion==='armor_alternate_punch')return{source:'armor_power_punch',hand:'left',method:'mirrored full-body A with slightly lower pelvis, extra forward step, and 1.50-second duration',duration_seconds:V61_OPPOSITE_PUNCH_DURATION,revision:'aegis-punchA-mirrored-left-forward-low-fast-v68-001'};return null;}
+function v61MotionMetadata(motion){if(motion==='xbot_hook')return{source:['xbot_punch','xbot_punch2'],order:'A then C',transition_seconds:.12,duration_seconds:v61PunchDuration(motion)};if(motion==='armor_punch'||motion==='armor_alternate_punch')return{source:'armor_power_punch',hand:'left',method:'mirrored full-body A with slightly lower pelvis, extra forward step, and 1.50-second duration',duration_seconds:V61_OPPOSITE_PUNCH_DURATION,revision:'aegis-punchC-as-new-B-v69-001'};if(motion==='armor_combo_punch')return{source:['armor_power_punch','armor_alternate_punch'],order:'right A then new left B',speed_multiplier:1.1,transition_seconds:.12,duration_seconds:v61PunchDuration(motion),revision:'aegis-punchA-and-newB-alternating-1.1x-v69-001'};return null;}
 /* v62 YBot: one X Bot skeleton, known programmable motion perturbations. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__YBot62=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
@@ -1743,7 +1744,7 @@ function v62RecalculateModifications(){
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;root.__AegisFists62=api;})(typeof globalThis==='object'?globalThis:this,function(){
 'use strict';
 const color=[.20,.36,.67,1],P=Math.PI;
-function mesh(name,bone){return{name,bone,onlyMotion:'armor_punch',p:[],n:[],col:[],tri:[],joints:[],weights:[]};}
+function mesh(name,bone){return{name,bone,onlyMotion:['armor_alternate_punch','armor_combo_punch','armor_punch'],p:[],n:[],col:[],tri:[],joints:[],weights:[]};}
 function v(m,p,n){const id=m.p.length/3;m.p.push(...p);m.n.push(...n);m.col.push(...color);m.joints.push(m.bone,0,0,0);m.weights.push(1,0,0,0);return id;}
 function quad(m,a,b,c,d,n){const ids=[a,b,c,d].map(p=>v(m,p,n));m.tri.push(ids[0],ids[1],ids[2],ids[0],ids[2],ids[3]);}
 function ellipsoid(m,c,r,lat=10,lon=16){
@@ -1899,7 +1900,7 @@ function tl62SourceFromCSV(csv){
   metadata:{coordinateSystem:origin.coordinate_system,data_schema:origin.data_schema,time_axis:origin.time_axis,source_type:'imported_csv'}};
 }
 function tl62Models(){for(const id of ['tl62X','tl62Y']){const el=tl62$(id),current=el.value;el.replaceChildren();for(const [value,label] of [['xbot','X Bot'],['ybot','Y Bot'],['aegisEmber','AEGIS NAVY'],['aegisSoldier','AEGIS SOLDIER'],['csv','読込CSV']]){const op=document.createElement('option');op.value=value;op.textContent=label;el.append(op);}el.value=current||((id==='tl62X')?'xbot':'ybot');}}
-function tl62Motions(id,avatar){const el=tl62$(id),old=el.value;el.replaceChildren();for(const m of avatar==='csv'?['uploaded_csv']:avatar==='xbot'||avatar==='ybot'?['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook']:['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch']){const o=document.createElement('option');o.value=m;o.textContent=MOTION_NAMES[m]||m;el.append(o);}el.value=[...el.options].some(x=>x.value===old)?old:el.options[0]?.value;}
+function tl62Motions(id,avatar){const el=tl62$(id),old=el.value;el.replaceChildren();for(const m of avatar==='csv'?['uploaded_csv']:avatar==='xbot'||avatar==='ybot'?['xbot_punch','xbot_punch1','xbot_punch2','xbot_hook']:['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_alternate_punch','armor_combo_punch']){const o=document.createElement('option');o.value=m;o.textContent=MOTION_NAMES[m]||m;el.append(o);}el.value=[...el.options].some(x=>x.value===old)?old:el.options[0]?.value;}
 function tl62Source(side){const avatar=tl62$('tl62'+side).value,motion=tl62$('tl62Motion'+side).value;if(avatar==='csv')return timeline62['import'+side];return v54ExportData(avatar,motion);}
 function tl62Preferred(joints){
  const order=['RightUpLeg','R_UpperLeg','Hips','Pelvis','Spine2','Chest','RightShoulder','R_UpperArm','RightArm','RightForeArm','R_Forearm','RightHand','R_Hand'];
@@ -2258,14 +2259,13 @@ function v64SetOverlay(on){
   v64Live.overlay=true;
   if(state.model!==x.avatar)changeModel(x.avatar);
   if(state.motion!==x.motion)setMotion(x.motion);
-  else if(state.paused)setMotion(x.motion);
   v64$('tl64Status').textContent='X＝実モデル、Y＝差分部位を差分色で重ねています。差分色は編集できます。';
  }else{
   v64Live.overlay=false;v64Live.frame=null;
   v64$('tl64Status').textContent='3D差分表示を停止しました。運動連鎖タイムラインは再生に同期しています。';
  }
  if(button)button.setAttribute('aria-pressed',String(v64Live.overlay));
- v64Render();v64UpdatePlayLabel();
+ v64Live.frame=null;v64Render();v64UpdatePlayLabel();if(state.paused)draw(performance.now());
 }
 function v64TimelineAxis(time,side,analysis){
  if(analysis.config.alignment==='phase')return time/(timeline62['source'+side]?.data?.duration||1);
@@ -2680,6 +2680,35 @@ function v66UpdatePlaybackControls(){
  if(rate)rate.disabled=!start?.checked||!analysis?.source_y||!analysis?.compatibility?.ok;
  if(out)out.textContent=v66Rate().toFixed(2)+'×';
 }
+function v66InstallWaveDock(dock){
+ if(v66$('tl66WaveDock'))return v66$('tl66WaveDock');
+ const root=document.createElement('section');root.id='tl66WaveDock';root.setAttribute('aria-label','比較波形');
+ const tabs=document.createElement('div');tabs.id='tl66WaveTabs';tabs.setAttribute('role','tablist');
+ const pages=document.createElement('div');pages.id='tl66WavePages';
+ const xy=document.createElement('div');xy.id='tl66WaveXY';xy.setAttribute('role','tabpanel');
+ const compare=document.createElement('div');compare.id='tl66WaveCompare';compare.setAttribute('role','tabpanel');compare.hidden=true;
+ const button=(id,label,mode)=>{const b=document.createElement('button');b.id=id;b.type='button';b.textContent=label;b.setAttribute('role','tab');b.setAttribute('aria-pressed',String(mode==='xy'));return b;};
+ const xyButton=button('tl66WaveTabXY','詳細解析：選択部位X/Y速度波形','xy');
+ const compareButton=button('tl66WaveTabCompare','実験計測：時刻同期・2動作比較波形','compare');
+ tabs.append(xyButton,compareButton);
+ const joint=v66$('tl62WaveJoint'),mode=v66$('tl66WaveMode'),wave=v66$('tl62Wave'),legend=v66$('tl62WaveLegend'),oldWaveDetails=wave?.closest('details');
+ const xyTools=document.createElement('div');xyTools.id='tl66WaveXYTools';xyTools.append(document.createTextNode('対象部位 '));
+ if(joint)xyTools.append(joint);
+ if(mode)xyTools.append(document.createTextNode(' 波形 '),mode);
+ if(wave)xy.append(xyTools,wave);
+ if(legend)xy.append(legend);
+ const compareSettings=document.createElement('button');compareSettings.id='tl66OpenExperimentSettings';compareSettings.type='button';compareSettings.textContent='比較条件を開く';
+ compareSettings.title='実験計測の比較条件を設定します。';
+ compareSettings.onclick=()=>{const p=v66$('experimentPanel'),v=v66$('v47Panel');if(p)p.open=true;if(v)v.open=true;p?.scrollIntoView({block:'nearest',behavior:'smooth'});};
+ compare.append(compareSettings);
+ for(const id of ['v47Readout','v48GraphLegend','v47Chart','v47Timeline']){const el=v66$(id);if(el)compare.append(el);}
+ if(oldWaveDetails)oldWaveDetails.hidden=true;
+ const activate=modeName=>{const isXY=modeName==='xy';xy.hidden=!isXY;compare.hidden=isXY;xyButton.setAttribute('aria-pressed',String(isXY));compareButton.setAttribute('aria-pressed',String(!isXY));root.dataset.mode=modeName;if(isXY)v66DrawWave();else{if(typeof v47Render==='function')v47Render();if(typeof v47RenderTimeline==='function')v47RenderTimeline();}};
+ xyButton.onclick=()=>activate('xy');compareButton.onclick=()=>activate('compare');
+ pages.append(xy,compare);root.append(tabs,pages);
+ dock.insertBefore(root,v66$('tl66Legend'));
+ return root;
+}
 function v66Install(){
  if(v66Installed||!v64Live?.workspace)return;
  v66Installed=true;
@@ -2749,6 +2778,7 @@ function v66Install(){
    wave.parentElement.insertBefore(select,wave);
   }
  }
+ v66InstallWaveDock(dock);
  const style=document.createElement('style');style.id='v66DynamicsStyles';style.textContent=[
   '#viewerWorkspace{display:grid!important;grid-template-columns:minmax(400px,1fr) 8px minmax(300px,var(--v66TimelineWidth,370px))!important;grid-template-rows:minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;gap:0 7px!important;align-items:stretch!important;width:100%!important;min-width:0!important}',
   '#viewerWorkspace>#screen{grid-column:1!important;grid-row:1!important;width:100%!important;height:100%!important;min-height:360px!important;max-height:none!important;resize:none!important}',
@@ -2757,8 +2787,8 @@ function v66Install(){
   '#tl66WidthGrip:after{content:"";position:absolute;left:3px;top:45%;width:2px;height:10%;min-height:34px;border-left:1px solid #9dc2d2;border-right:1px solid #9dc2d2}',
   '#tl66HeightGrip{grid-column:1/-1;grid-row:2;cursor:row-resize;touch-action:none;position:relative;z-index:5;border-radius:6px;background:#31546b}',
   '#tl66HeightGrip:after{content:"";position:absolute;left:48%;top:3px;width:4%;height:2px;border-top:1px solid #9dc2d2;border-bottom:1px solid #9dc2d2}',
-  '#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(190px,230px) minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}',
-  '#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:190px!important;max-height:none!important}',
+  '#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(430px,460px) minmax(360px,var(--v66ViewerHeight,610px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}',
+  '#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:420px!important;max-height:none!important}',
   '#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:360px!important}',
   '#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}',
   '#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}',
@@ -2777,9 +2807,26 @@ function v66Install(){
   '.tl66ControlLabel input{width:30px;height:22px;padding:0;border:0;background:transparent}',
   '#tl66Legend .diff i{background:'+v66Hex(v64Live.color)+';height:8px;border-radius:2px}',
   '#tl66Legend .diff{color:#f1c5de}',
-  '#tl64PlotWrap{flex:1 1 auto!important;min-height:200px!important;overflow:auto!important;background:#081d2c;border:1px solid #29495d;border-radius:8px}',
+  '#tl64PlotWrap{flex:0 1 43%!important;height:43%!important;min-height:145px!important;max-height:48%!important;overflow:auto!important;background:#081d2c;border:1px solid #29495d;border-radius:8px}',
   '#tl64Plot{width:100%;min-height:100%;overflow:visible}',
   '#tl64Plot svg{display:block;width:100%;height:auto;min-width:300px}',
+  '#tl66WaveDock{display:flex;flex:1 1 35%;flex-direction:column;gap:5px;min-height:155px;max-height:46%;padding:6px;border:1px solid #29495d;border-radius:8px;background:#081d2c;box-sizing:border-box;overflow:hidden}',
+  '#tl66WaveTabs{display:flex;gap:5px;flex-wrap:wrap;flex:0 0 auto}',
+  '#tl66WaveTabs button{flex:1 1 145px;padding:5px 7px;font-size:9px;line-height:1.25;background:#19364b;color:#d9edf5;border:1px solid #45677d;border-radius:6px}',
+  '#tl66WaveTabs button[aria-pressed="true"]{background:#24624f;border-color:#62c9a1;color:#fff}',
+  '#tl66WavePages{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain}',
+  '#tl66WavePages>[hidden]{display:none!important}',
+  '#tl66WaveXY,#tl66WaveCompare{min-width:0}',
+  '#tl66WaveXYTools{display:flex;align-items:center;flex-wrap:wrap;gap:5px;color:#bbd7e2;font-size:9px;margin-bottom:3px}',
+  '#tl66WaveXYTools select{max-width:145px;padding:4px 6px;background:#19364b;color:#eff8fb;border:1px solid #527990;border-radius:5px;font-size:10px}',
+  '#tl66WaveXY #tl62Wave{overflow-x:auto}',
+  '#tl66WaveXY #tl62Wave svg{display:block;width:100%;height:auto;min-width:300px}',
+  '#tl66WaveXY #tl62WaveLegend{font-size:9px;color:#aac9d5;line-height:1.35;margin-top:3px}',
+  '#tl66OpenExperimentSettings{padding:4px 7px;font-size:9px;margin:0 0 4px}',
+  '#tl66WaveCompare #v47Readout{font-size:9px!important;margin:2px 0!important}',
+  '#tl66WaveCompare #v48GraphLegend{font-size:9px;max-height:34px;overflow:auto}',
+  '#tl66WaveCompare .v47Chart{width:100%;max-height:160px;overflow:auto;background:#061b2a;border:1px solid #28465a;border-radius:5px;margin:3px 0}',
+  '#tl66WaveCompare .v47Chart svg{display:block;width:100%;min-width:560px;height:auto}',
   '.v66DockFoot{display:flex;flex-direction:column;gap:2px;min-height:26px}',
   '#tl64Readout{font-size:10px;font-variant-numeric:tabular-nums;color:#f2f8fb;min-height:14px}',
   '#tl64Status{font-size:10px;color:#b7d9e5;min-height:14px;line-height:1.35}',
@@ -2802,8 +2849,8 @@ function v66Install(){
   '#tl66AnalysisSummary .limitations{border-top:1px solid #31566c;margin-top:8px;padding-top:6px}',
   '#tl62Graphic[hidden],#tl62Order[hidden]{display:none!important}',
   '#tl66WaveMode{margin:8px 0 0;background:#19364b;color:#eff8fb;border:1px solid #527990;border-radius:5px;padding:5px}',
-  '@media(max-width:900px){#viewerWorkspace,#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(210px,250px) minmax(320px,var(--v66ViewerHeight,500px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}#viewerWorkspace>#liveDynamicsDock,#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:210px!important}#viewerWorkspace>#screen,#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:320px!important}#tl66WidthGrip{display:none}#viewerWorkspace>#tl66HeightGrip,#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}#viewerWorkspace>#viewerControlShelf,#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}}',
-  '@media(max-width:500px){#viewerWorkspace{grid-template-rows:minmax(205px,235px) minmax(300px,var(--v66ViewerHeight,460px)) 8px auto!important}#viewerWorkspace>#liveDynamicsDock{padding:6px!important}.v66DockHead{font-size:12px}#tl66Legend{gap:4px 7px}#liveDynamicsControls{padding:7px!important;gap:5px!important}}',
+  '@media(max-width:900px){#viewerWorkspace,#viewerWorkspace[data-multiview="true"]{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(390px,420px) minmax(320px,var(--v66ViewerHeight,500px)) 8px auto!important;row-gap:7px!important;column-gap:0!important}#viewerWorkspace>#liveDynamicsDock,#viewerWorkspace[data-multiview="true"]>#liveDynamicsDock{grid-column:1!important;grid-row:1!important;height:100%!important;min-height:380px!important}#viewerWorkspace>#screen,#viewerWorkspace[data-multiview="true"]>#screen{grid-column:1!important;grid-row:2!important;height:100%!important;min-height:320px!important}#tl66WidthGrip{display:none}#viewerWorkspace>#tl66HeightGrip,#viewerWorkspace[data-multiview="true"]>#tl66HeightGrip{grid-column:1!important;grid-row:3!important}#viewerWorkspace>#viewerControlShelf,#viewerWorkspace[data-multiview="true"]>#viewerControlShelf{grid-column:1!important;grid-row:4!important}}',
+  '@media(max-width:500px){#viewerWorkspace{grid-template-rows:minmax(360px,390px) minmax(300px,var(--v66ViewerHeight,460px)) 8px auto!important}#viewerWorkspace>#liveDynamicsDock{padding:6px!important}.v66DockHead{font-size:12px}#tl66Legend{gap:4px 7px}#liveDynamicsControls{padding:7px!important;gap:5px!important}}',
   '@media(max-width:700px){#v65AegisSettings #appearancePanel58{max-height:45dvh!important;overflow:auto!important}}',
   'body.compact-layout #viewerWorkspace{display:block!important}body.compact-layout #liveDynamicsDock,body.compact-layout #viewerControlShelf,body.compact-layout #tl66WidthGrip,body.compact-layout #tl66HeightGrip{display:none!important}',
   '#tl62Panel{margin-top:8px}#tl62Panel>summary{font-size:16px!important;padding:5px 0 10px}',
@@ -2841,7 +2888,8 @@ function v66Install(){
  tl62Wave=v66DrawWave;
  const waveJoint=v66$('tl62WaveJoint'),alignmentView=v66$('tl62Alignment');if(waveJoint)waveJoint.onchange=v66DrawWave;if(alignmentView)alignmentView.onchange=v66DrawWave;
  const colorInput=v66$('tl64DiffColor');if(colorInput)colorInput.addEventListener('input',()=>{const y=v66$('tl66Legend')?.querySelector('.y');if(y)y.style.background=colorInput.value;v66Render();});
- window.addEventListener('resize',()=>{v64Layout();v66Render();v66DrawWave();});
+ const pause=v66$('togglePause');if(pause)pause.addEventListener('click',()=>{v64Live.frame=null;requestAnimationFrame(()=>{draw(performance.now());v64Tick();v66Tick();v64UpdatePlayLabel();});});
+ window.addEventListener('resize',()=>{v64Layout();v66Render();v66DrawWave();if(v66$('tl66WaveCompare')?.hidden===false){if(typeof v47Render==='function')v47Render();if(typeof v47RenderTimeline==='function')v47RenderTimeline();}});
  v66RenderDetail();v66DrawWave();v66Render();
 }
 function v66AddEvent(svg,ns,row,side,type,time,value,scaleX,y,unit){
@@ -2905,9 +2953,14 @@ function v66Render(){
    if(line.onset?.time!==null)v66AddEvent(svg,ns,line,side,'onset',line.onset.time,null,scaleX,cy,line.unit);
    if(line.peak)v66AddEvent(svg,ns,line,side,'peak',line.peak.time,line.peak.value,scaleX,cy,line.unit);
   }
-  const hit=add('rect',{x:left,y:y,width:plotWidth,height:rowH,fill:'transparent'});hit.style.cursor='crosshair';hit.addEventListener('click',e=>{const box=svg.getBoundingClientRect(),ax=from+(e.clientX-box.left)/Math.max(1,box.width)*span;tl62Seek(analysis.config.alignment==='phase'?ax*(timeline62.sourceX?.data?.duration||1):ax,'X');});
+  const hit=add('rect',{x:left,y:y,width:plotWidth,height:rowH,fill:'transparent'});hit.style.cursor='crosshair';
  });
  const cursor=add('line',{id:'tl66Playhead',x1:left,x2:left,y1:top-7,y2:height-4,stroke:'#edf9ff','stroke-width':1.3,opacity:.8,'pointer-events':'none'});
+ let scrubbing=false;
+ const seekPointer=e=>{const box=svg.getBoundingClientRect(),vx=(e.clientX-box.left)/Math.max(1,box.width)*width,axis=v66Clamp(from+(vx-left)/plotWidth*span,from,to);tl62Seek(v64AxisToXTime(axis,analysis),'X');v64Live.frame=null;draw(performance.now());v64Tick();v66Tick();};
+ svg.style.touchAction='none';svg.style.cursor='crosshair';svg.dataset.scrubbable='true';svg.setAttribute('aria-label','ドラッグまたはクリックして一時停止位置を選択する運動ダイナミクスタイムライン');
+ svg.addEventListener('pointerdown',e=>{if(e.target.closest?.('.tl66Event'))return;scrubbing=true;try{svg.setPointerCapture(e.pointerId);}catch(_){}seekPointer(e);e.preventDefault();});
+ svg.addEventListener('pointermove',e=>{if(scrubbing)seekPointer(e);});svg.addEventListener('pointerup',()=>{scrubbing=false;});svg.addEventListener('pointercancel',()=>{scrubbing=false;});
  plot.replaceChildren(svg);plot.setAttribute('data-row-count',String(rows.length));plot.setAttribute('data-design','event-markers-no-per-row-playhead-dots');
  v66SvgState={svg,scaleX,from,to,top,height,compatible,analysis};
  v66Tick();
@@ -3363,7 +3416,7 @@ function aegisRetargetGait(nodes,T,R,motion,t){
 }
 function animateModel(md,motion,t){const nodes=md.nodes;let T=nodes.map(n=>n.translation.slice()),R=nodes.map(n=>n.rotation.slice()),S=nodes.map(n=>n.scale.slice());
 let clip=null,ct=0;
-if(md.animations.length && !['armor_punch','armor_power_punch','armor_alternate_punch','armor_walk','armor_run','xbot_hook'].includes(motion)){
+if(md.animations.length && !['armor_punch','armor_power_punch','armor_alternate_punch','armor_combo_punch','armor_walk','armor_run','xbot_hook'].includes(motion)){
  if(motion==='xbot_punch'){clip=md.animations.find(a=>a.name==='XBot_Punching_Original52')||md.animations[0];ct=Math.min(t%1.10,Math.max(clip.duration-.001,0));}
  else if(XBOT_CLIPS[motion]){clip=md.animations.find(a=>a.name===XBOT_CLIPS[motion])||md.animations[0];ct=t%Math.max(clip.duration,.1);}
  else if(motion==='walk'&&md.animations[0]?.name.startsWith('Walk')){clip=md.animations[0];ct=t%Math.max(clip.duration,.1);}
@@ -3471,8 +3524,8 @@ function renderMesh(pv,fit,region,modelOverride=null,ghostAlpha=0){gl.useProgram
  let md=modelOverride||modelData;
  if(!modelOverride&&A58.models.includes(state.model))window.__AegisVisor60.updateDrawMatrices(md,v58Appearance.visor[state.model]);
 for(const mesh of md.geo){
- if(mesh.v62OnlyMotion&&md.currentMotion!==mesh.v62OnlyMotion)continue;
- if(mesh.v62LegacyGloves&&md.currentMotion==='armor_punch')continue;
+ if(mesh.v62OnlyMotion&&(Array.isArray(mesh.v62OnlyMotion)?!mesh.v62OnlyMotion.includes(md.currentMotion):md.currentMotion!==mesh.v62OnlyMotion))continue;
+ if(mesh.v62LegacyGloves&&['armor_punch','armor_alternate_punch','armor_combo_punch'].includes(md.currentMotion))continue;
  gl.uniform1f(shaderProg.uYBotTint,ghostAlpha>0?0:(state.model==='ybot'&&md===modelData)?1:0);
  if(mesh.v57OriginalVisor)continue;
  const finish=mesh.v57Equipment?window.__AegisDetails58.finish(mesh.materialName,state.model):'body_navy';
@@ -3979,12 +4032,13 @@ function motionLensForBone(name){
 let analysisForceKinematics=false;
 function updateSkeletonMotion(animationTime,now){
  if(!modelData?.world)return;
+ if(state.paused){motionPrevNow=now;return;}
  const md=modelData,rootIdx=md.nodes.findIndex(n=>/^(Pelvis|Hips)$/.test(n.name));
  const root=md.world[rootIdx>=0?rootIdx:0]||ID(),rootPos=[root[12],root[13],root[14]];
  const dt=(now-motionPrevNow)/1000;
  const jump=motionPrevModel!==md||motionPrevMotion!==state.motion||
  !Number.isFinite(motionPrevTime)||animationTime<motionPrevTime-0.02||
- animationTime-motionPrevTime>.35||dt<=0||dt>.50||state.paused;
+ animationTime-motionPrevTime>.35||dt<=0||dt>.50;
  const next=new Map(),stats=[],active=analysisForceKinematics || (state.motion!=='idle'&&!state.motion.endsWith('_idle'));
  for(let i=0;i<md.nodes.length;i++){
   const bone=md.nodes[i],world=md.world[i];
@@ -4403,7 +4457,7 @@ function exportViewPreset(){const data={version:11,eyeCount:state.eyeCount,camer
 }
 
 const ui={gyroOn:false};
-function motionOptions(){if(['xbot','ybot'].includes(state.model))return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_punch','armor_alternate_punch'];
+function motionOptions(){if(['xbot','ybot'].includes(state.model))return ['xbot_idle','xbot_fight_idle','xbot_walk','xbot_walk2','xbot_run','xbot_punch','xbot_punch1','xbot_punch2','xbot_hook'];if(['aegisCeramic','aegisEmber','aegisSoldier'].includes(state.model))return ['armor_breathe','armor_walk','armor_run','armor_power_punch','armor_alternate_punch','armor_combo_punch'];
  if(state.model==='man')return ['walk','micro','guard','punch','block','kick','idle','spin'];
  return ['idle','spin'];}
 function fillMotionOptions(){const sel=$('motion');if(!sel)return;sel.innerHTML='';for(let id of motionOptions()){const opt=document.createElement('option');opt.value=id;opt.textContent=MOTION_NAMES[id];sel.append(opt);}}
@@ -6808,7 +6862,7 @@ async function startApplication(){
  await loadPublishedLensDefaults();await loadVRLensDefaults();await loadExperimentManifest();await v58LoadAppearance();loadVRAlignments();loadVRLensEditor();await unpackAssets();await v62LoadYBotConfig();
   initGL();initArena();makeVrMenu();changeModel('xbot');setMotion('xbot_punch');ready=true;loadV53LensLabels();loadMarkerPlacementV51();loadLensEditor();loadRadialSettings();loadFourEyeGap();applyDefaultSettings();loadEyeLayoutsV50();loadMarkerSettingsV50();loadMarkerMetricV52();syncMarkerMetricUiV52();syncBodyOpacityDefault();
   v62RegisterYBot();renderUI();v47Init();tl62Init();showStatus('人工複眼シミュレーションシステム：運動連鎖タイムライン／YBot比較');
-  window.__compoundTest={version:"68",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
+  window.__compoundTest={version:"69",v62SetYConfig,v62RecalculateModifications,v62GetYConfig:()=>v62YConfig,v61Source,v61ComboPose,v61AlternatePose,v61World,v61ClipPose,v61PunchDuration,v61MotionMetadata,v61IsPunch,motionDuration,motionOptions,analysisSourceDuration,v56BuildRunProfile,v58UpdateAccessories,v47Analyze,v47Seek,v47Render,v47Sample,v47Config,getV47:()=>v47,state,getVRAlignment,setVRInward,loadVRAlignments,saveCurrentVRAlignment,resetCurrentVRAlignment,selectExperimentCondition,resetExperimentPlayback,startExperiment,stopExperiment,clearExperiment,saveExperimentCsv,saveExperimentJson,getExperimentMetadata,recordExperimentFrame,setEyeCount,setMotion,changeModel,activeCameras,cameraSpec,updateCameraField,resetViewPreset,saveViewPreset,loadViewPreset,cameraPreset,parseGLB,draw,gl,shaderProg,compProg,getModelData:()=>modelData,getTargets:()=>offscreen,getTargetSize:()=>[fboWidth,fboHeight],getV54:()=>v54,v54ExportData,v54Analyze:v54DoAnalysis,v54Seek,animateModel,getModel,saveEyeLayoutV50,loadEyeLayoutsV50,applyEyeLayoutV50,
 
  getJointLensDiagnostics:()=>lensDiagnostics,getPartMask:partMask,getEffectiveSpec:effectiveSpec,setGameAction,updateGameControl,toggle3DSpace,flipFacing,saveCurrentDefaults,applyDefaultSettings,resetDefaultSettings,onOrientation,recenter,requestGyro,sensorLive,camera,compose,currentScreenAngle,enterVR:beginVR,exitVR:endVR,forceDraw:()=>draw(performance.now())};
   requestAnimationFrame(loop);
@@ -6857,8 +6911,8 @@ let v54LastExport=null,v54Imported=null;
 const v54TrialIds=new Map();
 function v54Revision(avatar,motion){if(avatar==='ybot')return window.__TimelineLiveV65?.revision(motion)||window.__YBot62.revise(v62YConfig,motion);
  if(avatar==='xbot'&&motion==='xbot_hook')return 'xbot-punchA-then-C-v61-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_punch')return 'aegis-punchC-alternating-as-B-v68-001';
- if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_alternate_punch')return 'aegis-punchA-mirrored-left-forward-low-fast-v68-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&['armor_punch','armor_alternate_punch'].includes(motion))return 'aegis-punchC-as-new-B-v69-001';
+ if(['aegisEmber','aegisSoldier'].includes(avatar)&&motion==='armor_combo_punch')return 'aegis-punchA-and-newB-alternating-1.1x-v69-001';
  return avatar==='xbot'?'xbot-embedded-animation-original-v54-export':
    motion==='armor_power_punch'?'aegis-punchA-ik-skin-v56-001':
    ['armor_walk','armor_run'].includes(motion)?'aegis-gait-periodic-v56-001':

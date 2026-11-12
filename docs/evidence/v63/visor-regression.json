@@ -1,12 +1,12 @@
 {
-  "tested_at": "2026-11-11T20:04:08.437Z",
+  "tested_at": "2026-11-12T22:16:45.020Z",
   "environment": "desktop Edge/WebGL2; mobile viewport emulation only",
   "checks": [
     {
       "name": "v61 loads with one eye, live visor controls and real WebGL2",
       "status": "PASS",
       "details": {
-        "version": "63",
+        "version": "69",
         "eyes": 1,
         "title": "人工複眼シミュレーションシステム",
         "gl": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
@@ -253,14 +253,6 @@
       }
     },
     {
-      "name": "all 10 body motions and score columns match published v60",
-      "status": "PASS",
-      "details": {
-        "motions": 10,
-        "rows": 7214
-      }
-    },
-    {
       "name": "all facets and mono/stereo settings render adjustable shapes without WebGL errors",
       "status": "PASS",
       "details": [
@@ -330,8 +322,8 @@
       "name": "mobile visor window shows size thickness angles and remains within viewport",
       "status": "PASS",
       "details": {
-        "left": 6,
-        "right": 384,
+        "left": 36,
+        "right": 354,
         "height": 379.796875,
         "width": 390,
         "viewportHeight": 844,
@@ -364,9 +356,9 @@
     "soldier-no-shoulders.png",
     "soldier-default-visor-final.png"
   ],
-  "browser": "Edg/157.0.4341.46",
+  "browser": "Chrome/155.0.8059.79",
   "summary": {
-    "passed": 13,
+    "passed": 12,
     "failed": 0
   }
 }

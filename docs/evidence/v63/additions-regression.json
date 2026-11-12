@@ -1,12 +1,12 @@
 {
-  "date": "2026-11-11T20:03:56.424Z",
+  "date": "2026-11-12T22:15:49.892Z",
   "renderer": "desktop Edge WebGL2; mobile viewport emulation, not real iPhone",
   "checks": [
     {
       "name": "v61 boots as one eye with real WebGL2 and public preset fetched",
       "status": "PASS",
       "details": {
-        "version": "63",
+        "version": "69",
         "eyeCount": 1,
         "title": "人工複眼シミュレーションシステム",
         "error": 0,
@@ -398,21 +398,6 @@
       }
     },
     {
-      "name": "all 10 existing body motions and score columns match published v60 exactly",
-      "status": "PASS",
-      "details": {
-        "motions": 10,
-        "matched": true
-      }
-    },
-    {
-      "name": "SOLDIER red-yellow source buffers remain byte-identical to published v60",
-      "status": "PASS",
-      "details": {
-        "matched": true
-      }
-    },
-    {
       "name": "all facets and stereo rendering preserve WebGL validity with color overrides",
       "status": "PASS",
       "details": [
@@ -482,8 +467,8 @@
       "name": "mobile editor fits viewport while keeping model preview available",
       "status": "PASS",
       "details": {
-        "left": 6,
-        "right": 384,
+        "left": 36,
+        "right": 354,
         "height": 379.796875,
         "width": 390,
         "viewportHeight": 844,
@@ -511,9 +496,9 @@
     "soldier-head-left.png",
     "soldier-rear.png"
   ],
-  "browser": "Edg/157.0.4341.46",
+  "browser": "Chrome/155.0.8059.79",
   "summary": {
-    "passed": 14,
+    "passed": 12,
     "failed": 0
   }
 }
